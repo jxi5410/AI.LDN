@@ -248,12 +248,89 @@ export const UPDATES=[
   {date:"2016-03-15",type:"milestone",text:"AlphaGo defeats Lee Sedol 4-1 in Seoul — watched by 200M people, decade ahead of predictions",company:"deepmind",link:"https://deepmind.google/research/alphago/"},
   {date:"2016-09-01",type:"funding",text:"Graphcore founded by Nigel Toon and Simon Knowles — AI chip startup, Bristol + London",company:"graphcore",link:null},
   {date:"2016-01-27",type:"milestone",text:"DeepMind's AlphaGo published in Nature — first AI to defeat professional Go player (Fan Hui 5-0)",company:"deepmind",link:"https://www.nature.com/articles/nature16961"},
-  // Interviews / podcasts as updates
-  {date:"2026-02-01",type:"interview",text:"Dario Amodei on Dwarkesh Patel — 'We are near the end of the exponential'",company:"anthropic",link:"https://www.dwarkesh.com/p/dario-amodei-2"},
+  // Interviews / podcasts as updates — generated from all PEOPLE data
+  // Demis Hassabis
   {date:"2025-11-01",type:"interview",text:"Demis Hassabis on Lex Fridman #475 — Future of AI, post-Nobel",company:"deepmind",link:"https://lexfridman.com/demis-hassabis-2/"},
-  {date:"2025-10-01",type:"interview",text:"Sam Altman on Conversations with Tyler — Second appearance",company:"openai",link:"https://conversationswithtyler.com/episodes/sam-altman-2/"},
-  {date:"2025-10-01",type:"interview",text:"Torsten Reil on Bloomberg — AI's Role in Defence",company:"helsing",link:"https://www.bloomberg.com/news/videos/2025-10-21/helsing-s-reil-on-ai-s-role-in-defense-innovation-video"},
-  {date:"2025-09-01",type:"interview",text:"Mati Staniszewski on 20VC — ElevenLabs $200M ARR",company:"elevenlabs",link:"https://open.spotify.com/episode/12pXbRQVhbx91MyBydH64i"},
+  {date:"2025-04-20",type:"interview",text:"Demis Hassabis on CBS 60 Minutes with Scott Pelley",company:"deepmind",link:"https://www.cbsnews.com/video/demis-hassabis-ai-deepmind-60-minutes-video-2025-04-20/"},
+  {date:"2024-10-10",type:"interview",text:"Demis Hassabis — Nobel Prize in Chemistry official lecture",company:"deepmind",link:"https://www.nobelprize.org/prizes/chemistry/2024/hassabis/interview/"},
+  {date:"2022-07-01",type:"interview",text:"Demis Hassabis on Lex Fridman #299 — Superintelligence & DeepMind",company:"deepmind",link:"https://lexfridman.com/demis-hassabis/"},
+  {date:"2017-01-01",type:"interview",text:"Demis Hassabis on BBC Desert Island Discs",company:"deepmind",link:"https://www.bbc.co.uk/programmes/b08qy1sl"},
+  // Dario Amodei
+  {date:"2026-02-01",type:"interview",text:"Dario Amodei on Dwarkesh Patel — 'We are near the end of the exponential'",company:"anthropic",link:"https://www.dwarkesh.com/p/dario-amodei-2"},
+  {date:"2024-11-01",type:"interview",text:"Dario Amodei on Lex Fridman #452 — Claude, AGI & Future of AI (5h)",company:"anthropic",link:"https://www.youtube.com/watch?v=ugvHCXCOmm4"},
+  {date:"2025-01-01",type:"interview",text:"Dario Amodei — In Good Company with Nicolai Tangen (Norwegian SWF)",company:"anthropic",link:"https://open.spotify.com/episode/6UzOVEv3Upt5oHAMZw9Gzx"},
+  {date:"2023-08-01",type:"interview",text:"Dario Amodei on Dwarkesh Patel — $10 Billion Models, OpenAI & Scaling",company:"anthropic",link:"https://www.dwarkesh.com/p/dario-amodei"},
+  // Sam Altman
+  {date:"2025-10-01",type:"interview",text:"Sam Altman on Conversations with Tyler — second appearance",company:"openai",link:"https://conversationswithtyler.com/episodes/sam-altman-2/"},
+  {date:"2025-04-01",type:"interview",text:"Sam Altman TED 2025 — ChatGPT, AI Agents & Superintelligence",company:"openai",link:"https://www.ted.com/talks/sam_altman_openai_s_sam_altman_talks_chatgpt_ai_agents_and_superintelligence_live_at_ted2025"},
+  {date:"2024-03-01",type:"interview",text:"Sam Altman on Lex Fridman #419 — GPT-5, Sora, Board Saga",company:"openai",link:"https://lexfridman.com/sam-altman-2/"},
+  {date:"2024-05-01",type:"interview",text:"Sam Altman on All-In Podcast — In Conversation",company:"openai",link:"https://open.spotify.com/episode/0rka7b2zunmx6f0etLWRGB"},
+  {date:"2023-10-01",type:"interview",text:"Sam Altman on Joe Rogan #2044",company:"openai",link:"https://open.spotify.com/episode/66edV3LAbUXa26HG1ZQaKB"},
+  {date:"2023-03-01",type:"interview",text:"Sam Altman on Lex Fridman #367 — GPT-4, ChatGPT & the Future",company:"openai",link:"https://lexfridman.com/sam-altman/"},
+  // Arthur Mensch
+  {date:"2026-02-18",type:"interview",text:"Arthur Mensch on CNBC — India AI Impact Summit",company:"mistral",link:"https://www.cnbc.com/video/2026/02/18/watch-cnbcs-full-interview-with-mistral-ai-ceo-arthur-mensch.html"},
+  {date:"2025-09-09",type:"interview",text:"Arthur Mensch on CNBC Squawk Box — Mistral funding & strategy",company:"mistral",link:"https://www.cnbc.com/video/2025/09/09/watch-cnbcs-full-interview-with-mistral-ai-founder-and-ceo-arthur-mensch.html"},
+  {date:"2023-10-01",type:"interview",text:"Arthur Mensch on No Priors #40 — Mistral 7B & Open Source Revolution",company:"mistral",link:"https://open.spotify.com/episode/2H7gV2CgfzS7jXK4Mx8v9j"},
+  {date:"2024-03-01",type:"interview",text:"Arthur Mensch — TIME Magazine: Europe's AI Ecosystem",company:"mistral",link:"https://time.com/7007040/mistral-ai-ceo-arthur-mensch-interview/"},
+  // Aidan Gomez
+  {date:"2024-10-01",type:"interview",text:"Aidan Gomez on No Priors #91 — Model Plateaus & Enterprise AI",company:"cohere",link:"https://open.spotify.com/episode/4ALfoL5D1bujniynuy76yM"},
+  {date:"2025-02-01",type:"interview",text:"Aidan Gomez on MAD Podcast — The Paper That Changed AI Forever",company:"cohere",link:"https://open.spotify.com/episode/70RgbeBY38bhP4wSshSEGW"},
+  {date:"2024-06-01",type:"interview",text:"Aidan Gomez on MLST — AI's Inner Monologue for Reasoning",company:"cohere",link:"https://open.spotify.com/episode/0oFwBJG0lBdbBaHK1M8L8H"},
+  // Alex Kendall
+  {date:"2025-11-01",type:"interview",text:"Alex Kendall on Sequoia Training Data — End-to-End AV 2.0",company:"wayve",link:"https://sequoiacap.com/podcast/how-end-to-end-learning-created-autonomous-driving-2-0-wayve-ceo-alex-kendall/"},
+  {date:"2024-05-07",type:"interview",text:"Alex Kendall on TechCrunch — Autonomous Future for Cars & Robots",company:"wayve",link:"https://techcrunch.com/2024/05/07/exclusive-wayve-cofounder-alex-kendall-on-the-autonomous-future-for-cars-and-robots/"},
+  {date:"2023-06-01",type:"interview",text:"Alex Kendall on Sifted Podcast — Vindicated by Elon Musk",company:"wayve",link:"https://sifted.eu/articles/wayves-alex-kendall-sifted-podcast"},
+  // Victor Riparbelli
+  {date:"2026-01-13",type:"interview",text:"Victor Riparbelli on CNBC Executive Decisions — Synthesia at $4B",company:"synthesia",link:"https://www.cnbc.com/video/2026/01/13/synthesia-ceo-victor-riparbelli-executive-decisions-with-steve-sedgwick.html"},
+  {date:"2024-09-01",type:"interview",text:"Victor Riparbelli on 20VC E1246 — OpenAI vs Anthropic: Who Wins",company:"synthesia",link:"https://open.spotify.com/episode/4Qe1XP4sPOLBZ8tAA4P0Er"},
+  {date:"2025-01-01",type:"interview",text:"Victor Riparbelli on This Week in Startups — $1B AI Avatar Business",company:"synthesia",link:"https://thisweekinstartups.com/episodes/EbY2M03ANMs"},
+  {date:"2024-06-01",type:"interview",text:"Victor Riparbelli on Accel Spotlight On — AI Benefits & Harms",company:"synthesia",link:"https://www.accel.com/podcast-episodes/synthesia-victor-riparbelli"},
+  // Mati Staniszewski
+  {date:"2025-11-01",type:"interview",text:"Mati Staniszewski on Sequoia — Scaling AI Rocketships (ElevenLabs)",company:"elevenlabs",link:"https://sequoiacap.com/podcast/scaling-ai-rocketships-elevenlabs-mati-staniszewski-lovables-anton-osika/"},
+  {date:"2025-09-01",type:"interview",text:"Mati Staniszewski on 20VC — ElevenLabs hits $200M ARR",company:"elevenlabs",link:"https://open.spotify.com/episode/12pXbRQVhbx91MyBydH64i"},
+  {date:"2026-01-12",type:"interview",text:"Mati Staniszewski on Bloomberg TV — $330M ARR crossed",company:"elevenlabs",link:"https://www.bloomberg.com/news/videos/2026-01-12/elevenlabs-330m-crossed-in-arr-video"},
+  // Connor Leahy
+  {date:"2023-07-01",type:"interview",text:"Connor Leahy on Future of Life Institute — Why Humanity Risks Extinction from AGI",company:"conjecture",link:"https://futureoflife.org/podcast/connor-leahy-on-why-humanity-risks-extinction-from-agi/"},
+  {date:"2023-12-01",type:"interview",text:"Connor Leahy vs Beff Jezos on MLST — e/acc vs Doomer Showdown",company:"conjecture",link:"https://www.youtube.com/watch?v=0zxi0xSBOaQ"},
+  {date:"2023-05-01",type:"interview",text:"Connor Leahy on FLI — AGI & Cognitive Emulation",company:"conjecture",link:"https://futureoflife.org/podcast/connor-leahy-on-agi-and-cognitive-emulation/"},
+  // Yann LeCun
+  {date:"2024-03-01",type:"interview",text:"Yann LeCun on Lex Fridman #416 — Meta AI, Open Source, Limits of LLMs",company:"meta-ai",link:"https://lexfridman.com/yann-lecun-3/"},
+  {date:"2021-06-01",type:"interview",text:"Yann LeCun TED Talk — Deep Learning & Future of AI",company:"meta-ai",link:"https://www.ted.com/talks/yann_lecun_deep_learning_neural_networks_and_the_future_of_ai"},
+  {date:"2022-02-01",type:"interview",text:"Yann LeCun on Lex Fridman #258 — Dark Matter of Intelligence",company:"meta-ai",link:"https://lexfridman.com/yann-lecun-2/"},
+  // Mustafa Suleyman
+  {date:"2025-12-01",type:"interview",text:"Mustafa Suleyman on Bloomberg — 'AI Is Already Superhuman'",company:"ms-research",link:"https://www.bloomberg.com/features/2025-mustafa-suleyman-weekend-interview/"},
+  {date:"2024-04-01",type:"interview",text:"Mustafa Suleyman TED 2024 — What is an AI Anyway?",company:"ms-research",link:"https://www.youtube.com/watch?v=KKNCiRWd_j0"},
+  {date:"2025-04-04",type:"interview",text:"Mustafa Suleyman on CNBC Closing Bell — Microsoft AI CEO",company:"ms-research",link:"https://www.cnbc.com/video/2025/04/04/watch-cnbcs-full-interview-with-microsoft-ai-ceo-mustafa-suleyman.html"},
+  // David Silver
+  {date:"2019-01-01",type:"interview",text:"David Silver — Lex Fridman #86: AlphaGo, AlphaZero & Deep RL",company:"deepmind",link:"https://www.youtube.com/watch?v=uPUEq8d73JI"},
+  {date:"2015-01-01",type:"interview",text:"David Silver — UCL RL Course Lecture 1 (legendary, millions of views)",company:"deepmind",link:"https://www.youtube.com/watch?v=2pWv7GOvuf0"},
+  // Nathan Benaich
+  {date:"2025-11-01",type:"interview",text:"Nathan Benaich on Hidden Forces #448 — State of AI 2025 & Investing",company:"air-street",link:"https://hiddenforces.io/podcasts/investing-on-the-front-lines-of-the-ai-arms-race-nathan-benaich/"},
+  {date:"2025-10-01",type:"interview",text:"Nathan Benaich — State of AI 2025 Report Launch (video + 300 slides)",company:"air-street",link:"https://www.stateof.ai/2025-report-launch"},
+  {date:"2024-11-01",type:"interview",text:"Nathan Benaich on The PEEL — 2-hour State of AI deep dive",company:"air-street",link:"https://www.thespl.it/p/the-state-of-ai-with-nathan-benaich"},
+  // Ian Hogarth
+  {date:"2023-06-01",type:"interview",text:"Ian Hogarth on AI Breakdown — Head of UK AI Taskforce",company:"plural",link:"https://podcasts.apple.com/us/podcast/what-the-head-of-the-new-uk-ai-foundation/id1680633614?i=1000618244541"},
+  {date:"2023-09-01",type:"interview",text:"Ian Hogarth — TIME 100 AI profile & interview",company:"plural",link:"https://time.com/collection/time100-ai/6309473/ian-hogarth/"},
+  {date:"2019-01-01",type:"interview",text:"Ian Hogarth on Sifted — 'Machine learning will eat the world'",company:"plural",link:"https://sifted.eu/articles/ian-hogarth-machine-learning-will-eat-the-world"},
+  // Poppy Gustafsson
+  {date:"2021-05-01",type:"interview",text:"Poppy Gustafsson — TIME Leadership Brief: Fighting Cyber Attacks",company:"darktrace",link:"https://time.com/6048319/poppy-gustafsson-darktrace-cyber-attacks/"},
+  {date:"2019-06-01",type:"interview",text:"Poppy Gustafsson at BoS Europe — Scaling AI at Warp Speed",company:"darktrace",link:"https://businessofsoftware.org/talks/billion-dollar-business/"},
+  // Torsten Reil
+  {date:"2025-10-21",type:"interview",text:"Torsten Reil on Bloomberg Tech Summit — AI's Role in Defence",company:"helsing",link:"https://www.bloomberg.com/news/videos/2025-10-21/helsing-s-reil-on-ai-s-role-in-defense-innovation-video"},
+  {date:"2025-06-01",type:"interview",text:"Torsten Reil on 20VC — Raising $828M for European Defence AI",company:"helsing",link:"https://www.thetwentyminutevc.com/torsten-reil"},
+  {date:"2025-03-23",type:"interview",text:"Torsten Reil — FT Lunch: AI Drones, Ukraine & VC Herd Mentality",company:"helsing",link:"https://www.techmeme.com/250323/p11"},
+  // Nikola Mrksic
+  {date:"2024-06-01",type:"interview",text:"Nikola Mrkšić on Practical AI — Next-Gen Voice Assistants",company:"polyai",link:"https://poly.ai/blog/nikola-mrksic-on-the-practical-ai-podcast/"},
+  {date:"2025-02-19",type:"interview",text:"Nikola Mrkšić on tech.eu — 'Our future is predominantly American'",company:"polyai",link:"https://tech.eu/2025/02/19/our-future-is-predominantly-american-says-founder-of-nvidia-backed-london-startup-polyai/"},
+  // Guy Podjarny
+  {date:"2025-03-01",type:"interview",text:"Guy Podjarny on Scaling DevTools — Future of Programming (Tessl)",company:"tessl",link:"https://scalingdevtools.com/podcast/episodes/guy-podjarny"},
+  {date:"2024-06-01",type:"interview",text:"Guy Podjarny on PMF Show — Snyk $4M to $4.5M ARR story",company:"tessl",link:"https://www.pmf.show/guy-podjarny-snyk-product-buyer-fit-growth/"},
+  // Barney Hussey-Yeo
+  {date:"2024-11-01",type:"interview",text:"Barney Hussey-Yeo on Jimmy's Jobs — UK Unicorns: Cleo",company:"cleo",link:"https://open.spotify.com/episode/4kX02ccyFWYXgsFmEa1nOA"},
+  {date:"2024-03-01",type:"interview",text:"Barney Hussey-Yeo on Sifted — Build £100bn & Save Democracy",company:"cleo",link:"https://sifted.eu/articles/cleo-big-interview"},
+  // Alex Dalyac
+  {date:"2021-09-01",type:"interview",text:"Alex Dalyac on EF Podcast — Billion Dollar Tractable Story (w/ Reid Hoffman)",company:"tractable",link:"https://podcasts.apple.com/gb/podcast/the-billion-dollar-story-of-tractable/id1581333327?i=1000533165537"},
+  {date:"2022-02-01",type:"interview",text:"Alex Dalyac on World of DaaS — Building a Computer Vision Unicorn",company:"tractable",link:"https://podcasts.apple.com/us/podcast/alex-dalyac-the-secret-to-building-a-computer/id1570644971?i=1000551139486"},
 ];
 
 // ── COMPANIES ───────────────────────────────────────────────────────────
