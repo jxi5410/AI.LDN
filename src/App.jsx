@@ -97,24 +97,41 @@ export default function App() {
 
   // ── AUTH ─────────────────────────────────────────────────────────────
   useEffect(() => {
+    // Load localStorage backup immediately (fast)
+    try {
+      const backup = localStorage.getItem("lai-connections-backup");
+      if (backup) setUd(JSON.parse(backup));
+    } catch {}
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user || null);
-      if (session?.user) loadUserData(session.user.id);
+      if (session?.user) loadUserData(session.user);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
-      if (session?.user) loadUserData(session.user.id);
+      if (session?.user) loadUserData(session.user);
     });
     return () => subscription.unsubscribe();
   }, []);
 
-  const loadUserData = async (userId) => {
-    // Profile
+  const loadUserData = async (userObj) => {
+    const userId = userObj.id;
+    // Profile — try DB first, fallback to user metadata
     const { data: p } = await supabase.from("profiles").select("*").eq("id", userId).single();
-    if (p) setProfile(p);
+    if (p) {
+      setProfile(p);
+    } else {
+      // Profile may not exist yet (email not confirmed, or trigger didn't fire)
+      // Use auth metadata as fallback
+      setProfile({
+        id: userId,
+        username: userObj.user_metadata?.username || userObj.email?.split("@")[0] || "User",
+        email: userObj.email,
+      });
+    }
     // Connections
     const { data: conns } = await supabase.from("user_connections").select("*").eq("user_id", userId);
-    if (conns) {
+    if (conns && conns.length > 0) {
       const map = {};
       conns.forEach(c => { map[c.company_id] = { status: c.status, contact_name: c.contact_name, notes: c.notes, id: c.id }; });
       setUd(map);
@@ -170,23 +187,36 @@ export default function App() {
     const next = { ...ud };
     if (data) {
       if (user) {
-        if (next[companyId]?.id) {
-          await supabase.from("user_connections").update({ status: data.status, contact_name: data.contact_name, notes: data.notes, updated_at: new Date().toISOString() }).eq("id", next[companyId].id);
-          next[companyId] = { ...next[companyId], ...data };
-        } else {
-          const { data: row } = await supabase.from("user_connections").insert({ user_id: user.id, company_id: companyId, status: data.status, contact_name: data.contact_name, notes: data.notes }).select().single();
-          if (row) next[companyId] = { ...data, id: row.id };
+        try {
+          if (next[companyId]?.id) {
+            const { error } = await supabase.from("user_connections").update({ status: data.status, contact_name: data.contact_name, notes: data.notes, updated_at: new Date().toISOString() }).eq("id", next[companyId].id);
+            if (error) throw error;
+            next[companyId] = { ...next[companyId], ...data };
+          } else {
+            const { data: row, error } = await supabase.from("user_connections").insert({ user_id: user.id, company_id: companyId, status: data.status, contact_name: data.contact_name, notes: data.notes }).select().single();
+            if (error) throw error;
+            if (row) next[companyId] = { ...data, id: row.id };
+          }
+        } catch (e) {
+          console.error("Supabase save failed, using local:", e.message);
+          // Fallback to local state — connection still shows in UI
+          next[companyId] = data;
         }
       } else {
         next[companyId] = data;
       }
     } else {
       if (user && next[companyId]?.id) {
-        await supabase.from("user_connections").delete().eq("id", next[companyId].id);
+        try {
+          const { error } = await supabase.from("user_connections").delete().eq("id", next[companyId].id);
+          if (error) throw error;
+        } catch (e) { console.error("Delete failed:", e.message); }
       }
       delete next[companyId];
     }
     setUd(next);
+    // Always persist to localStorage as backup
+    try { localStorage.setItem("lai-connections-backup", JSON.stringify(next)); } catch {}
     setEditConn(null);
   };
 
@@ -369,8 +399,8 @@ export default function App() {
       {/* ── HEADER ──────────────────────────────────────────────────── */}
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "10px 14px", background: "linear-gradient(180deg,rgba(6,10,20,0.97),rgba(6,10,20,0))", zIndex: 10, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
         <div style={{ flexShrink: 0, cursor: "pointer" }} onClick={() => { setPanel("graph"); setSel(null); }}>
-          <h1 style={{ margin: 0, fontSize: 18, fontFamily: "'Outfit',sans-serif", fontWeight: 800, background: "linear-gradient(135deg,#FF2D55,#BF5AF2,#00D4FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>London AI Ecosystem</h1>
-          <p style={{ margin: 0, fontSize: 8.5, color: "#475569" }}>
+          <h1 style={{ margin: 0, fontSize: 22, fontFamily: "'Outfit'',sans-serif", fontWeight: 800, background: "linear-gradient(135deg,#FF2D55,#BF5AF2,#00D4FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>London AI Ecosystem</h1>
+          <p style={{ margin: 0, fontSize: 10, color: "#475569" }}>
             {companies.filter(c => !["investor", "academic", "accelerator"].includes(c.cat)).length} companies · {edges.length} connections{mn > 0 ? ` · ${mn} tracked` : ""}
           </p>
         </div>
@@ -378,7 +408,7 @@ export default function App() {
         {/* Nav */}
         <div style={{ display: "flex", gap: 0, borderRadius: 6, overflow: "hidden", border: "1px solid #1E293B" }}>
           {[["graph", "🌌 Map"], ["updates", "📡 Updates"], ["people", "👤 People"], ["score", "🏆 Score"]].map(([k, l]) => (
-            <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "4px 9px", border: "none", background: panel === k ? "#1E293B" : "transparent", color: panel === k ? "#E2E8F0" : "#475569", fontSize: 8.5, fontFamily: "inherit", cursor: "pointer" }}>{l}</button>
+            <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "4px 9px", border: "none", background: panel === k ? "#1E293B" : "transparent", color: panel === k ? "#E2E8F0" : "#475569", fontSize: 10, fontFamily: "inherit", cursor: "pointer" }}>{l}</button>
           ))}
         </div>
         {panel === "graph" && <>
@@ -392,14 +422,14 @@ export default function App() {
         {/* Search */}
         <div style={{ position: "relative" }}>
           <input type="text" placeholder="Search companies, people, contacts…" value={search} onChange={e => setSearch(e.target.value)}
-            style={{ padding: "5px 8px", borderRadius: 6, border: "1px solid #1E293B", background: "#0F172A", color: "#E2E8F0", fontSize: 10, width: 220, outline: "none", fontFamily: "inherit" }} />
+            style={{ padding: "5px 8px", borderRadius: 6, border: "1px solid #1E293B", background: "#0F172A", color: "#E2E8F0", fontSize: 12, width: 240, outline: "none", fontFamily: "inherit" }} />
           {searchResults && search && <div style={{ position: "absolute", top: "100%", right: 0, width: 320, maxHeight: 400, overflowY: "auto", background: "#0F172A", borderRadius: 8, border: "1px solid #1E293B", marginTop: 4, zIndex: 30 }}>
             {searchResults.companies.length > 0 && <div style={{ padding: "6px 10px", borderBottom: "1px solid #111827" }}>
               <div style={{ fontSize: 8, color: "#475569", fontWeight: 600, marginBottom: 4 }}>COMPANIES</div>
               {searchResults.companies.map(c => (
                 <div key={c.id} onClick={() => { setSel(c); setPanel("graph"); setTab("info"); setSearch(""); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", cursor: "pointer" }}>
                   <span style={{ fontSize: 10 }}>{CC[c.cat]?.i}</span>
-                  <span style={{ fontSize: 10.5, color: "#E2E8F0" }}>{c.name}</span>
+                  <span style={{ fontSize: 12, color: "#E2E8F0" }}>{c.name}</span>
                   {ud[c.id] && <span style={{ fontSize: 7, color: US[ud[c.id].status]?.c }}>{US[ud[c.id].status]?.i}</span>}
                 </div>
               ))}
@@ -432,7 +462,7 @@ export default function App() {
         {/* Auth */}
         {user ? (
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ fontSize: 9, color: "#94A3B8" }}>{profile?.username || user.email}</span>
+            <span style={{ fontSize: 11, color: "#94A3B8" }}>{profile?.username || user.email}</span>
             {score.score > 0 && <span style={{ fontSize: 8, color: "#FFD700", cursor: "pointer" }} onClick={() => setPanel("score")}>{score.emoji} {score.score}</span>}
             <button onClick={signOut} style={{ padding: "3px 6px", borderRadius: 4, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 8, cursor: "pointer" }}>Sign out</button>
           </div>
@@ -457,7 +487,7 @@ export default function App() {
             </div>
           </> : <>
           <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "'Outfit',sans-serif", color: "#F8FAFC" }}>{authMode === "signup" ? "Create Account" : "Welcome Back"}</h2>
-          <p style={{ margin: "0 0 16px", fontSize: 9.5, color: "#64748B" }}>{authMode === "signup" ? "Join the London AI Ecosystem network" : "Sign in to track your connections"}</p>
+          <p style={{ margin: "0 0 16px", fontSize: 11, color: "#64748B" }}>{authMode === "signup" ? "Join the London AI Ecosystem network" : "Sign in to track your connections"}</p>
           {authError && <div style={{ padding: "6px 10px", borderRadius: 6, background: "#FF453A18", border: "1px solid #FF453A33", color: "#FF453A", fontSize: 9.5, marginBottom: 10 }}>{authError}</div>}
           {authMode === "signup" && <input type="text" placeholder="Username *" value={authForm.username} onChange={e => setAuthForm(p => ({ ...p, username: e.target.value }))} style={inputStyle} />}
           <input type="email" placeholder="Email *" value={authForm.email} onChange={e => setAuthForm(p => ({ ...p, email: e.target.value }))} style={inputStyle} />
@@ -520,16 +550,16 @@ export default function App() {
         {Object.entries(CC).map(([k, cfg]) => (
           <div key={k} onClick={() => tc(k)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "2px 3px", borderRadius: 3, cursor: "pointer", opacity: cats.has(k) ? 1 : 0.22 }}>
             <div style={{ width: 7, height: 7, borderRadius: "50%", background: cfg.c, flexShrink: 0 }} />
-            <span style={{ fontSize: 8.5, color: "#CBD5E1", flex: 1 }}>{cfg.l}</span>
+            <span style={{ fontSize: 10, color: "#CBD5E1", flex: 1 }}>{cfg.l}</span>
             <span style={{ fontSize: 7, color: "#475569" }}>{companies.filter(c => c.cat === k).length}</span>
           </div>
         ))}
         <div style={{ marginTop: 6, paddingTop: 5, borderTop: "1px solid #1E293B" }}>
-          <div style={{ fontSize: 7.5, color: "#475569", fontWeight: 600, marginBottom: 3 }}>CONNECTIONS</div>
+          <div style={{ fontSize: 9, color: "#475569", fontWeight: 600, marginBottom: 3 }}>CONNECTIONS</div>
           {Object.entries(ECfg).map(([t, cfg]) => (<div key={t} style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 1 }}><div style={{ width: 10, height: 1.5, background: cfg.c }} /><span style={{ fontSize: 7.5, color: "#64748B" }}>{cfg.l}</span></div>))}
         </div>
         <div style={{ marginTop: 6, paddingTop: 5, borderTop: "1px solid #1E293B" }}>
-          <div style={{ fontSize: 7.5, color: "#475569", fontWeight: 600, marginBottom: 3 }}>BUBBLE SIZE = FUNDING</div>
+          <div style={{ fontSize: 9, color: "#475569", fontWeight: 600, marginBottom: 3 }}>BUBBLE SIZE = FUNDING</div>
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
             <div style={{ width: 6, height: 6, borderRadius: "50%", border: "1px solid #475569" }} />
             <span style={{ fontSize: 7, color: "#475569" }}>Small</span>
@@ -544,8 +574,8 @@ export default function App() {
 
       {/* ── UPDATES PANEL ────────────────────────────────────────── */}
       {panel === "updates" && <div style={{ position: "absolute", top: 55, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: "0 20px 20px" }}>
-        <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "10px 0 4px" }}>Ecosystem Updates</h2>
-        <p style={{ fontSize: 9.5, color: "#475569", marginBottom: 10 }}>Funding, acquisitions, people moves, milestones, interviews</p>
+        <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 20, fontWeight: 700, color: "#F8FAFC", margin: "10px 0 4px" }}>Ecosystem Updates</h2>
+        <p style={{ fontSize: 11, color: "#475569", marginBottom: 10 }}>Funding, acquisitions, people moves, milestones, interviews</p>
         {/* Category tabs */}
         <div style={{ display: "flex", gap: 4, marginBottom: 14, flexWrap: "wrap" }}>
           {Object.entries(UPDATE_TYPES).map(([k, cfg]) => (
@@ -560,7 +590,7 @@ export default function App() {
               <div style={{ fontSize: 8, color: UPDATE_TYPES[u.type]?.c || "#666", textTransform: "uppercase", fontWeight: 600, marginTop: 2 }}>{u.type}</div>
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 11, color: "#E2E8F0", lineHeight: 1.4 }}>{u.text}</div>
+              <div style={{ fontSize: 13, color: "#E2E8F0", lineHeight: 1.5 }}>{u.text}</div>
               <div style={{ display: "flex", gap: 8, marginTop: 4, alignItems: "center" }}>
                 {co && <span onClick={() => { setSel(co); setPanel("graph"); setTab("info"); }} style={{ fontSize: 9, color: CC[co.cat]?.c || "#666", cursor: "pointer" }}>{CC[co.cat]?.i} {co.name} →</span>}
                 {u.link && <a href={u.link} target="_blank" rel="noopener" style={{ fontSize: 8.5, color: "#64748B", textDecoration: "none" }}>📰 Source →</a>}
@@ -572,8 +602,8 @@ export default function App() {
 
       {/* ── PEOPLE PANEL ─────────────────────────────────────────── */}
       {panel === "people" && <div style={{ position: "absolute", top: 55, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: "0 20px 20px" }}>
-        <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "10px 0 4px" }}>Key People</h2>
-        <p style={{ fontSize: 9.5, color: "#475569", marginBottom: 14 }}>Founders, CEOs, and leaders with interviews & social links</p>
+        <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 20, fontWeight: 700, color: "#F8FAFC", margin: "10px 0 4px" }}>Key People</h2>
+        <p style={{ fontSize: 11, color: "#475569", marginBottom: 14 }}>Founders, CEOs, and leaders with interviews & social links</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 8 }}>
           {Object.entries(PEOPLE).map(([name, p]) => {
             const isStarred = stars.has(`person:${name}`);
@@ -581,8 +611,8 @@ export default function App() {
               <div key={name} style={{ background: "#0F172A", borderRadius: 8, padding: "12px", border: "1px solid #1E293B" }}>
                 <div style={{ display: "flex", alignItems: "start", gap: 8 }}>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 12, color: "#F8FAFC", fontWeight: 600 }}>{name}</div>
-                    <div style={{ fontSize: 9.5, color: "#64748B", marginTop: 1 }}>{p.role}</div>
+                    <div style={{ fontSize: 14, color: "#F8FAFC", fontWeight: 600 }}>{name}</div>
+                    <div style={{ fontSize: 11, color: "#64748B", marginTop: 1 }}>{p.role}</div>
                   </div>
                   <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
                     <span onClick={() => toggleStar("person", name)} style={{ cursor: "pointer" }}><StarIcon filled={isStarred} /></span>
@@ -596,7 +626,7 @@ export default function App() {
                 </div>
                 {/* Podcasts — top 3 + more */}
                 {p.pods && p.pods.length > 0 && <div style={{ marginTop: 8, paddingTop: 6, borderTop: "1px solid #1E293B" }}>
-                  <div style={{ fontSize: 7.5, color: "#475569", fontWeight: 600, marginBottom: 3 }}>INTERVIEWS & PODCASTS</div>
+                  <div style={{ fontSize: 9, color: "#475569", fontWeight: 600, marginBottom: 3 }}>INTERVIEWS & PODCASTS</div>
                   <PodcastList pods={p.pods} />
                 </div>}
               </div>
@@ -607,7 +637,7 @@ export default function App() {
 
       {/* ── SCORE PANEL ──────────────────────────────────────────── */}
       {panel === "score" && <div style={{ position: "absolute", top: 55, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: "0 20px 20px" }}>
-        <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 16, fontWeight: 700, color: "#F8FAFC", margin: "10px 0 4px" }}>Network Score & Badges</h2>
+        <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 20, fontWeight: 700, color: "#F8FAFC", margin: "10px 0 4px" }}>Network Score & Badges</h2>
         {!user && <div style={{ padding: "12px", borderRadius: 8, background: "#FF9F0A18", border: "1px solid #FF9F0A33", marginBottom: 12 }}>
           <span style={{ fontSize: 10, color: "#FF9F0A" }}>⚠️ Sign up to save your score, appear on the leaderboard, and track connections across devices.</span>
           <button onClick={() => setAuthMode("signup")} style={{ marginLeft: 8, padding: "3px 8px", borderRadius: 4, border: "1px solid #30D158", background: "#30D15818", color: "#30D158", fontSize: 9, cursor: "pointer" }}>Sign up</button>
@@ -615,8 +645,8 @@ export default function App() {
         {/* Score card */}
         <div style={{ background: "linear-gradient(135deg,#1E293B,#0F172A)", borderRadius: 12, padding: "20px", border: "1px solid #334155", marginBottom: 12, textAlign: "center" }}>
           <div style={{ fontSize: 40 }}>{score.emoji || "🔭"}</div>
-          <div style={{ fontSize: 28, fontWeight: 800, fontFamily: "'Outfit',sans-serif", color: "#FFD700", marginTop: 4 }}>{score.score}</div>
-          <div style={{ fontSize: 13, color: "#E2E8F0", fontWeight: 600 }}>{score.level || "Explorer"}</div>
+          <div style={{ fontSize: 34, fontWeight: 800, fontFamily: "'Outfit',sans-serif", color: "#FFD700", marginTop: 4 }}>{score.score}</div>
+          <div style={{ fontSize: 16, color: "#E2E8F0", fontWeight: 600 }}>{score.level || "Explorer"}</div>
           {score.nextLevel && <>
             <div style={{ width: "100%", height: 4, background: "#1E293B", borderRadius: 2, marginTop: 10 }}>
               <div style={{ width: score.pct + "%", height: 4, background: "linear-gradient(90deg,#FF2D55,#FFD700)", borderRadius: 2 }} />
@@ -651,7 +681,7 @@ export default function App() {
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ flex: 1 }}>
               <span style={{ fontSize: 8, color: CC[sel.cat]?.c, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>{CC[sel.cat]?.i} {CC[sel.cat]?.l}</span>
-              <h2 style={{ margin: "2px 0 0", fontSize: 15, fontFamily: "'Outfit',sans-serif", fontWeight: 700, color: "#F8FAFC" }}>{sel.name}</h2>
+              <h2 style={{ margin: "2px 0 0", fontSize: 18, fontFamily: "'Outfit',sans-serif", fontWeight: 700, color: "#F8FAFC" }}>{sel.name}</h2>
               {sel.hq && <p style={{ margin: "1px 0 0", fontSize: 9, color: "#64748B" }}>📍 {sel.hq}</p>}
             </div>
             <div style={{ display: "flex", gap: 4, alignItems: "start" }}>
@@ -746,7 +776,7 @@ export default function App() {
 
       {/* ── BOTTOM HINTS ─────────────────────────────────────────── */}
       {panel === "graph" && !sel && <div style={{ position: "absolute", bottom: 10, left: "50%", transform: "translateX(-50%)", background: "rgba(15,23,42,0.8)", borderRadius: 8, padding: "5px 14px", border: "1px solid #1E293B", zIndex: 10 }}>
-        <p style={{ margin: 0, fontSize: 9, color: "#475569" }}>Click → details · Hover → highlight · ⭐ star to follow · 🤝 track connections</p>
+        <p style={{ margin: 0, fontSize: 10.5, color: "#475569" }}>Click → details · Hover → highlight · ⭐ star to follow · 🤝 track connections</p>
       </div>}
       {panel === "graph" && <div style={{ position: "absolute", bottom: 10, right: 10, display: "flex", gap: 5, zIndex: 10 }}>
         <SB l="Companies" v={filt.filter(c => !["investor", "academic", "accelerator"].includes(c.cat)).length} c="#FF2D55" />
@@ -758,11 +788,11 @@ export default function App() {
 }
 
 // ── SUBCOMPONENTS ───────────────────────────────────────────────────────
-const inputStyle = { width: "100%", padding: "6px 8px", borderRadius: 5, border: "1px solid #1E293B", background: "#111827", color: "#E2E8F0", fontSize: 10.5, fontFamily: "'JetBrains Mono',monospace", outline: "none", marginBottom: 8, boxSizing: "border-box" };
+const inputStyle = { width: "100%", padding: "6px 8px", borderRadius: 5, border: "1px solid #1E293B", background: "#111827", color: "#E2E8F0", fontSize: 12, fontFamily: "'JetBrains Mono',monospace", outline: "none", marginBottom: 8, boxSizing: "border-box" };
 
-function M({ l, v }) { return (<div style={{ background: "#0F172A", borderRadius: 5, padding: "5px 7px" }}><div style={{ fontSize: 7, color: "#475569", textTransform: "uppercase", letterSpacing: 0.3 }}>{l}</div><div style={{ fontSize: 10.5, color: "#E2E8F0", fontWeight: 500 }}>{String(v)}</div></div>); }
-function S({ t, v }) { return (<div style={{ marginBottom: 8 }}><div style={{ fontSize: 8, color: "#64748B", textTransform: "uppercase", letterSpacing: 0.3, marginBottom: 1.5, fontWeight: 600 }}>{t}</div><div style={{ fontSize: 10, color: "#CBD5E1", lineHeight: 1.45 }}>{v}</div></div>); }
-function SB({ l, v, c }) { return (<div style={{ background: "rgba(15,23,42,0.85)", borderRadius: 6, padding: "3px 8px", border: "1px solid #1E293B", textAlign: "center" }}><div style={{ fontSize: 12, fontWeight: 700, color: c, fontFamily: "'Outfit',sans-serif" }}>{v}</div><div style={{ fontSize: 7, color: "#475569", textTransform: "uppercase" }}>{l}</div></div>); }
+function M({ l, v }) { return (<div style={{ background: "#0F172A", borderRadius: 5, padding: "5px 7px" }}><div style={{ fontSize: 7, color: "#475569", textTransform: "uppercase", letterSpacing: 0.3 }}>{l}</div><div style={{ fontSize: 12, color: "#E2E8F0", fontWeight: 500 }}>{String(v)}</div></div>); }
+function S({ t, v }) { return (<div style={{ marginBottom: 8 }}><div style={{ fontSize: 8, color: "#64748B", textTransform: "uppercase", letterSpacing: 0.3, marginBottom: 1.5, fontWeight: 600 }}>{t}</div><div style={{ fontSize: 11.5, color: "#CBD5E1", lineHeight: 1.5 }}>{v}</div></div>); }
+function SB({ l, v, c }) { return (<div style={{ background: "rgba(15,23,42,0.85)", borderRadius: 6, padding: "3px 8px", border: "1px solid #1E293B", textAlign: "center" }}><div style={{ fontSize: 14, fontWeight: 700, color: c, fontFamily: "'Outfit',sans-serif" }}>{v}</div><div style={{ fontSize: 7, color: "#475569", textTransform: "uppercase" }}>{l}</div></div>); }
 
 function PodcastList({ pods, compact }) {
   const [showAll, setShowAll] = useState(false);
