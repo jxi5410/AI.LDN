@@ -248,6 +248,19 @@ export const UPDATES=[
   {date:"2016-03-15",type:"milestone",text:"AlphaGo defeats Lee Sedol 4-1 in Seoul — watched by 200M people, decade ahead of predictions",company:"deepmind",link:"https://deepmind.google/research/alphago/"},
   {date:"2016-09-01",type:"funding",text:"Graphcore founded by Nigel Toon and Simon Knowles — AI chip startup, Bristol + London",company:"graphcore",link:null},
   {date:"2016-01-27",type:"milestone",text:"DeepMind's AlphaGo published in Nature — first AI to defeat professional Go player (Fan Hui 5-0)",company:"deepmind",link:"https://www.nature.com/articles/nature16961"},
+  // People moves — founders leaving to start new companies
+  {date:"2025-11-01",type:"people",text:"David Silver leaves DeepMind after 15 years to found Ineffable Intelligence — seeking $1B seed for RL superintelligence",company:"ineffable",link:"https://sifted.eu/articles/ineffable-intelligence-david-silver/"},
+  {date:"2025-01-01",type:"people",text:"Simon Kohl (core AlphaFold2 team) leaves DeepMind to found Latent Labs — AI protein design",company:"latent-labs",link:null},
+  {date:"2024-02-01",type:"people",text:"Guy Podjarny (Snyk founder, $7.4B exit) launches Tessl — AI-native spec-driven development, raises $125M pre-product",company:"tessl",link:null},
+  {date:"2023-06-01",type:"people",text:"Arthur Mensch leaves DeepMind to co-found Mistral AI — raises €105M seed, Europe's largest ever",company:"mistral",link:null},
+  {date:"2021-07-01",type:"people",text:"Dario & Daniela Amodei leave OpenAI to found Anthropic — focus on AI safety research",company:"anthropic",link:null},
+  {date:"2021-11-01",type:"people",text:"Demis Hassabis founds Isomorphic Labs as standalone Alphabet company — dual CEO with DeepMind",company:"isomorphic",link:null},
+  {date:"2019-03-01",type:"people",text:"Mustafa Suleyman placed on leave from DeepMind, later joins Google as VP AI — eventually becomes Microsoft AI CEO",company:"ms-research",link:null},
+  {date:"2025-11-19",type:"people",text:"Yann LeCun leaves Meta to found AMI Labs (Advanced Machine Intelligence) — €500M+ backing reported",company:"meta-ai",link:null},
+  {date:"2024-06-01",type:"people",text:"Convergence AI founders (ex-Cohere, ex-DeepMind) acquired by Salesforce — 9 months from founding to exit",company:"convergence",link:null},
+  {date:"2022-01-01",type:"people",text:"Connor Leahy (EleutherAI co-founder) launches Conjecture in London — AI safety startup, Karpathy & Collisons invest",company:"conjecture",link:null},
+  {date:"2024-01-01",type:"people",text:"Joelle Pineau steps down as Meta FAIR VP Research — later joins Cohere as Chief AI Officer (Aug 2025)",company:"cohere",link:null},
+  {date:"2024-01-15",type:"people",text:"Poppy Gustafsson (ex-Darktrace CEO, post Thoma Bravo acquisition) appointed UK Minister for Investment",company:"darktrace",link:null},
   // Interviews / podcasts as updates — generated from all PEOPLE data
   // Demis Hassabis
   {date:"2025-11-01",type:"interview",text:"Demis Hassabis on Lex Fridman #475 — Future of AI, post-Nobel",company:"deepmind",link:"https://lexfridman.com/demis-hassabis-2/"},

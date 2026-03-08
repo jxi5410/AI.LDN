@@ -555,19 +555,6 @@ export default function App() {
             <span style={{ fontSize: 7, color: "#5a564e" }}>{companies.filter(c => c.cat === k).length}</span>
           </div>
         ))}
-        <div style={{ marginTop: 6, paddingTop: 5, borderTop: "1px solid #2a2826" }}>
-          <div style={{ fontSize: 9, color: "#5a564e", fontWeight: 600, marginBottom: 3 }}>CONNECTIONS</div>
-          {Object.entries(ECfg).map(([t, cfg]) => (<div key={t} style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 1 }}><div style={{ width: 10, height: 1.5, background: cfg.c }} /><span style={{ fontSize: 7.5, color: "#7a756c" }}>{cfg.l}</span></div>))}
-        </div>
-        <div style={{ marginTop: 6, paddingTop: 5, borderTop: "1px solid #2a2826" }}>
-          <div style={{ fontSize: 9, color: "#5a564e", fontWeight: 600, marginBottom: 3 }}>BUBBLE SIZE = FUNDING</div>
-          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", border: "1px solid #475569" }} />
-            <span style={{ fontSize: 7, color: "#5a564e" }}>Small</span>
-            <div style={{ width: 12, height: 12, borderRadius: "50%", border: "1px solid #475569" }} />
-            <span style={{ fontSize: 7, color: "#5a564e" }}>Large = more funding</span>
-          </div>
-        </div>
       </div>}
 
       {/* ── GRAPH SVG ────────────────────────────────────────────── */}
@@ -776,16 +763,9 @@ export default function App() {
       </div>}
 
       {/* ── BOTTOM HINTS ─────────────────────────────────────────── */}
-      {panel === "graph" && !sel && <div style={{ position: "absolute", bottom: 10, left: "50%", transform: "translateX(-50%)", background: "rgba(30,29,26,0.9)", borderRadius: 10, padding: "8px 16px", border: "1px solid #2a2826", zIndex: 10, backdropFilter: "blur(8px)", textAlign: "center", maxWidth: 500 }}>
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 4, flexWrap: "wrap" }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 14, height: 2, background: "#FF2D55", display: "inline-block", borderRadius: 1 }} /><span style={{ fontSize: 10, color: "#a09b90" }}>Alumni</span></span>
-          <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 14, height: 2, background: "#BF5AF2", display: "inline-block", borderRadius: 1 }} /><span style={{ fontSize: 10, color: "#a09b90" }}>Spin-off</span></span>
-          <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 14, height: 2, background: "#FFD700", display: "inline-block", borderRadius: 1 }} /><span style={{ fontSize: 10, color: "#a09b90" }}>Investment</span></span>
-          <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 14, height: 2, background: "#5AC8FA", display: "inline-block", borderRadius: 1 }} /><span style={{ fontSize: 10, color: "#a09b90" }}>Academic</span></span>
-          <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 14, height: 2, background: "#64D2FF", display: "inline-block", borderRadius: 1, borderTop: "1px dashed #64D2FF" }} /><span style={{ fontSize: 10, color: "#a09b90" }}>Partnership</span></span>
-          <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 14, height: 2, background: "#FF9500", display: "inline-block", borderRadius: 1 }} /><span style={{ fontSize: 10, color: "#a09b90" }}>Accelerator</span></span>
-        </div>
-        <p style={{ margin: 0, fontSize: 10.5, color: "#5a564e" }}>Lines show how companies are connected · Click → details · Hover → highlight network</p>
+      {panel === "graph" && !sel && <div style={{ position: "absolute", bottom: 10, left: "50%", transform: "translateX(-50%)", background: "rgba(30,29,26,0.9)", borderRadius: 10, padding: "8px 16px", border: "1px solid #2a2826", zIndex: 10, backdropFilter: "blur(8px)", textAlign: "center" }}>
+        <p style={{ margin: 0, fontSize: 11, color: "#a09b90" }}>Lines show how companies are connected by way of people moves or investments</p>
+        <p style={{ margin: "3px 0 0", fontSize: 10, color: "#5a564e" }}>Click → details · Hover → highlight network</p>
       </div>}
       {panel === "graph" && <div style={{ position: "absolute", bottom: 10, right: 10, display: "flex", gap: 5, zIndex: 10 }}>
         <SB l="Companies" v={filt.filter(c => !["investor", "academic", "accelerator"].includes(c.cat)).length} c="#C15F3C" />
