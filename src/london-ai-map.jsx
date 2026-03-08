@@ -2,569 +2,625 @@ import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import * as d3 from "d3";
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   LONDON AI ECOSYSTEM — V2.0
-   Interactive constellation map: 80+ entities, hover highlight, timeline,
-   search, category filters, detail panels, force-directed graph
+   LONDON AI ECOSYSTEM — V3.0
+   110+ entities · Personal network overlay · Career links · Cluster view
+   Persistent storage for user connections · Hover highlight · Timeline
    ═══════════════════════════════════════════════════════════════════════════ */
 
-// ── DATA ────────────────────────────────────────────────────────────────────
+// ── CATEGORY CONFIG ─────────────────────────────────────────────────────
+const CC = {
+  frontier:           { color: "#FF2D55", label: "Frontier Labs",     icon: "⚡" },
+  "frontier-emerging":{ color: "#FF6B9D", label: "Emerging Frontier", icon: "🌟" },
+  autonomous:         { color: "#00D4FF", label: "Autonomous",        icon: "🚗" },
+  generative:         { color: "#BF5AF2", label: "Generative AI",     icon: "🎨" },
+  biotech:            { color: "#30D158", label: "AI + Biotech",      icon: "🧬" },
+  enterprise:         { color: "#FFD60A", label: "Enterprise AI",     icon: "🏢" },
+  cybersecurity:      { color: "#FF453A", label: "Cybersecurity",     icon: "🛡️" },
+  hardware:           { color: "#5E5CE6", label: "AI Hardware",       icon: "🔧" },
+  fintech:            { color: "#64D2FF", label: "AI Fintech",        icon: "💰" },
+  defence:            { color: "#FF375F", label: "Defence AI",        icon: "🎯" },
+  safety:             { color: "#FF9F0A", label: "AI Safety",         icon: "🔒" },
+  governance:         { color: "#AC8E68", label: "Governance",        icon: "📋" },
+  devtools:           { color: "#32D74B", label: "Dev Tools",         icon: "⚙️" },
+  investor:           { color: "#FFD700", label: "Investors",         icon: "💎" },
+  academic:           { color: "#5AC8FA", label: "Academic",          icon: "🎓" },
+  accelerator:        { color: "#FF9500", label: "Accelerators",      icon: "🚀" },
+};
 
+const EC = {
+  alumni:      { color: "#FF2D55", label: "Alumni Flow",  dash: null },
+  spinoff:     { color: "#BF5AF2", label: "Spin-off",     dash: null },
+  investment:  { color: "#FFD700", label: "Investment",    dash: null },
+  academic:    { color: "#5AC8FA", label: "Academic",      dash: null },
+  partnership: { color: "#64D2FF", label: "Partnership",   dash: "6,3" },
+  accelerator: { color: "#FF9500", label: "Accelerator",   dash: null },
+};
+
+const USER_STATUS = {
+  know_someone:  { color: "#30D158", label: "Know Someone", icon: "🤝" },
+  applied:       { color: "#FFD60A", label: "Applied",      icon: "📨" },
+  target:        { color: "#00D4FF", label: "Target",       icon: "🎯" },
+  interviewing:  { color: "#BF5AF2", label: "Interviewing", icon: "💬" },
+  rejected:      { color: "#FF453A", label: "Rejected",     icon: "❌" },
+  watching:      { color: "#64748B", label: "Watching",     icon: "👁️" },
+};
+
+// ── COMPANY DATA (110+ entities) ────────────────────────────────────────
 const companies = [
   // FRONTIER LABS
-  { id: "deepmind", name: "Google DeepMind", short: "DeepMind", category: "frontier", founded: 2010, employees: "~3,000 LDN", funding: "$500-650M (acq.)", fundingNum: 600, valuation: "Alphabet sub.", founders: "Demis Hassabis, Shane Legg, Mustafa Suleyman", focus: "AGI · AlphaFold · Gemini · RL · robotics · science", ethos: "Solve intelligence, advance science & humanity", hq: "King's Cross", keyPeople: "Demis Hassabis (CEO, Nobel 2024), Shane Legg (Chief Scientist), Koray Kavukcuoglu (VP Research), Lila Ibrahim (COO)", milestones: "AlphaGo (2016) · AlphaFold (2020) · Gemini (2023) · Nobel Prize Chemistry (2024) · Gemini 2.5 (Mar 2025)", interviews: "Hassabis: Lex Fridman, Tim Ferriss, BBC HARDtalk · Shane Legg: Machine Intelligence Research Institute" },
-  { id: "anthropic", name: "Anthropic", short: "Anthropic", category: "frontier", founded: 2021, employees: "1,000+ global", funding: "~$30B", fundingNum: 30000, valuation: "$380B", founders: "Dario Amodei, Daniela Amodei (ex-OpenAI VP Research)", focus: "AI safety · Constitutional AI · Claude models · interpretability", ethos: "Safety-first, responsible scaling, pro-regulation", hq: "Cheapside (LDN office)", keyPeople: "Pip White (EMEA North, ex-Google/Salesforce), Guillaume Princen (Head EMEA, ex-Stripe)", milestones: "LDN office (May 2023) · Claude 3.5 Sonnet · 100+ UK roles (Apr 2025) · EU fastest-growing region · 10x large account growth", interviews: "Dario: Lex Fridman, Dwarkesh Patel, All-In · Daniela: Bloomberg, Fortune" },
-  { id: "openai", name: "OpenAI", short: "OpenAI", category: "frontier", founded: 2015, employees: "92-300 LDN", funding: "$17B+ (MS)", fundingNum: 17000, valuation: "$157B+", founders: "Sam Altman, Greg Brockman, Ilya Sutskever et al.", focus: "GPT · ChatGPT · DALL-E · Sora · o1/o3 reasoning", ethos: "Ensure AGI benefits all of humanity", hq: "King's Cross (1st non-US office)", keyPeople: "Sam Altman (CEO), Dale Markowitz (LDN)", milestones: "LDN office (Jun 2023) · $6.6B round Oct 2024 · UK govt MoU (Jul 2025) · 'Humphrey' Whitehall AI · $100B round talks at $850B", interviews: "Altman: Lex Fridman, Joe Rogan, All-In" },
-  { id: "meta-ai", name: "Meta AI / FAIR", short: "Meta AI", category: "frontier", founded: 2013, employees: "~3,000 global", funding: "Meta sub.", fundingNum: 0, valuation: "Meta sub.", founders: "Yann LeCun (FAIR founder)", focus: "Llama open models · CV · AR/VR · open-source", ethos: "Open-source AI research", hq: "London research office", keyPeople: "Rob Fergus (FAIR lead, ex-DM 5yr), LeCun departed Nov 2025 → AMI Labs", milestones: "Llama 3 · Meta Superintelligence Labs (2025) · 600 cuts (Oct 2025) · LeCun left to found AMI Labs (€500M raise)", interviews: "LeCun: Lex Fridman, TED, NeurIPS" },
-  { id: "microsoft-research", name: "Microsoft Research", short: "MS Research", category: "frontier", founded: 1997, employees: "6,000 UK", funding: "MS sub.", fundingNum: 0, valuation: "MS sub.", founders: "Roger Needham (Cambridge lab 1997)", focus: "ML · AI for science · security · mixed reality", ethos: "Empower through technology", hq: "Cambridge + Paddington Hub", keyPeople: "Mustafa Suleyman (CEO MS AI, ex-DM co-founder), Jordan Hoffmann (LDN Hub, ex-DM/Inflection), Aditya Nori (Cambridge dir.)", milestones: "$30B UK investment (2025-28) · Paddington AI Hub (Apr 2024) · UK's largest supercomputer (23,000+ NVIDIA GPUs)", interviews: "Suleyman: Lex Fridman, FT, Bloomberg" },
-  { id: "mistral", name: "Mistral AI", short: "Mistral", category: "frontier", founded: 2023, employees: "280+", funding: "€486M+", fundingNum: 550, valuation: "€5.8B", founders: "Arthur Mensch (ex-DM Sr Staff), Guillaume Lample (ex-Meta), Timothée Lacroix (ex-Meta)", focus: "Open-source frontier LLMs · enterprise platform · Le Chat", ethos: "European sovereignty, open-source first", hq: "Paris (LDN satellite, hiring)", keyPeople: "Arthur Mensch (CEO)", milestones: "Mistral 7B (Sep 2023) · Mixtral MoE · Le Chat · LDN entity May 2023 · hiring AI scientists LDN", interviews: "Mensch: Sifted, TC Disrupt, Lex Fridman" },
-  { id: "cohere", name: "Cohere", short: "Cohere", category: "frontier", founded: 2019, employees: "500 (25-50 LDN)", funding: "~$1B", fundingNum: 1000, valuation: "$5.5B+", founders: "Aidan Gomez ('Attention Is All You Need' co-author, Oxford), Ivan Zhang, Nick Frosst", focus: "Enterprise NLP · Command · Embed · RAG · North platform", ethos: "Enterprise-focused, cloud-agnostic", hq: "Toronto (LDN research hub)", keyPeople: "Aidan Gomez (CEO), Phil Blunsom (Chief Sci, ex-Oxford NLP prof), Joelle Pineau (CAO, ex-Meta FAIR VP)", milestones: "Hired Pineau Aug 2025 · doubling LDN headcount · North platform launch", interviews: "Gomez: No Priors, TC, Bloomberg" },
+  { id:"deepmind", name:"Google DeepMind", s:"DeepMind", cat:"frontier", yr:2010, emp:"~3,000 LDN", fund:"$500-650M (acq.)", fn:600, val:"Alphabet sub.", founders:"Demis Hassabis, Shane Legg, Mustafa Suleyman", focus:"AGI · AlphaFold · Gemini · RL · robotics · science", ethos:"Solve intelligence, advance science & humanity", hq:"King's Cross", kp:"Demis Hassabis (CEO, Nobel 2024), Shane Legg (Chief Scientist), Koray Kavukcuoglu (VP Research)", ms:"AlphaGo (2016) · AlphaFold (2020) · Gemini (2023) · Nobel Chemistry (2024) · Gemini 2.5 (Mar 2025)", iv:"Hassabis: Lex Fridman, Tim Ferriss, BBC HARDtalk", jobs:"https://deepmind.google/careers/" },
+  { id:"anthropic", name:"Anthropic", s:"Anthropic", cat:"frontier", yr:2021, emp:"1,000+ global", fund:"~$30B", fn:30000, val:"$380B", founders:"Dario Amodei, Daniela Amodei (ex-OpenAI)", focus:"AI safety · Constitutional AI · Claude · interpretability", ethos:"Safety-first, responsible scaling", hq:"Cheapside (LDN)", kp:"Pip White (EMEA North), Guillaume Princen (Head EMEA)", ms:"LDN office (May 2023) · Claude 3.5 · 100+ UK roles · fastest-growing region", iv:"Dario: Lex Fridman, Dwarkesh, All-In", jobs:"https://www.anthropic.com/careers" },
+  { id:"openai", name:"OpenAI", s:"OpenAI", cat:"frontier", yr:2015, emp:"92-300 LDN", fund:"$17B+", fn:17000, val:"$157B+", founders:"Sam Altman, Greg Brockman, Ilya Sutskever et al.", focus:"GPT · ChatGPT · DALL-E · Sora · o1/o3 reasoning", ethos:"AGI benefits all of humanity", hq:"King's Cross (1st non-US)", kp:"Sam Altman (CEO)", ms:"LDN office (Jun 2023) · UK govt MoU (Jul 2025) · 'Humphrey' Whitehall AI", iv:"Altman: Lex Fridman, Joe Rogan, All-In", jobs:"https://openai.com/careers/" },
+  { id:"meta-ai", name:"Meta AI / FAIR", s:"Meta AI", cat:"frontier", yr:2013, emp:"~3,000 global", fund:"Meta sub.", fn:0, val:"Meta sub.", founders:"Yann LeCun", focus:"Llama · CV · AR/VR · open-source", ethos:"Open-source AI", hq:"LDN research", kp:"Rob Fergus (FAIR, ex-DM), LeCun departed → AMI Labs", ms:"Llama 3 · MSL (2025) · 600 cuts · LeCun → AMI Labs (€500M)", iv:"LeCun: Lex Fridman, TED", jobs:"https://www.metacareers.com/" },
+  { id:"ms-research", name:"Microsoft Research", s:"MS Research", cat:"frontier", yr:1997, emp:"6,000 UK", fund:"MS sub.", fn:0, val:"MS sub.", founders:"Roger Needham (1997)", focus:"ML · AI for science · security · mixed reality", ethos:"Empower through technology", hq:"Cambridge + Paddington", kp:"Mustafa Suleyman (MS AI CEO), Jordan Hoffmann (LDN Hub)", ms:"$30B UK invest · Paddington Hub (Apr 2024) · UK's largest supercomputer", iv:"Suleyman: Lex Fridman, FT", jobs:"https://www.microsoft.com/en-us/research/careers/" },
+  { id:"mistral", name:"Mistral AI", s:"Mistral", cat:"frontier", yr:2023, emp:"280+", fund:"€486M+", fn:550, val:"€5.8B", founders:"Arthur Mensch (ex-DM), G. Lample, T. Lacroix (ex-Meta)", focus:"Open-source LLMs · enterprise · Le Chat", ethos:"European sovereignty, open-source", hq:"Paris (LDN satellite)", kp:"Mensch (CEO)", ms:"Mistral 7B · Mixtral · LDN hiring", iv:"Mensch: Sifted, TC Disrupt", jobs:"https://jobs.lever.co/mistral/" },
+  { id:"cohere", name:"Cohere", s:"Cohere", cat:"frontier", yr:2019, emp:"500 (25-50 LDN)", fund:"~$1B", fn:1000, val:"$5.5B+", founders:"Aidan Gomez (Attention paper, Oxford), Ivan Zhang, Nick Frosst", focus:"Enterprise NLP · Command · North platform", ethos:"Enterprise-focused, cloud-agnostic", hq:"Toronto (LDN hub)", kp:"Gomez (CEO), Phil Blunsom (Chief Sci, ex-Oxford), Joelle Pineau (CAO, ex-Meta FAIR)", ms:"Hired Pineau (Aug 2025) · doubling LDN", iv:"Gomez: No Priors, TC", jobs:"https://jobs.ashbyhq.com/cohere" },
 
   // WELL-FUNDED STARTUPS
-  { id: "wayve", name: "Wayve", short: "Wayve", category: "autonomous", founded: 2017, employees: "350+", funding: "~$2.5B", fundingNum: 2500, valuation: "$8.6B", founders: "Alex Kendall (Cambridge PhD/OBE), Amar Shah (departed 2020)", focus: "End-to-end autonomous driving · embodied AI · no lidar/HD maps", ethos: "AI-first generalizable driving", hq: "London", keyPeople: "Alex Kendall (CEO), Jamie Shotton (Chief Sci, ex-MS Kinect/HoloLens), Erez Dagan (President, ex-Mobileye)", milestones: "$1.2B Series D (Feb 2026) · Uber L4 LDN robotaxi (Spring 2026) · Nissan integration 2027 · driven 500+ cities zero-shot", interviews: "Kendall: Lex Fridman, AI Podcast, Cambridge talks" },
-  { id: "synthesia", name: "Synthesia", short: "Synthesia", category: "generative", founded: 2017, employees: "400+", funding: "~$530M", fundingNum: 530, valuation: "$4B", founders: "Victor Riparbelli (CEO, Danish), Steffen Tjerrild, Prof M. Niessner (TU Munich), Prof L. Agapito (UCL)", focus: "AI video generation · enterprise comms · avatars · 140+ languages", ethos: "Ethics-first — no deepfakes of real people, consent required", hq: "London (Regent's Place)", keyPeople: "Victor Riparbelli (CEO, Forbes 30U30)", milestones: "$200M Series E (Jan 2026, GV led) · $100M ARR (Apr 2025) · 60-80% Fortune 100 · Adobe strategic investment (Apr 2025)", interviews: "Riparbelli: 20VC, Sifted, Bloomberg" },
-  { id: "isomorphic", name: "Isomorphic Labs", short: "Isomorphic", category: "biotech", founded: 2021, employees: "200+", funding: "$600M", fundingNum: 600, valuation: "Alphabet sub.", founders: "Demis Hassabis (dual CEO with DeepMind)", focus: "AI drug discovery · AlphaFold-derived drug design engine", ethos: "Solve all disease through AI-first drug discovery", hq: "King's Cross + Lausanne", keyPeople: "Hassabis (CEO), Max Jaderberg (CTO), Jennifer Doudna (SAB, Nobel laureate)", milestones: "$600M Series A (Apr 2025, Thrive led) · Lilly/Novartis ~$3B milestone deals · IsoDDE 'AlphaFold 4' (Feb 2026) · J&J deal", interviews: "Hassabis on Iso: Nature, CNBC, Fortune, Scientific American" },
-  { id: "elevenlabs", name: "ElevenLabs", short: "ElevenLabs", category: "generative", founded: 2022, employees: "330", funding: "$781M", fundingNum: 781, valuation: "$11B", founders: "Mati Staniszewski (ex-Palantir, Imperial maths), Piotr Dąbkowski (ex-Google/DM, Oxbridge)", focus: "AI voice/TTS · dubbing · cloning · music · agents · 70+ languages", ethos: "Break language barriers through voice AI", hq: "London (Soho) + Warsaw R&D", keyPeople: "Staniszewski (CEO), Dąbkowski (CTO)", milestones: "$500M Series D (Feb 2026, Sequoia) · $330M ARR · 41% Fortune 500 · eyeing IPO · childhood friends from Poland", interviews: "Staniszewski: 20VC, Bloomberg, TC" },
-  { id: "stability", name: "Stability AI", short: "Stability", category: "generative", founded: 2019, employees: "~190", funding: "~$300M", fundingNum: 300, valuation: "$1B", founders: "Emad Mostaque (departed Mar 2024)", focus: "Open-source image/video/audio/3D generation", ethos: "Open generative AI for all", hq: "Notting Hill", keyPeople: "Prem Akkaraju (CEO, ex-Weta), Sean Parker (Exec Chair, ex-Facebook), James Cameron (Board)", milestones: "Stable Diffusion (Aug 2022, ignited GenAI boom) · leadership crisis (2024) · $80M rescue (Jun 2024) · EA/WMG/UMG deals · won Getty case (Nov 2025)", interviews: "Mostaque (pre-departure): Lex Fridman, TED" },
-  { id: "helsing", name: "Helsing", short: "Helsing", category: "defence", founded: 2021, employees: "275-500", funding: "€1.37B", fundingNum: 1500, valuation: "€12B (~$13.8B)", founders: "Torsten Reil, Dr Gundbert Scherf (co-CEOs)", focus: "Military AI · battlefield intelligence · autonomous drones (HX-2) · electronic warfare", ethos: "AI exclusively for democratic governments", hq: "Munich (LDN office Feb 2023)", keyPeople: "Amelia Gould (UK MD), Torsten Reil (co-CEO)", milestones: "€600M Series D (Jun 2025) · AI fighter pilot combat (May 2025, first ever) · £350M UK investment · FCAS backbone · ASGARD contracts", interviews: "Reil: Sifted, FT, defence events" },
-  { id: "darktrace", name: "Darktrace", short: "Darktrace", category: "cybersecurity", founded: 2013, employees: "2,400+", funding: "$230M pre-IPO", fundingNum: 230, valuation: "$5.3B (Thoma Bravo)", founders: "Poppy Gustafsson (now Baroness, UK Minister), Jack Stockdale, Nicole Eagan", focus: "Self-learning AI cybersecurity (digital immune system)", ethos: "Immune system approach to cyber defense", hq: "Cambridge + London", keyPeople: "Gustafsson (now UK Minister of Investment — left Darktrace)", milestones: "IPO Apr 2021 (~£7B peak) · Thoma Bravo $5.3B acq. (Oct 2024) · Mike Lynch (founding backer) died Bayesian yacht Aug 2024", interviews: "Gustafsson: BBC, Fortune, FT" },
-  { id: "graphcore", name: "Graphcore", short: "Graphcore", category: "hardware", founded: 2016, employees: "~500", funding: "$710M", fundingNum: 710, valuation: "$2.77B peak → acq.", founders: "Nigel Toon, Simon Knowles (both co-founded Icera → Nvidia $435M), Hermann Hauser (ARM co-founder)", focus: "Intelligence Processing Units (IPUs) for AI workloads", ethos: "Purpose-built AI silicon", hq: "Bristol + London + Cambridge", keyPeople: "Nigel Toon (CEO)", milestones: "SoftBank acquired Jul 2024 ~$500M (below total raised) · $1B India investment · angel investors: Hassabis & Brockman (OpenAI)", interviews: "Toon: Bloomberg, Cerebral Valley" },
-  { id: "faculty", name: "Faculty AI", short: "Faculty", category: "enterprise", founded: 2014, employees: "400", funding: "~£40M VC", fundingNum: 50, valuation: "£600M+ (Accenture)", founders: "Dr Marc Warner (Marie Curie Fellow, Harvard quantum), Dr Angie Ma (co-founder, PhD physics)", focus: "Decision intelligence · Frontier platform · govt AI", ethos: "AI for institutional decision-making", hq: "Welbeck Street", keyPeople: "Marc Warner (CEO → Accenture CTO)", milestones: "Accenture acq. ~$1B+ (Jan 2026) · OpenAI red-teaming · NHS/MoD/BBC/Rolls Royce · Jaan Tallinn (Skype) invested", interviews: "Warner: AI Summit London" },
-  { id: "benevolentai", name: "BenevolentAI", short: "BenevolentAI", category: "biotech", founded: 2013, employees: "~69", funding: "$700M+", fundingNum: 700, valuation: "€1.5B SPAC peak", founders: "Kenneth Mulvany (serial entrepreneur, America's Cup sailor)", focus: "AI knowledge graph for drug discovery", ethos: "Cure disease through AI", hq: "Fitzrovia + Cambridge wet labs", keyPeople: "Mulvany (Exec Chairman, returned late 2024)", milestones: "COVID baricitinib 90-min discovery (FDA EUA followed) · SPAC listing 2021 · AstraZeneca/Merck deals · delisted Mar 2025 → Osaka Holdings", interviews: "Mulvany: Endpoints, BioWorld" },
-  { id: "polyai", name: "PolyAI", short: "PolyAI", category: "enterprise", founded: 2017, employees: "200+", funding: "$206M", fundingNum: 206, valuation: "$500M+", founders: "Nikola Mrkšić (ex-Apple/VocalIQ), Tsung-Hsien Wen (ex-Google), Pei-Hao Su (ex-Facebook) — all Cambridge ML Lab PhDs", focus: "Enterprise voice AI agents · 45 languages · authentication/payments", ethos: "Human-quality voice AI for customer service", hq: "Holborn", keyPeople: "Mrkšić (CEO)", milestones: "$86M Series D (Dec 2025) · 100+ clients: FedEx, Marriott, Caesars, PG&E · UK Chancellor cited as AI exemplar", interviews: "Mrkšić: AI Business podcast" },
-  { id: "cleo", name: "Cleo AI", short: "Cleo", category: "fintech", founded: 2016, employees: "300-500", funding: "~$175M", fundingNum: 175, valuation: "$500M+", founders: "Barney Hussey-Yeo (ML graduate)", focus: "AI financial assistant for Gen Z/millennials", ethos: "Make money less stressful (with sass — 'Roast Mode')", hq: "London + NYC/SF", keyPeople: "Hussey-Yeo (CEO)", milestones: "$300M+ ARR · profitable · 6M users · 743K paid subs · re-launching UK 2025 · eyeing IPO", interviews: "Hussey-Yeo: TC, Sifted" },
-  { id: "tractable", name: "Tractable", short: "Tractable", category: "enterprise", founded: 2014, employees: "117-224", funding: "$185M", fundingNum: 185, valuation: "$1B (Jun 2021)", founders: "Alex Dalyac (LSE/Imperial, French), Razvan Ranca (Cambridge), Adrien Cohen", focus: "Computer vision for insurance/property damage assessment", ethos: "AI to accelerate accident & disaster recovery", hq: "London", keyPeople: "Dalyac (CEO)", milestones: "UK's first CV unicorn (2021) · $7B+ vehicle repairs processed/yr · 20+ top-100 global insurers", interviews: "Dalyac: InsurTech Digital, Sifted" },
-  { id: "signal-ai", name: "Signal AI", short: "Signal AI", category: "enterprise", founded: 2013, employees: "220-243", funding: "$268M", fundingNum: 268, valuation: "Undisclosed", founders: "David Benigson (law background), Dr Miguel Martinez (Essex), Wesley Hall — started in a N. London garage", focus: "External intelligence · reputation risk · media monitoring (226 markets, 75 languages)", ethos: "AI decision augmentation for enterprises", hq: "London", keyPeople: "Benigson (CEO)", milestones: "$165M Battery Ventures (Sep 2025, majority stake) · 40% Fortune 500 · Ask AIQ conversational product", interviews: "Benigson: PRmoment Podcast, Sifted, TC" },
-  { id: "abound", name: "Abound", short: "Abound", category: "fintech", founded: 2020, employees: "100-130", funding: "£1.6B+ (debt+equity)", fundingNum: 150, valuation: "Undisclosed", founders: "Gerald Chappell (ex-McKinsey partner, PhD maths), Dr Michelle He (ex-EY Director, PhD CS)", focus: "AI lending using Open Banking (replaces credit scores)", ethos: "Fair credit through AI & open data", hq: "London", keyPeople: "Chappell (CEO), He (COO)", milestones: "Profitable since Apr 2024 · £66.8M rev (+151% YoY) · 70-75% lower defaults · £900M+ issued · Citi/Deutsche Bank debt", interviews: "Chappell: City AM, FT" },
-  { id: "exscientia", name: "Exscientia", short: "Exscientia", category: "biotech", founded: 2012, employees: "~250 pre-acq", funding: "$674M (IPO+)", fundingNum: 674, valuation: "$2.9B peak", founders: "Prof Andrew Hopkins CBE (ex-Pfizer, TIME 100 AI, Royal Society Fellow)", focus: "AI drug design — first AI-designed drug in clinical trials", ethos: "Precision medicine through AI", hq: "Oxford Science Park", keyPeople: "Hopkins (CEO)", milestones: "First AI drug → clinical trials in 12 months (vs 4.5yr avg) · Nasdaq IPO Oct 2021 ($510M) · acquired by Recursion Nov 2024", interviews: "Hopkins: Nature, FT, Royal Society" },
-  { id: "onfido", name: "Onfido → Entrust", short: "Onfido", category: "enterprise", founded: 2012, employees: "600+ pre-acq", funding: "$242M", fundingNum: 242, valuation: "$1.5B peak", founders: "Husayn Kassai, Eamon Jubbawy, Ruhul Amin — all met at Oxford Entrepreneurs", focus: "AI identity verification · 2,500+ doc types · 195 countries", ethos: "Digital identity for everyone", hq: "London → Entrust (acq.)", keyPeople: "Kassai (then founded London AI Hub community)", milestones: "Acquired by Entrust $650M (Apr 2024) · Oxford seeded £20K (80x return) · served 1,200+ global clients incl. Revolut", interviews: "Kassai: Oxford talks, startup events" },
+  { id:"wayve", name:"Wayve", s:"Wayve", cat:"autonomous", yr:2017, emp:"350+", fund:"~$2.5B", fn:2500, val:"$8.6B", founders:"Alex Kendall (Cambridge PhD/OBE), Amar Shah", focus:"End-to-end AV · embodied AI · no lidar/HD maps", ethos:"AI-first generalizable driving", hq:"London", kp:"Kendall (CEO), Jamie Shotton (Chief Sci, ex-MS), Erez Dagan (Pres, ex-Mobileye)", ms:"$1.2B Series D (Feb 2026) · Uber L4 LDN (2026) · Nissan (2027) · 500+ cities zero-shot", iv:"Kendall: Lex Fridman", jobs:"https://wayve.ai/careers/" },
+  { id:"synthesia", name:"Synthesia", s:"Synthesia", cat:"generative", yr:2017, emp:"400+", fund:"~$530M", fn:530, val:"$4B", founders:"Victor Riparbelli, Steffen Tjerrild, Prof Niessner (TUM), Prof Agapito (UCL)", focus:"AI video · enterprise comms · avatars · 140+ langs", ethos:"Ethics-first — no deepfakes", hq:"London", kp:"Riparbelli (CEO, Forbes 30U30)", ms:"$200M Series E (Jan 2026) · $100M ARR · 60-80% F100 · Adobe investment", iv:"Riparbelli: 20VC, Sifted", jobs:"https://www.synthesia.io/careers" },
+  { id:"isomorphic", name:"Isomorphic Labs", s:"Isomorphic", cat:"biotech", yr:2021, emp:"200+", fund:"$600M", fn:600, val:"Alphabet sub.", founders:"Demis Hassabis (dual CEO)", focus:"AI drug discovery · AlphaFold-derived engines", ethos:"Solve all disease", hq:"King's Cross + Lausanne", kp:"Hassabis (CEO), Max Jaderberg (CTO), Jennifer Doudna (SAB)", ms:"$600M A (Apr 2025) · Lilly/Novartis ~$3B · IsoDDE (Feb 2026) · J&J deal", iv:"Hassabis: Nature, CNBC, Fortune", jobs:"https://www.isomorphiclabs.com/careers" },
+  { id:"elevenlabs", name:"ElevenLabs", s:"ElevenLabs", cat:"generative", yr:2022, emp:"330", fund:"$781M", fn:781, val:"$11B", founders:"Mati Staniszewski (ex-Palantir, Imperial), Piotr Dąbkowski (ex-DM, Oxbridge)", focus:"AI voice/TTS · dubbing · cloning · music · 70+ langs", ethos:"Break language barriers", hq:"London (Soho) + Warsaw", kp:"Staniszewski (CEO), Dąbkowski (CTO)", ms:"$500M D (Feb 2026, Sequoia) · $330M ARR · 41% F500 · IPO talk", iv:"Staniszewski: 20VC, Bloomberg", jobs:"https://elevenlabs.io/careers" },
+  { id:"stability", name:"Stability AI", s:"Stability", cat:"generative", yr:2019, emp:"~190", fund:"~$300M", fn:300, val:"$1B", founders:"Emad Mostaque (departed Mar 2024)", focus:"Open image/video/audio/3D gen", ethos:"Open generative AI", hq:"Notting Hill", kp:"Prem Akkaraju (CEO), Sean Parker (Chair), James Cameron (Board)", ms:"Stable Diffusion (Aug 2022) · $80M rescue · EA/WMG deals · won Getty case", iv:"Mostaque: Lex Fridman (pre-departure)", jobs:"https://stability.ai/careers" },
+  { id:"helsing", name:"Helsing", s:"Helsing", cat:"defence", yr:2021, emp:"275-500", fund:"€1.37B", fn:1500, val:"€12B", founders:"Torsten Reil, Dr Gundbert Scherf", focus:"Military AI · battlefield intel · drones · EW", ethos:"AI for democratic defence only", hq:"Munich (LDN Feb 2023)", kp:"Amelia Gould (UK MD)", ms:"€600M D (Jun 2025) · AI fighter pilot (May 2025) · £350M UK · FCAS", iv:"Reil: Sifted, FT", jobs:"https://helsing.ai/careers" },
+  { id:"darktrace", name:"Darktrace", s:"Darktrace", cat:"cybersecurity", yr:2013, emp:"2,400+", fund:"$230M pre-IPO", fn:230, val:"$5.3B (Thoma Bravo)", founders:"Poppy Gustafsson (Baroness), Jack Stockdale, Nicole Eagan", focus:"Self-learning AI cybersecurity", ethos:"Digital immune system", hq:"Cambridge + LDN", kp:"Gustafsson (now UK Min. of Investment)", ms:"IPO Apr 2021 · Thoma Bravo $5.3B (Oct 2024)", iv:"Gustafsson: BBC, Fortune", jobs:"https://darktrace.com/careers" },
+  { id:"graphcore", name:"Graphcore", s:"Graphcore", cat:"hardware", yr:2016, emp:"~500", fund:"$710M", fn:710, val:"$2.77B → SB acq.", founders:"Nigel Toon, Simon Knowles, Hermann Hauser (ARM)", focus:"IPUs for AI", ethos:"Purpose-built AI silicon", hq:"Bristol + LDN", kp:"Toon (CEO)", ms:"SoftBank acq. Jul 2024 · $1B India · Hassabis/Brockman angels", iv:"Toon: Bloomberg", jobs:"https://www.graphcore.ai/careers" },
+  { id:"faculty", name:"Faculty AI", s:"Faculty", cat:"enterprise", yr:2014, emp:"400", fund:"~£40M", fn:50, val:"£600M+ (Accenture)", founders:"Dr Marc Warner, Dr Angie Ma", focus:"Decision intelligence · govt AI · Frontier platform", ethos:"AI for institutions", hq:"Welbeck St", kp:"Warner (CEO → Accenture CTO)", ms:"Accenture ~$1B+ (Jan 2026) · OpenAI red-teaming · NHS/MoD", iv:"Warner: AI Summit", jobs:"https://faculty.ai/careers/" },
+  { id:"benevolentai", name:"BenevolentAI", s:"BenevolentAI", cat:"biotech", yr:2013, emp:"~69", fund:"$700M+", fn:700, val:"€1.5B peak", founders:"Kenneth Mulvany", focus:"AI knowledge graph drug discovery", ethos:"AI to cure disease", hq:"Fitzrovia + Cambridge", kp:"Mulvany (Exec Chair)", ms:"COVID baricitinib (2020) · SPAC 2021 · delisted Mar 2025 · AZ/Merck", iv:"Mulvany: Endpoints", jobs:"https://www.benevolent.com/careers" },
+  { id:"polyai", name:"PolyAI", s:"PolyAI", cat:"enterprise", yr:2017, emp:"200+", fund:"$206M", fn:206, val:"$500M+", founders:"Nikola Mrkšić (ex-Apple), T-H Wen (ex-Google), P-H Su (ex-FB) — all Cambridge PhDs", focus:"Enterprise voice agents · 45 langs", ethos:"Human-quality voice AI", hq:"Holborn", kp:"Mrkšić (CEO)", ms:"$86M D (Dec 2025) · FedEx/Marriott/Caesars/PG&E", iv:"Mrkšić: AI Business pod", jobs:"https://poly.ai/careers/" },
+  { id:"cleo", name:"Cleo AI", s:"Cleo", cat:"fintech", yr:2016, emp:"300-500", fund:"~$175M", fn:175, val:"$500M+", founders:"Barney Hussey-Yeo", focus:"AI financial assistant (Gen Z)", ethos:"Money less stressful, with sass", hq:"London + NYC", kp:"Hussey-Yeo (CEO)", ms:"$300M+ ARR · profitable · 6M users · re-launching UK", iv:"Hussey-Yeo: TC, Sifted", jobs:"https://web.meetcleo.com/careers" },
+  { id:"tractable", name:"Tractable", s:"Tractable", cat:"enterprise", yr:2014, emp:"117-224", fund:"$185M", fn:185, val:"$1B", founders:"Alex Dalyac (LSE/Imperial), Razvan Ranca (Cambridge), Adrien Cohen", focus:"CV for insurance damage", ethos:"Accelerate accident recovery", hq:"London", kp:"Dalyac (CEO)", ms:"UK's 1st CV unicorn · $7B+ repairs/yr · 20+ top insurers", iv:"Dalyac: InsurTech Digital", jobs:"https://tractable.ai/careers/" },
+  { id:"signal-ai", name:"Signal AI", s:"Signal AI", cat:"enterprise", yr:2013, emp:"220-243", fund:"$268M", fn:268, val:"Undisclosed", founders:"David Benigson, Dr Miguel Martinez, Wesley Hall", focus:"External intelligence · reputation risk · 226 markets", ethos:"AI decision augmentation", hq:"London", kp:"Benigson (CEO)", ms:"$165M Battery (Sep 2025) · 40% F500 · Ask AIQ", iv:"Benigson: PRmoment Pod", jobs:"https://www.signal-ai.com/careers" },
+  { id:"abound", name:"Abound", s:"Abound", cat:"fintech", yr:2020, emp:"100-130", fund:"£1.6B+", fn:150, val:"Undisclosed", founders:"Gerald Chappell (McKinsey, PhD), Dr Michelle He (EY, PhD)", focus:"AI lending via Open Banking", ethos:"Fair credit through AI", hq:"London", kp:"Chappell (CEO), He (COO)", ms:"Profitable Apr 2024 · £66.8M rev · 70-75% lower defaults", iv:"Chappell: City AM", jobs:"https://www.getabound.com/careers" },
+  { id:"exscientia", name:"Exscientia", s:"Exscientia", cat:"biotech", yr:2012, emp:"~250 pre-acq", fund:"$674M", fn:674, val:"$2.9B peak", founders:"Prof Andrew Hopkins CBE (ex-Pfizer, TIME 100 AI)", focus:"AI drug design — 1st AI drug in trials", ethos:"Precision medicine", hq:"Oxford", kp:"Hopkins (CEO)", ms:"1st AI drug in 12mo (vs 4.5yr) · Nasdaq IPO $510M · Recursion acq. Nov 2024", iv:"Hopkins: Nature, FT", jobs:"https://www.exscientia.ai/careers" },
+  { id:"onfido", name:"Onfido → Entrust", s:"Onfido", cat:"enterprise", yr:2012, emp:"600+ pre-acq", fund:"$242M", fn:242, val:"$1.5B peak", founders:"Husayn Kassai, Eamon Jubbawy, Ruhul Amin (Oxford)", focus:"AI identity verification · 195 countries", ethos:"Digital identity for all", hq:"LDN → Entrust", kp:"Kassai → London AI Hub", ms:"Entrust $650M (Apr 2024) · Oxford £20K seed (80x return)", iv:"Kassai: Oxford talks", jobs:null },
 
   // EMERGING / HIGH-GROWTH
-  { id: "ineffable", name: "Ineffable Intelligence", short: "Ineffable", category: "frontier-emerging", founded: 2025, employees: "Early", funding: "Seeking $1B seed", fundingNum: 0, valuation: "~$4B target", founders: "David Silver (ex-DM 15+ yrs, AlphaGo/Zero/MuZero lead, UCL Professor)", focus: "RL-based superintelligence · self-discovering knowledge from first principles", ethos: "Beyond LLMs — true first-principles intelligence", hq: "London", keyPeople: "David Silver", milestones: "Founded Nov 2025 · potentially Europe's largest-ever seed · Sequoia/Nvidia/Google interest reported", interviews: "Silver: Nature, DeepMind research lectures, YouTube RL course (millions of views)" },
-  { id: "tessl", name: "Tessl", short: "Tessl", category: "devtools", founded: 2024, employees: "Early", funding: "$125M", fundingNum: 125, valuation: "$750M", founders: "Guy Podjarny (ex-Akamai CTO, founded Snyk at $7.4B valuation)", focus: "AI-native software development · spec-driven · beyond copilots", ethos: "Spec-driven development replacing code-first", hq: "London", keyPeople: "Podjarny (CEO)", milestones: "$125M raised pre-product (seed + Series A, Index Ventures led) · product on waitlist", interviews: "Podjarny: Sifted, The Changelog" },
-  { id: "physicsx", name: "PhysicsX", short: "PhysicsX", category: "enterprise", founded: 2023, employees: "150+", funding: "~$175M", fundingNum: 175, valuation: "~$1B", founders: "Robin Tuluie (ex-Renault F1/Mercedes F1 R&D), Jacomo Corbo (ex-Bentley)", focus: "Large Physics Models for engineering simulation & generative design", ethos: "AI-powered engineering at industrial scale", hq: "London", keyPeople: "Tuluie (CEO)", milestones: "$135M Series B (Jun 2025, Atomico led) · Siemens/Applied Materials partnerships · Temasek backed", interviews: "Tuluie: Deep tech events" },
-  { id: "conjecture", name: "Conjecture", short: "Conjecture", category: "safety", founded: 2021, employees: "~13", funding: "~$25M", fundingNum: 25, valuation: "Undisclosed", founders: "Connor Leahy (EleutherAI co-lead), Sid Black, Gabriel Alfour", focus: "Cognitive Emulation — controllable, transparent AI alignment", ethos: "Make AI safe before making it powerful", hq: "London", keyPeople: "Leahy (CEO)", milestones: "$25M from Andrej Karpathy, Patrick & John Collison (Stripe), Nat Friedman (ex-GitHub CEO), Daniel Gross · House of Lords AI policy", interviews: "Leahy: 80,000 Hours, MIRI talks, numerous safety podcasts" },
-  { id: "holistic-ai", name: "Holistic AI", short: "Holistic AI", category: "governance", founded: 2020, employees: "43-79", funding: "Undisclosed (raising $200M)", fundingNum: 15, valuation: "Undisclosed", founders: "Dr Adriano Koshiyama (ex-Goldman Sachs, UCL PhD CS), Dr Emre Kazim (UCL PhD Philosophy/AI ethics)", focus: "AI governance · risk management · EU AI Act compliance · NIST/ISO 42001", ethos: "Responsible AI governance at scale", hq: "Soho Square", keyPeople: "Koshiyama (CEO)", milestones: "Mozilla Ventures investment · Tola Capital · Premji Invest · 500+ enterprise clients", interviews: "Koshiyama: AI governance conferences" },
-  { id: "encord", name: "Encord", short: "Encord", category: "devtools", founded: 2020, employees: "50+", funding: "~€50M+", fundingNum: 55, valuation: "Undisclosed", founders: "Eric Landau, Ulrik Stig Hansen", focus: "AI data annotation · fine-tuning · agent deployment (images, video, medical)", ethos: "Data-centric AI development", hq: "London", keyPeople: "Landau (CEO)", milestones: "€50M Series C (Feb 2026) · 300+ enterprise clients · Sifted AI 100", interviews: "Landau: AI data talks" },
-  { id: "convergence", name: "Convergence AI", short: "Convergence", category: "enterprise", founded: 2024, employees: "Small → acq.", funding: "$12M", fundingNum: 12, valuation: "Undisclosed", founders: "Marvin Purtorab, Andy Toulis (ex-Shopify/Cohere, DM alumni on team)", focus: "Personal AI agents with long-term memory (Large Meta Learning Models)", ethos: "AI that remembers and learns about you", hq: "London → Salesforce", keyPeople: "Purtorab (CEO)", milestones: "Acquired by Salesforce mid-2025 — just 9 months from founding (remarkable velocity)", interviews: "N/A" },
-  { id: "latent-labs", name: "Latent Labs", short: "Latent Labs", category: "biotech", founded: 2025, employees: "Early", funding: "$50M", fundingNum: 50, valuation: "Undisclosed", founders: "Simon Kohl (core AlphaFold2 team at DeepMind)", focus: "AI protein design — designing biology from scratch", ethos: "Engineer biology at the molecular level", hq: "London", keyPeople: "Kohl (CEO)", milestones: "First AI model launched Jul 2025 · $50M raised", interviews: "N/A" },
-  { id: "fyxer", name: "Fyxer AI", short: "Fyxer", category: "enterprise", founded: 2024, employees: "Growing fast", funding: "€25.5M", fundingNum: 28, valuation: "Undisclosed", founders: "Richard Hollingsworth, Archie Hollingsworth", focus: "AI executive assistant: email triage, meetings, scheduling", ethos: "Your inbox, handled by AI", hq: "London", keyPeople: "R. Hollingsworth (CEO)", milestones: "€1M → €17M ARR in 7 months · 180K users · Marc Benioff (Salesforce) investor · Sifted EU top AI #9", interviews: "N/A" },
-  { id: "mimica", name: "Mimica", short: "Mimica", category: "enterprise", founded: 2019, employees: "Growing", funding: "$26.2M", fundingNum: 26, valuation: "Undisclosed", founders: "Raphael Planche (CEO)", focus: "AI process intelligence — observe workflows then automate", ethos: "Observe before you automate", hq: "London", keyPeople: "Planche (CEO)", milestones: "$26.2M Series B (Sep 2025) · Khosla Ventures · EF alumni", interviews: "N/A" },
-  { id: "phoebe", name: "Phoebe AI", short: "Phoebe", category: "devtools", founded: 2024, employees: "Early", funding: "$17M", fundingNum: 17, valuation: "Undisclosed", founders: "Matt Henderson, James Summerfield (ex-Stripe EU CEO/CIO, prev. co-founded Rangespan → Google)", focus: "AI for detecting and fixing software failures in production", ethos: "AI software reliability engineering", hq: "London", keyPeople: "Henderson, Summerfield", milestones: "$17M from GV (Google Ventures)", interviews: "N/A" },
-  { id: "metaview", name: "Metaview", short: "Metaview", category: "enterprise", founded: 2018, employees: "Growing", funding: "$50M", fundingNum: 50, valuation: "Undisclosed", founders: "Siadhal Magos (CEO)", focus: "AI hiring process automation", ethos: "Better hiring decisions through AI", hq: "London", keyPeople: "Magos (CEO)", milestones: "$35M Series B (Jun 2025, GV led) · Plural/Seedcamp backed", interviews: "N/A" },
-  { id: "unitary", name: "Unitary AI", short: "Unitary", category: "safety", founded: 2019, employees: "Small", funding: "Undisclosed", fundingNum: 5, valuation: "Undisclosed", founders: "Josh Bateman", focus: "Multimodal AI content moderation at scale", ethos: "Safer internet through AI moderation", hq: "London", keyPeople: "Bateman (CEO)", milestones: "UK's most disruptive startup 2024 · open-source Detoxify tool · Plural invested", interviews: "N/A" },
-  { id: "paid-ai", name: "Paid AI", short: "Paid AI", category: "devtools", founded: 2024, employees: "Early", funding: "$21.6M", fundingNum: 22, valuation: "Undisclosed", founders: "Undisclosed", focus: "Billing infrastructure for autonomous AI agents", ethos: "Payment rails for the AI agent economy", hq: "London", keyPeople: "N/A", milestones: "$21.6M seed (Sep 2025, Lightspeed led)", interviews: "N/A" },
-  { id: "maze-ai", name: "Maze (Security)", short: "Maze", category: "cybersecurity", founded: 2024, employees: "Early", funding: "$31M", fundingNum: 31, valuation: "Undisclosed", founders: "Undisclosed", focus: "AI agents for autonomous cloud security", ethos: "AI-native cloud defense", hq: "London", keyPeople: "N/A", milestones: "$25M Series A (Jun 2025)", interviews: "N/A" },
+  { id:"ineffable", name:"Ineffable Intelligence", s:"Ineffable", cat:"frontier-emerging", yr:2025, emp:"Early", fund:"Seeking $1B", fn:0, val:"~$4B target", founders:"David Silver (DM 15yr, AlphaGo/Zero lead, UCL Prof)", focus:"RL superintelligence · first-principles knowledge", ethos:"Beyond LLMs", hq:"London", kp:"David Silver", ms:"Founded Nov 2025 · Europe's largest seed? · Sequoia/Nvidia interest", iv:"Silver: YouTube RL course (millions of views)", jobs:null },
+  { id:"tessl", name:"Tessl", s:"Tessl", cat:"devtools", yr:2024, emp:"Early", fund:"$125M", fn:125, val:"$750M", founders:"Guy Podjarny (Akamai CTO → Snyk $7.4B)", focus:"AI-native spec-driven dev", ethos:"Beyond copilots", hq:"London", kp:"Podjarny (CEO)", ms:"$125M pre-product (Index led)", iv:"Podjarny: Sifted", jobs:"https://www.tessl.io/careers" },
+  { id:"physicsx", name:"PhysicsX", s:"PhysicsX", cat:"enterprise", yr:2023, emp:"150+", fund:"~$175M", fn:175, val:"~$1B", founders:"Robin Tuluie (ex-F1), Jacomo Corbo (ex-Bentley)", focus:"Large Physics Models · engineering sim", ethos:"AI-powered engineering", hq:"London", kp:"Tuluie (CEO)", ms:"$135M B (Jun 2025, Atomico) · Siemens · Temasek", iv:null, jobs:"https://physicsx.com/careers" },
+  { id:"conjecture", name:"Conjecture", s:"Conjecture", cat:"safety", yr:2021, emp:"~13", fund:"~$25M", fn:25, val:"Undisclosed", founders:"Connor Leahy (EleutherAI), Sid Black, Gabriel Alfour", focus:"Cognitive Emulation · controllable alignment", ethos:"Safe before powerful", hq:"London", kp:"Leahy (CEO)", ms:"$25M (Karpathy/Collisons/Friedman) · House of Lords", iv:"Leahy: 80,000 Hours", jobs:"https://www.conjecture.dev/careers" },
+  { id:"holistic-ai", name:"Holistic AI", s:"Holistic AI", cat:"governance", yr:2020, emp:"43-79", fund:"Raising $200M", fn:15, val:"Undisclosed", founders:"Dr Adriano Koshiyama (Goldman/UCL), Dr Emre Kazim (UCL)", focus:"AI governance · EU AI Act · risk mgmt", ethos:"Responsible AI governance", hq:"Soho Square", kp:"Koshiyama (CEO)", ms:"Mozilla Ventures · 500+ clients", iv:null, jobs:"https://www.holisticai.com/careers" },
+  { id:"encord", name:"Encord", s:"Encord", cat:"devtools", yr:2020, emp:"50+", fund:"~€50M+", fn:55, val:"Undisclosed", founders:"Eric Landau, Ulrik Stig Hansen", focus:"AI data annotation · fine-tuning · agents", ethos:"Data-centric AI", hq:"London", kp:"Landau (CEO)", ms:"€50M C (Feb 2026) · 300+ clients · Sifted AI 100", iv:null, jobs:"https://encord.com/careers/" },
+  { id:"convergence", name:"Convergence AI → Salesforce", s:"Convergence", cat:"enterprise", yr:2024, emp:"Acquired", fund:"$12M", fn:12, val:"Acq.", founders:"Marvin Purtorab, Andy Toulis (ex-Shopify/Cohere, DM team)", focus:"AI agents w/ long-term memory", ethos:"AI that remembers", hq:"LDN → Salesforce", kp:"Purtorab", ms:"Salesforce acq. mid-2025 — 9 months from founding", iv:null, jobs:null },
+  { id:"latent-labs", name:"Latent Labs", s:"Latent Labs", cat:"biotech", yr:2025, emp:"Early", fund:"$50M", fn:50, val:"Undisclosed", founders:"Simon Kohl (core AlphaFold2, DM)", focus:"AI protein design", ethos:"Design biology from scratch", hq:"London", kp:"Kohl (CEO)", ms:"1st AI model Jul 2025", iv:null, jobs:null },
+  { id:"fyxer", name:"Fyxer AI", s:"Fyxer", cat:"enterprise", yr:2024, emp:"Growing", fund:"€25.5M", fn:28, val:"Undisclosed", founders:"Richard & Archie Hollingsworth", focus:"AI exec assistant: email, meetings", ethos:"AI handles your inbox", hq:"London", kp:null, ms:"€1M→€17M ARR in 7mo · 180K users · Benioff investor · Sifted #9", iv:null, jobs:null },
+  { id:"mimica", name:"Mimica", s:"Mimica", cat:"enterprise", yr:2019, emp:"Growing", fund:"$26.2M", fn:26, val:"Undisclosed", founders:"Raphael Planche", focus:"AI process intelligence → automation", ethos:"Observe then automate", hq:"London", kp:"Planche (CEO)", ms:"$26.2M B (Sep 2025) · Khosla · EF alum", iv:null, jobs:"https://www.mimica.ai/careers" },
+  { id:"phoebe", name:"Phoebe AI", s:"Phoebe", cat:"devtools", yr:2024, emp:"Early", fund:"$17M", fn:17, val:"Undisclosed", founders:"Matt Henderson, James Summerfield (ex-Stripe EU CEO → Google)", focus:"AI software failure detection", ethos:"AI reliability engineering", hq:"London", kp:"Henderson, Summerfield", ms:"$17M from GV", iv:null, jobs:null },
+  { id:"metaview", name:"Metaview", s:"Metaview", cat:"enterprise", yr:2018, emp:"Growing", fund:"$50M", fn:50, val:"Undisclosed", founders:"Siadhal Magos", focus:"AI hiring automation", ethos:"Better hiring through AI", hq:"London", kp:"Magos (CEO)", ms:"$35M B (Jun 2025, GV) · Plural/Seedcamp", iv:null, jobs:"https://www.metaview.ai/careers" },
+  { id:"unitary", name:"Unitary AI", s:"Unitary", cat:"safety", yr:2019, emp:"Small", fund:"Undisclosed", fn:5, val:"Undisclosed", founders:"Josh Bateman", focus:"Multimodal content moderation", ethos:"Safer internet", hq:"London", kp:"Bateman (CEO)", ms:"UK most disruptive 2024 · open-source Detoxify", iv:null, jobs:"https://www.unitary.ai/careers" },
+  { id:"paid-ai", name:"Paid AI", s:"Paid AI", cat:"devtools", yr:2024, emp:"Early", fund:"$21.6M", fn:22, val:"Undisclosed", founders:null, focus:"Billing for AI agents", ethos:"Payment rails for AI economy", hq:"London", kp:null, ms:"$21.6M seed (Lightspeed)", iv:null, jobs:null },
+  { id:"maze-ai", name:"Maze Security", s:"Maze", cat:"cybersecurity", yr:2024, emp:"Early", fund:"$31M", fn:31, val:"Undisclosed", founders:null, focus:"AI cloud security agents", ethos:"Autonomous cloud defence", hq:"London", kp:null, ms:"$25M A (Jun 2025)", iv:null, jobs:null },
+
+  // NEW IN V3 — additional companies
+  { id:"oxbotica", name:"Oxbotica", s:"Oxbotica", cat:"autonomous", yr:2014, emp:"200+", fund:"~$225M", fn:225, val:"$1B+", founders:"Prof Paul Newman (Oxford), Ingmar Posner (Oxford)", focus:"Universal autonomous driving software", ethos:"Autonomy everywhere", hq:"Oxford + London", kp:"Newman (CEO)", ms:"$140M B (Jan 2023, backed by Google) · bp/Ocado partnerships · on-road UK trials", iv:null, jobs:"https://www.oxbotica.com/careers/" },
+  { id:"mind-foundry", name:"Mind Foundry", s:"Mind Foundry", cat:"enterprise", yr:2016, emp:"50-100", fund:"~$30M", fn:30, val:"Undisclosed", founders:"Prof Stephen Roberts (Oxford), Prof Michael Osborne (Oxford)", focus:"Human-centric AI decision support · defence/govt", ethos:"AI humans can trust", hq:"Oxford + London", kp:"Roberts, Osborne", ms:"UK MoD contracts · Oxford ML Group spinout", iv:null, jobs:"https://www.mindfoundry.ai/careers" },
+  { id:"healx", name:"Healx", s:"Healx", cat:"biotech", yr:2014, emp:"50-100", fund:"~$68M", fn:68, val:"Undisclosed", founders:"Dr Tim Guilliams (Cambridge PhD)", focus:"AI rare disease drug discovery · drug repurposing", ethos:"Treatments for rare disease patients", hq:"Cambridge + London", kp:"Guilliams (CEO)", ms:"$56M B (2020, Atomico led) · 12+ rare disease programmes · 100+ patient groups", iv:null, jobs:"https://healx.io/careers/" },
+  { id:"nscale", name:"Nscale", s:"Nscale", cat:"hardware", yr:2023, emp:"Growing", fund:"$155M", fn:155, val:"Undisclosed", founders:"Undisclosed", focus:"Sovereign AI cloud · GPU infrastructure · European data sovereignty", ethos:"European AI compute independence", hq:"London", kp:null, ms:"$155M raised · European sovereign cloud play", iv:null, jobs:null },
+  { id:"robin-ai", name:"Robin AI", s:"Robin AI", cat:"enterprise", yr:2019, emp:"100+", fund:"~$52M", fn:52, val:"Undisclosed", founders:"Richard Robinson", focus:"AI contract review & drafting for legal teams", ethos:"AI-powered legal", hq:"London", kp:"Robinson (CEO)", ms:"$26M B (2024) · Plural invested · 600+ enterprise clients", iv:null, jobs:"https://www.robinai.com/careers" },
+  { id:"v7", name:"V7 Labs", s:"V7", cat:"devtools", yr:2018, emp:"80+", fund:"~$33M", fn:33, val:"Undisclosed", founders:"Alberto Rizzoli, Simon Edwardsson", focus:"AI training data platform · auto-annotation", ethos:"Build better AI with better data", hq:"London", kp:"Rizzoli (CEO)", ms:"$33M A (Radical Ventures, Air Street) · used by Samsung, Genentech", iv:null, jobs:"https://www.v7labs.com/careers" },
+  { id:"diffblue", name:"Diffblue", s:"Diffblue", cat:"devtools", yr:2016, emp:"50-100", fund:"~$40M", fn:40, val:"Undisclosed", founders:"Prof Daniel Kroening (Oxford CS), Peter Sheridan Dodds", focus:"AI-powered code testing (Java unit tests)", ethos:"AI writes your tests", hq:"Oxford + London", kp:"Kroening", ms:"Oxford CS spinout · Goldman Sachs Strategic Inv. backed · Cover tool", iv:null, jobs:"https://www.diffblue.com/careers/" },
+  { id:"builderai", name:"Builder.ai", s:"Builder.ai", cat:"enterprise", yr:2016, emp:"700+", fund:"~$450M", fn:450, val:"$1B+ (reported)", founders:"Sachin Dev Duggal", focus:"AI-powered software building (no-code)", ethos:"Software building for everyone", hq:"London", kp:"Duggal (CEO)", ms:"$250M raised in 2024 (Microsoft + QIA backed) · serious governance issues 2024", iv:null, jobs:"https://www.builder.ai/careers" },
+  { id:"basecamp-res", name:"Basecamp Research", s:"Basecamp Res.", cat:"biotech", yr:2020, emp:"50+", fund:"~$80M", fn:80, val:"Undisclosed", founders:"Glen Mayall", focus:"Nature's DNA → protein design (world's largest biodiversity database for AI)", ethos:"Nature-first biotech", hq:"London", kp:"Mayall (CEO)", ms:"$60M B (2024, Nvidia backed) · 4B+ protein sequences", iv:null, jobs:null },
+  { id:"five-ai", name:"Five AI → Bosch", s:"Five AI", cat:"autonomous", yr:2015, emp:"Acquired", fund:"~$77M", fn:77, val:"Acq.", founders:"Stan Sherborne, Ben Peters", focus:"AV simulation & testing platform", ethos:"Safe AV through simulation", hq:"Cambridge + London", kp:null, ms:"Acquired by Bosch 2024 · backed by Kindred, Amadeus", iv:null, jobs:null },
+  { id:"papercup", name:"Papercup", s:"Papercup", cat:"generative", yr:2017, emp:"50+", fund:"~$20M", fn:20, val:"Undisclosed", founders:"Jesse Sherwood, Jiameng Gao, Ben Sherwood", focus:"AI video dubbing / voice translation", ethos:"Every voice in every language", hq:"London", kp:"J. Sherwood (CEO)", ms:"Sky News, Bloomberg clients · Series A (LocalGlobe)", iv:null, jobs:null },
 
   // INVESTORS
-  { id: "balderton", name: "Balderton Capital", short: "Balderton", category: "investor", founded: 2000, focus: "Europe's largest early-stage VC, $3B+ AUM. Key: Wayve, Cleo, Convergence", hq: "London", keyPeople: "Suranga Chandratillake", fundingNum: 0 },
-  { id: "atomico", name: "Atomico", short: "Atomico", category: "investor", founded: 2006, focus: "European tech VC (Niklas Zennström/Skype founder). Key: Graphcore, Synthesia, PhysicsX", hq: "London", keyPeople: "Siraj Khaliq (AI)", fundingNum: 0 },
-  { id: "localglobe", name: "LocalGlobe / Latitude", short: "LocalGlobe", category: "investor", founded: 2015, focus: "Seed-stage. Key: Synthesia, Cleo, Faculty, Nscale", hq: "London", keyPeople: "Robin & Saul Klein", fundingNum: 0 },
-  { id: "air-street", name: "Air Street Capital", short: "Air Street", category: "investor", founded: 2019, focus: "AI-specialist fund. State of AI Report. RAAIS Summit. Key: Wayve, Synthesia, ElevenLabs, Tractable", hq: "London", keyPeople: "Nathan Benaich", fundingNum: 0 },
-  { id: "sequoia-eu", name: "Sequoia Capital", short: "Sequoia", category: "investor", founded: 1972, focus: "Global VC. Key: ElevenLabs ($500M D lead), Ineffable Intelligence talks", hq: "London/SF", keyPeople: "Luciana Lixandru", fundingNum: 0 },
-  { id: "accel", name: "Accel", short: "Accel", category: "investor", founded: 1983, focus: "Global VC. Key: Synthesia, Helsing. Dealroom GenAI report co-author", hq: "London office", keyPeople: "Luciana Lixandru, Philippe Botteri", fundingNum: 0 },
-  { id: "softbank", name: "SoftBank Vision Fund", short: "SoftBank", category: "investor", founded: 2017, focus: "Massive AI bets. Key: Wayve ($1.05B lead), Tractable, Graphcore (acquired), Exscientia", hq: "London office", keyPeople: "Masayoshi Son", fundingNum: 0 },
-  { id: "nvidia-inv", name: "Nvidia (Strategic)", short: "Nvidia", category: "investor", founded: 1993, focus: "£2B UK pledge. Key: Wayve, Synthesia, ElevenLabs, PolyAI, Latent Labs", hq: "US (active London)", keyPeople: "Jensen Huang", fundingNum: 0 },
-  { id: "gv", name: "GV (Google Ventures)", short: "GV", category: "investor", founded: 2009, focus: "Alphabet VC. Key: Synthesia (led $200M E), Isomorphic, Phoebe, Metaview", hq: "London office", keyPeople: "Tom Hulme", fundingNum: 0 },
-  { id: "khosla", name: "Khosla Ventures", short: "Khosla", category: "investor", founded: 2004, focus: "Deep tech. Key: PolyAI, Mimica, ElevenLabs", hq: "US (active London)", keyPeople: "Vinod Khosla", fundingNum: 0 },
-  { id: "index", name: "Index Ventures", short: "Index", category: "investor", founded: 1996, focus: "European/global. Key: Tessl (led Series A)", hq: "London/SF", keyPeople: "Danny Rimer", fundingNum: 0 },
-  { id: "lightspeed", name: "Lightspeed", short: "Lightspeed", category: "investor", founded: 2000, focus: "Global VC. Key: Helsing, Paid AI, ElevenLabs", hq: "London office", keyPeople: "Various", fundingNum: 0 },
-  { id: "plural", name: "Plural", short: "Plural", category: "investor", founded: 2022, focus: "€400M Fund II. Key: Helsing, Unitary, Metaview. Founded by Wise CEO + AISI Chair", hq: "London", keyPeople: "Taavet Hinrikus (Wise), Ian Hogarth (AISI Chair)", fundingNum: 0 },
-  { id: "mmc", name: "MMC Ventures", short: "MMC", category: "investor", founded: 2000, focus: "UK's largest domestic AI investor (75 AI cos since 2010). Annual State of AI reports", hq: "London", keyPeople: "David Kelnar", fundingNum: 0 },
+  { id:"balderton", name:"Balderton Capital", s:"Balderton", cat:"investor", yr:2000, focus:"Europe's largest early-stage, $3B+. Key: Wayve, Cleo, Convergence", hq:"London", kp:"Suranga Chandratillake", fn:0, jobs:null },
+  { id:"atomico", name:"Atomico", s:"Atomico", cat:"investor", yr:2006, focus:"European VC (Zennström/Skype). Key: Graphcore, Synthesia, PhysicsX, Healx", hq:"London", kp:"Siraj Khaliq", fn:0, jobs:null },
+  { id:"localglobe", name:"LocalGlobe", s:"LocalGlobe", cat:"investor", yr:2015, focus:"Seed. Key: Synthesia, Cleo, Faculty, Nscale, Papercup", hq:"London", kp:"Robin & Saul Klein", fn:0, jobs:null },
+  { id:"air-street", name:"Air Street Capital", s:"Air Street", cat:"investor", yr:2019, focus:"AI-specialist. State of AI Report. Key: Wayve, Synthesia, ElevenLabs, Tractable, V7", hq:"London", kp:"Nathan Benaich", fn:0, jobs:null },
+  { id:"sequoia-eu", name:"Sequoia Capital", s:"Sequoia", cat:"investor", yr:1972, focus:"Global. Key: ElevenLabs ($500M D), Ineffable talks", hq:"London/SF", kp:"Luciana Lixandru", fn:0, jobs:null },
+  { id:"accel", name:"Accel", s:"Accel", cat:"investor", yr:1983, focus:"Global. Key: Synthesia, Helsing", hq:"London", kp:"Luciana Lixandru", fn:0, jobs:null },
+  { id:"softbank", name:"SoftBank Vision Fund", s:"SoftBank", cat:"investor", yr:2017, focus:"Key: Wayve ($1.05B), Tractable, Graphcore (acq.), Exscientia", hq:"London", kp:"Son", fn:0, jobs:null },
+  { id:"nvidia-inv", name:"Nvidia (Strategic)", s:"Nvidia", cat:"investor", yr:1993, focus:"£2B UK. Key: Wayve, Synthesia, ElevenLabs, PolyAI, Latent Labs, Basecamp", hq:"US", kp:"Jensen Huang", fn:0, jobs:null },
+  { id:"gv", name:"GV", s:"GV", cat:"investor", yr:2009, focus:"Alphabet VC. Key: Synthesia (led E), Isomorphic, Phoebe, Metaview", hq:"London", kp:"Tom Hulme", fn:0, jobs:null },
+  { id:"khosla", name:"Khosla Ventures", s:"Khosla", cat:"investor", yr:2004, focus:"Deep tech. Key: PolyAI, Mimica, ElevenLabs", hq:"US", kp:"Vinod Khosla", fn:0, jobs:null },
+  { id:"index", name:"Index Ventures", s:"Index", cat:"investor", yr:1996, focus:"EU/global. Key: Tessl (led A)", hq:"London/SF", kp:"Danny Rimer", fn:0, jobs:null },
+  { id:"lightspeed", name:"Lightspeed", s:"Lightspeed", cat:"investor", yr:2000, focus:"Global. Key: Helsing, Paid AI, ElevenLabs", hq:"London", kp:null, fn:0, jobs:null },
+  { id:"plural", name:"Plural", s:"Plural", cat:"investor", yr:2022, focus:"€400M II. Key: Helsing, Unitary, Metaview, Robin AI. Founders: Wise CEO + AISI Chair", hq:"London", kp:"Taavet Hinrikus, Ian Hogarth", fn:0, jobs:null },
+  { id:"mmc", name:"MMC Ventures", s:"MMC", cat:"investor", yr:2000, focus:"UK's largest AI investor (75 cos). State of AI reports", hq:"London", kp:"David Kelnar", fn:0, jobs:null },
 
   // ACADEMIC
-  { id: "ucl", name: "UCL", short: "UCL", category: "academic", founded: 1826, focus: "Gatsby Unit (DeepMind birthplace) · AI Hub in Generative Models · 46 spinouts/5yr raising £3.4B", hq: "Bloomsbury / King's Cross", fundingNum: 0 },
-  { id: "cambridge", name: "Cambridge", short: "Cambridge", category: "academic", founded: 1209, focus: "ML Group (Cipolla) · Dialog Systems · #1 GenAI founder university EU (7.9%) · VocalIQ → Apple", hq: "Cambridge", fundingNum: 0 },
-  { id: "oxford", name: "Oxford", short: "Oxford", category: "academic", founded: 1096, focus: "OATML (Yarin Gal) · NLP lab · Spin-outs: Onfido, Eigen, Exscientia, Mind Foundry, Diffblue, Oxbotica", hq: "Oxford", fundingNum: 0 },
-  { id: "imperial", name: "Imperial College", short: "Imperial", category: "academic", founded: 1907, focus: "Robotics · CV · healthcare AI · 7% EU GenAI founders (#2) · Magic Pony → Twitter", hq: "South Kensington", fundingNum: 0 },
-  { id: "turing", name: "Alan Turing Institute", short: "Turing Inst.", category: "academic", founded: 2015, focus: "UK national AI/data science institute · 13+ university partners · Accenture, GCHQ, Gates Foundation", hq: "British Library, King's Cross", fundingNum: 0 },
+  { id:"ucl", name:"UCL", s:"UCL", cat:"academic", yr:1826, focus:"Gatsby Unit (DM birthplace) · AI Hub GenModels · 46 spinouts/5yr £3.4B", hq:"King's Cross", fn:0, jobs:null },
+  { id:"cambridge", name:"Cambridge", s:"Cambridge", cat:"academic", yr:1209, focus:"ML Group · Dialog Systems · #1 GenAI founders EU (7.9%) · VocalIQ→Apple", hq:"Cambridge", fn:0, jobs:null },
+  { id:"oxford", name:"Oxford", s:"Oxford", cat:"academic", yr:1096, focus:"OATML · NLP · Spinouts: Onfido, Eigen, Exscientia, Mind Foundry, Diffblue, Oxbotica", hq:"Oxford", fn:0, jobs:null },
+  { id:"imperial", name:"Imperial College", s:"Imperial", cat:"academic", yr:1907, focus:"Robotics · CV · 7% EU GenAI founders (#2) · Magic Pony→Twitter", hq:"S. Kensington", fn:0, jobs:null },
+  { id:"turing", name:"Alan Turing Institute", s:"Turing Inst.", cat:"academic", yr:2015, focus:"UK national AI institute · 13+ unis · GCHQ/Gates/Accenture", hq:"British Library, KX", fn:0, jobs:null },
 
   // ACCELERATORS
-  { id: "ef", name: "Entrepreneur First", short: "EF", category: "accelerator", founded: 2011, focus: "Talent investor, $10B+ portfolio. Alumni: Tractable (unicorn), Cleo, PolyAI, Magic Pony. Backed by a16z, Sequoia, SoftBank", hq: "London", fundingNum: 0 },
-  { id: "seedcamp", name: "Seedcamp", short: "Seedcamp", category: "accelerator", founded: 2007, focus: "Europe's pioneering seed fund · 550+ companies · 10+ unicorns (Revolut, Wise, UiPath)", hq: "London", fundingNum: 0 },
+  { id:"ef", name:"Entrepreneur First", s:"EF", cat:"accelerator", yr:2011, focus:"Talent investor, $10B+. Alumni: Tractable, Cleo, PolyAI, Magic Pony, Mimica", hq:"London", fn:0, jobs:null },
+  { id:"seedcamp", name:"Seedcamp", s:"Seedcamp", cat:"accelerator", yr:2007, focus:"550+ cos · 10+ unicorns (Revolut, Wise, UiPath)", hq:"London", fn:0, jobs:null },
 ];
 
+// ── EDGES ───────────────────────────────────────────────────────────────
 const edges = [
-  // DeepMind alumni flows
-  { source: "deepmind", target: "ineffable", type: "alumni", label: "David Silver" },
-  { source: "deepmind", target: "isomorphic", type: "spinoff", label: "Hassabis dual CEO" },
-  { source: "deepmind", target: "mistral", type: "alumni", label: "Mensch Sr Staff" },
-  { source: "deepmind", target: "elevenlabs", type: "alumni", label: "Dąbkowski ML Eng" },
-  { source: "deepmind", target: "microsoft-research", type: "alumni", label: "Suleyman → MS AI CEO" },
-  { source: "deepmind", target: "meta-ai", type: "alumni", label: "Fergus → FAIR lead" },
-  { source: "deepmind", target: "latent-labs", type: "alumni", label: "Kohl (AlphaFold2)" },
-  { source: "deepmind", target: "convergence", type: "alumni", label: "DM alumni on team" },
-
-  // Academic origins
-  { source: "ucl", target: "deepmind", type: "academic", label: "Gatsby Unit founding" },
-  { source: "ucl", target: "synthesia", type: "academic", label: "Agapito co-founder" },
-  { source: "ucl", target: "holistic-ai", type: "academic", label: "Both founders UCL" },
-  { source: "cambridge", target: "wayve", type: "academic", label: "Kendall PhD" },
-  { source: "cambridge", target: "polyai", type: "academic", label: "All 3 founders" },
-  { source: "cambridge", target: "darktrace", type: "academic", label: "Cambridge maths" },
-  { source: "cambridge", target: "tractable", type: "academic", label: "Ranca" },
-  { source: "oxford", target: "cohere", type: "academic", label: "Gomez at Oxford" },
-  { source: "oxford", target: "onfido", type: "academic", label: "3 Oxford students" },
-  { source: "oxford", target: "exscientia", type: "academic", label: "Oxford spinout" },
-  { source: "imperial", target: "elevenlabs", type: "academic", label: "Staniszewski maths" },
-  { source: "imperial", target: "tractable", type: "academic", label: "Dalyac" },
-
-  // Investment relationships
-  { source: "softbank", target: "wayve", type: "investment", label: "Led $1.05B C" },
-  { source: "softbank", target: "tractable", type: "investment", label: "Led $65M E" },
-  { source: "softbank", target: "graphcore", type: "investment", label: "Acquired" },
-  { source: "softbank", target: "exscientia", type: "investment" },
-  { source: "sequoia-eu", target: "elevenlabs", type: "investment", label: "Led $500M D" },
-  { source: "sequoia-eu", target: "ineffable", type: "investment", label: "In talks $1B" },
-  { source: "nvidia-inv", target: "wayve", type: "investment" },
-  { source: "nvidia-inv", target: "synthesia", type: "investment" },
-  { source: "nvidia-inv", target: "elevenlabs", type: "investment" },
-  { source: "nvidia-inv", target: "polyai", type: "investment" },
-  { source: "nvidia-inv", target: "latent-labs", type: "investment" },
-  { source: "gv", target: "synthesia", type: "investment", label: "Led $200M E" },
-  { source: "gv", target: "isomorphic", type: "investment" },
-  { source: "gv", target: "phoebe", type: "investment" },
-  { source: "gv", target: "metaview", type: "investment", label: "Led $35M B" },
-  { source: "balderton", target: "wayve", type: "investment", label: "Series A" },
-  { source: "balderton", target: "cleo", type: "investment" },
-  { source: "balderton", target: "convergence", type: "investment", label: "$12M pre-seed" },
-  { source: "atomico", target: "graphcore", type: "investment" },
-  { source: "atomico", target: "synthesia", type: "investment" },
-  { source: "atomico", target: "physicsx", type: "investment", label: "Led $135M B" },
-  { source: "localglobe", target: "synthesia", type: "investment" },
-  { source: "localglobe", target: "cleo", type: "investment" },
-  { source: "localglobe", target: "faculty", type: "investment" },
-  { source: "air-street", target: "wayve", type: "investment" },
-  { source: "air-street", target: "synthesia", type: "investment" },
-  { source: "air-street", target: "elevenlabs", type: "investment" },
-  { source: "air-street", target: "tractable", type: "investment" },
-  { source: "accel", target: "synthesia", type: "investment" },
-  { source: "accel", target: "helsing", type: "investment" },
-  { source: "index", target: "tessl", type: "investment", label: "Led Series A" },
-  { source: "lightspeed", target: "helsing", type: "investment" },
-  { source: "lightspeed", target: "paid-ai", type: "investment" },
-  { source: "khosla", target: "polyai", type: "investment" },
-  { source: "khosla", target: "mimica", type: "investment" },
-  { source: "khosla", target: "elevenlabs", type: "investment" },
-  { source: "plural", target: "helsing", type: "investment" },
-  { source: "plural", target: "unitary", type: "investment" },
-  { source: "plural", target: "metaview", type: "investment" },
-
+  // DM alumni
+  {s:"deepmind",t:"ineffable",ty:"alumni",l:"David Silver"},
+  {s:"deepmind",t:"isomorphic",ty:"spinoff",l:"Hassabis dual CEO"},
+  {s:"deepmind",t:"mistral",ty:"alumni",l:"Mensch Sr Staff"},
+  {s:"deepmind",t:"elevenlabs",ty:"alumni",l:"Dąbkowski ML Eng"},
+  {s:"deepmind",t:"ms-research",ty:"alumni",l:"Suleyman→MS AI CEO"},
+  {s:"deepmind",t:"meta-ai",ty:"alumni",l:"Fergus→FAIR"},
+  {s:"deepmind",t:"latent-labs",ty:"alumni",l:"Kohl (AlphaFold2)"},
+  {s:"deepmind",t:"convergence",ty:"alumni",l:"DM alumni on team"},
+  // Academic
+  {s:"ucl",t:"deepmind",ty:"academic",l:"Gatsby→founding"},
+  {s:"ucl",t:"synthesia",ty:"academic",l:"Agapito co-founder"},
+  {s:"ucl",t:"holistic-ai",ty:"academic",l:"Both founders UCL"},
+  {s:"cambridge",t:"wayve",ty:"academic",l:"Kendall PhD"},
+  {s:"cambridge",t:"polyai",ty:"academic",l:"All 3 founders"},
+  {s:"cambridge",t:"darktrace",ty:"academic",l:"Cambridge maths"},
+  {s:"cambridge",t:"tractable",ty:"academic",l:"Ranca"},
+  {s:"cambridge",t:"healx",ty:"academic",l:"Guilliams PhD"},
+  {s:"oxford",t:"cohere",ty:"academic",l:"Gomez at Oxford"},
+  {s:"oxford",t:"onfido",ty:"academic",l:"3 Oxford students"},
+  {s:"oxford",t:"exscientia",ty:"academic",l:"Oxford spinout"},
+  {s:"oxford",t:"oxbotica",ty:"academic",l:"Newman & Posner"},
+  {s:"oxford",t:"mind-foundry",ty:"academic",l:"Roberts & Osborne"},
+  {s:"oxford",t:"diffblue",ty:"academic",l:"Kroening CS"},
+  {s:"imperial",t:"elevenlabs",ty:"academic",l:"Staniszewski"},
+  {s:"imperial",t:"tractable",ty:"academic",l:"Dalyac"},
+  // Investment
+  {s:"softbank",t:"wayve",ty:"investment",l:"Led $1.05B C"},
+  {s:"softbank",t:"tractable",ty:"investment",l:"Led $65M E"},
+  {s:"softbank",t:"graphcore",ty:"investment",l:"Acquired"},
+  {s:"softbank",t:"exscientia",ty:"investment"},
+  {s:"sequoia-eu",t:"elevenlabs",ty:"investment",l:"Led $500M D"},
+  {s:"sequoia-eu",t:"ineffable",ty:"investment",l:"In talks $1B"},
+  {s:"nvidia-inv",t:"wayve",ty:"investment"},
+  {s:"nvidia-inv",t:"synthesia",ty:"investment"},
+  {s:"nvidia-inv",t:"elevenlabs",ty:"investment"},
+  {s:"nvidia-inv",t:"polyai",ty:"investment"},
+  {s:"nvidia-inv",t:"latent-labs",ty:"investment"},
+  {s:"nvidia-inv",t:"basecamp-res",ty:"investment",l:"Backed $60M B"},
+  {s:"gv",t:"synthesia",ty:"investment",l:"Led $200M E"},
+  {s:"gv",t:"isomorphic",ty:"investment"},
+  {s:"gv",t:"phoebe",ty:"investment"},
+  {s:"gv",t:"metaview",ty:"investment",l:"Led $35M B"},
+  {s:"balderton",t:"wayve",ty:"investment",l:"Series A"},
+  {s:"balderton",t:"cleo",ty:"investment"},
+  {s:"balderton",t:"convergence",ty:"investment"},
+  {s:"atomico",t:"graphcore",ty:"investment"},
+  {s:"atomico",t:"synthesia",ty:"investment"},
+  {s:"atomico",t:"physicsx",ty:"investment",l:"Led $135M B"},
+  {s:"atomico",t:"healx",ty:"investment",l:"Led $56M B"},
+  {s:"localglobe",t:"synthesia",ty:"investment"},
+  {s:"localglobe",t:"cleo",ty:"investment"},
+  {s:"localglobe",t:"faculty",ty:"investment"},
+  {s:"localglobe",t:"papercup",ty:"investment"},
+  {s:"air-street",t:"wayve",ty:"investment"},
+  {s:"air-street",t:"synthesia",ty:"investment"},
+  {s:"air-street",t:"elevenlabs",ty:"investment"},
+  {s:"air-street",t:"tractable",ty:"investment"},
+  {s:"air-street",t:"v7",ty:"investment"},
+  {s:"accel",t:"synthesia",ty:"investment"},
+  {s:"accel",t:"helsing",ty:"investment"},
+  {s:"index",t:"tessl",ty:"investment",l:"Led A"},
+  {s:"lightspeed",t:"helsing",ty:"investment"},
+  {s:"lightspeed",t:"paid-ai",ty:"investment"},
+  {s:"khosla",t:"polyai",ty:"investment"},
+  {s:"khosla",t:"mimica",ty:"investment"},
+  {s:"khosla",t:"elevenlabs",ty:"investment"},
+  {s:"plural",t:"helsing",ty:"investment"},
+  {s:"plural",t:"unitary",ty:"investment"},
+  {s:"plural",t:"metaview",ty:"investment"},
+  {s:"plural",t:"robin-ai",ty:"investment"},
   // Accelerator
-  { source: "ef", target: "tractable", type: "accelerator", label: "Founded at EF" },
-  { source: "ef", target: "cleo", type: "accelerator" },
-  { source: "ef", target: "polyai", type: "accelerator" },
-  { source: "ef", target: "mimica", type: "accelerator" },
-  { source: "seedcamp", target: "metaview", type: "accelerator" },
-
+  {s:"ef",t:"tractable",ty:"accelerator",l:"Founded at EF"},
+  {s:"ef",t:"cleo",ty:"accelerator"},
+  {s:"ef",t:"polyai",ty:"accelerator"},
+  {s:"ef",t:"mimica",ty:"accelerator"},
+  {s:"seedcamp",t:"metaview",ty:"accelerator"},
   // Cross-links
-  { source: "faculty", target: "openai", type: "partnership", label: "Red teaming" },
-  { source: "turing", target: "ucl", type: "academic" },
-  { source: "turing", target: "cambridge", type: "academic" },
-  { source: "turing", target: "oxford", type: "academic" },
-  { source: "meta-ai", target: "cohere", type: "alumni", label: "Pineau FAIR → Cohere" },
-  { source: "cohere", target: "convergence", type: "alumni", label: "Founders ex-Cohere" },
-  { source: "graphcore", target: "deepmind", type: "partnership", label: "Hassabis angel" },
+  {s:"faculty",t:"openai",ty:"partnership",l:"Red teaming"},
+  {s:"turing",t:"ucl",ty:"academic"},
+  {s:"turing",t:"cambridge",ty:"academic"},
+  {s:"turing",t:"oxford",ty:"academic"},
+  {s:"meta-ai",t:"cohere",ty:"alumni",l:"Pineau FAIR→Cohere"},
+  {s:"cohere",t:"convergence",ty:"alumni",l:"Ex-Cohere founders"},
+  {s:"graphcore",t:"deepmind",ty:"partnership",l:"Hassabis angel"},
+  {s:"oxbotica",t:"wayve",ty:"partnership",l:"Both LDN AV"},
 ];
 
-// ── Category + edge config ──────────────────────────────────────────────
-const categoryConfig = {
-  frontier: { color: "#FF2D55", label: "Frontier Labs", icon: "⚡" },
-  "frontier-emerging": { color: "#FF6B9D", label: "Emerging Frontier", icon: "🌟" },
-  autonomous: { color: "#00D4FF", label: "Autonomous", icon: "🚗" },
-  generative: { color: "#BF5AF2", label: "Generative AI", icon: "🎨" },
-  biotech: { color: "#30D158", label: "AI + Biotech", icon: "🧬" },
-  enterprise: { color: "#FFD60A", label: "Enterprise AI", icon: "🏢" },
-  cybersecurity: { color: "#FF453A", label: "Cybersecurity", icon: "🛡️" },
-  hardware: { color: "#5E5CE6", label: "AI Hardware", icon: "🔧" },
-  fintech: { color: "#64D2FF", label: "AI Fintech", icon: "💰" },
-  defence: { color: "#FF375F", label: "Defence AI", icon: "🎯" },
-  safety: { color: "#FF9F0A", label: "AI Safety", icon: "🔒" },
-  governance: { color: "#AC8E68", label: "Governance", icon: "📋" },
-  devtools: { color: "#32D74B", label: "Dev Tools", icon: "⚙️" },
-  investor: { color: "#FFD700", label: "Investors", icon: "💎" },
-  academic: { color: "#5AC8FA", label: "Academic", icon: "🎓" },
-  accelerator: { color: "#FF9500", label: "Accelerators", icon: "🚀" },
-};
+// ── HELPERS ─────────────────────────────────────────────────────────────
+function nr(c) {
+  if(c.cat==="frontier") return 28;
+  if(c.cat==="investor") return 11;
+  if(c.cat==="academic") return 14;
+  if(c.cat==="accelerator") return 10;
+  if(c.cat==="frontier-emerging") return 20;
+  const f=c.fn||0;
+  if(f>=1000) return 24; if(f>=500) return 20; if(f>=200) return 17; if(f>=50) return 13; if(f>=10) return 11;
+  return 9;
+}
 
-const edgeTypeConfig = {
-  alumni: { color: "#FF2D55", label: "Alumni Flow", dash: null },
-  spinoff: { color: "#BF5AF2", label: "Spin-off", dash: null },
-  investment: { color: "#FFD700", label: "Investment", dash: null },
-  academic: { color: "#5AC8FA", label: "Academic", dash: null },
-  partnership: { color: "#64D2FF", label: "Partnership", dash: "6,3" },
-  accelerator: { color: "#FF9500", label: "Accelerator", dash: null },
-};
-
-function getNodeRadius(c) {
-  if (c.category === "frontier") return 30;
-  if (c.category === "investor") return 12;
-  if (c.category === "academic") return 15;
-  if (c.category === "accelerator") return 11;
-  if (c.category === "frontier-emerging") return 22;
-  const f = c.fundingNum || 0;
-  if (f >= 1000) return 26;
-  if (f >= 500) return 22;
-  if (f >= 200) return 18;
-  if (f >= 50) return 15;
-  if (f >= 10) return 12;
-  return 10;
+// ── STORAGE HELPERS ─────────────────────────────────────────────────────
+function loadUserData() {
+  try {
+    const r = localStorage.getItem("user-network-v1");
+    return r ? JSON.parse(r) : {};
+  } catch { return {}; }
+}
+function saveUserData(data) {
+  try { localStorage.setItem("user-network-v1", JSON.stringify(data)); } catch(e) { console.error("Save failed:", e); }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   COMPONENT
+   MAIN COMPONENT
    ═══════════════════════════════════════════════════════════════════════════ */
-
-export default function LondonAIMap() {
+export default function App() {
   const svgRef = useRef(null);
-  const [selected, setSelected] = useState(null);
+  const [sel, setSel] = useState(null);
   const [search, setSearch] = useState("");
-  const [activeCats, setActiveCats] = useState(new Set(Object.keys(categoryConfig)));
-  const [hovered, setHovered] = useState(null);
-  const [yearRange, setYearRange] = useState([1990, 2026]);
-  const [dim, setDim] = useState({ w: 1200, h: 800 });
-  const [detailTab, setDetailTab] = useState("info");
+  const [cats, setCats] = useState(new Set(Object.keys(CC)));
+  const [hov, setHov] = useState(null);
+  const [yr, setYr] = useState([1990,2026]);
+  const [dim, setDim] = useState({w:1200,h:800});
+  const [tab, setTab] = useState("info");
+  const [layout, setLayout] = useState("force"); // force | cluster
+  const [userData, setUserData] = useState({});
+  const [showMyNet, setShowMyNet] = useState(false);
+  const [editingConn, setEditingConn] = useState(null);
+  const [connForm, setConnForm] = useState({status:"target",contact:"",notes:""});
+
+  // Load persistent user data
+  useEffect(() => { setUserData(loadUserData()); }, []);
 
   // Responsive
   useEffect(() => {
-    const u = () => setDim({ w: window.innerWidth, h: window.innerHeight });
-    u(); window.addEventListener("resize", u);
-    return () => window.removeEventListener("resize", u);
-  }, []);
+    const u=()=>setDim({w:window.innerWidth,h:window.innerHeight});
+    u(); window.addEventListener("resize",u); return()=>window.removeEventListener("resize",u);
+  },[]);
 
-  // Filtering
-  const filtered = useMemo(() => companies.filter(c => {
-    if (!activeCats.has(c.category)) return false;
-    if (search && !c.name.toLowerCase().includes(search.toLowerCase()) && !(c.focus||"").toLowerCase().includes(search.toLowerCase()) && !(c.founders||"").toLowerCase().includes(search.toLowerCase())) return false;
-    if (c.founded && (c.founded < yearRange[0] || c.founded > yearRange[1])) return false;
+  // Filter
+  const filt = useMemo(()=>companies.filter(c=>{
+    if(!cats.has(c.cat)) return false;
+    if(search) { const q=search.toLowerCase(); if(!c.name.toLowerCase().includes(q) && !(c.focus||"").toLowerCase().includes(q) && !(c.founders||"").toLowerCase().includes(q) && !(c.s||"").toLowerCase().includes(q)) return false; }
+    if(c.yr && (c.yr<yr[0]||c.yr>yr[1])) return false;
+    if(showMyNet && !userData[c.id]) return false;
     return true;
-  }), [activeCats, search, yearRange]);
+  }),[cats,search,yr,showMyNet,userData]);
 
-  const filteredEdges = useMemo(() => {
-    const ids = new Set(filtered.map(c => c.id));
-    return edges.filter(e => ids.has(e.source) && ids.has(e.target));
-  }, [filtered]);
+  const fEdges = useMemo(()=>{
+    const ids=new Set(filt.map(c=>c.id));
+    return edges.filter(e=>ids.has(e.s)&&ids.has(e.t));
+  },[filt]);
 
-  // Hover connections
-  const hoveredConnections = useMemo(() => {
-    if (!hovered) return null;
-    const connected = new Set([hovered]);
-    edges.forEach(e => {
-      if (e.source === hovered) connected.add(e.target);
-      if (e.target === hovered) connected.add(e.source);
-    });
-    return connected;
-  }, [hovered]);
+  const hovConn = useMemo(()=>{
+    if(!hov) return null;
+    const c=new Set([hov]);
+    edges.forEach(e=>{ if(e.s===hov)c.add(e.t); if(e.t===hov)c.add(e.s); });
+    return c;
+  },[hov]);
 
-  const toggleCat = (c) => setActiveCats(p => { const n = new Set(p); n.has(c) ? n.delete(c) : n.add(c); return n; });
+  const tc=(c)=>setCats(p=>{const n=new Set(p); n.has(c)?n.delete(c):n.add(c); return n;});
 
-  // ── D3 Force Graph ────────────────────────────────────────────────────
-  useEffect(() => {
-    if (!svgRef.current) return;
-    const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove();
-    const { w, h } = dim;
+  // Save user connection
+  const saveConn = (compId, data) => {
+    const next = {...userData};
+    if(data) next[compId]=data; else delete next[compId];
+    setUserData(next);
+    saveUserData(next);
+    setEditingConn(null);
+  };
 
-    const nodes = filtered.map(c => ({ ...c, r: getNodeRadius(c) }));
-    const nodeMap = new Map(nodes.map(n => [n.id, n]));
-    const links = filteredEdges.filter(e => nodeMap.has(e.source) && nodeMap.has(e.target))
-      .map(e => ({ ...e }));
+  // ── D3 ────────────────────────────────────────────────────────────────
+  useEffect(()=>{
+    if(!svgRef.current) return;
+    const svg=d3.select(svgRef.current); svg.selectAll("*").remove();
+    const {w,h}=dim;
+    const nodes=filt.map(c=>({...c,r:nr(c)}));
+    const nodeMap=new Map(nodes.map(n=>[n.id,n]));
+    const links=fEdges.filter(e=>nodeMap.has(e.s)&&nodeMap.has(e.t)).map(e=>({...e,source:e.s,target:e.t}));
 
-    const g = svg.append("g");
-
-    // Zoom
-    const zoom = d3.zoom().scaleExtent([0.1, 6])
-      .on("zoom", e => g.attr("transform", e.transform));
+    const g=svg.append("g");
+    const zoom=d3.zoom().scaleExtent([0.08,6]).on("zoom",e=>g.attr("transform",e.transform));
     svg.call(zoom);
-    svg.call(zoom.transform, d3.zoomIdentity.translate(w/2, h/2).scale(0.55).translate(-w/2, -h/2));
+    svg.call(zoom.transform,d3.zoomIdentity.translate(w/2,h/2).scale(0.5).translate(-w/2,-h/2));
 
-    // Defs
-    const defs = svg.append("defs");
-    const glow = defs.append("filter").attr("id", "glow").attr("x", "-50%").attr("y", "-50%").attr("width", "200%").attr("height", "200%");
-    glow.append("feGaussianBlur").attr("stdDeviation", "4").attr("result", "blur");
-    const merge = glow.append("feMerge");
-    merge.append("feMergeNode").attr("in", "blur");
-    merge.append("feMergeNode").attr("in", "SourceGraphic");
+    // Glow filter
+    const defs=svg.append("defs");
+    const gl=defs.append("filter").attr("id","gl").attr("x","-50%").attr("y","-50%").attr("width","200%").attr("height","200%");
+    gl.append("feGaussianBlur").attr("stdDeviation","4").attr("result","b");
+    const mg=gl.append("feMerge"); mg.append("feMergeNode").attr("in","b"); mg.append("feMergeNode").attr("in","SourceGraphic");
 
-    // Simulation
-    const sim = d3.forceSimulation(nodes)
-      .force("link", d3.forceLink(links).id(d => d.id)
-        .distance(d => d.type === "alumni" || d.type === "spinoff" ? 100 : d.type === "investment" ? 160 : 130)
-        .strength(0.25))
-      .force("charge", d3.forceManyBody().strength(d => -d.r * 22))
-      .force("center", d3.forceCenter(w/2, h/2).strength(0.05))
-      .force("collision", d3.forceCollide().radius(d => d.r + 6))
-      .force("x", d3.forceX(w/2).strength(0.02))
-      .force("y", d3.forceY(h/2).strength(0.02));
+    // Cluster positions
+    const catCenters = {};
+    if(layout==="cluster") {
+      const catList = [...new Set(filt.map(c=>c.cat))];
+      const cols = Math.ceil(Math.sqrt(catList.length));
+      catList.forEach((cat,i)=>{
+        const col=i%cols, row=Math.floor(i/cols);
+        catCenters[cat]={x:w*0.15+col*(w*0.7/(cols-1||1)), y:h*0.15+row*(h*0.7/(Math.ceil(catList.length/cols)-1||1))};
+      });
+    }
+
+    const sim=d3.forceSimulation(nodes)
+      .force("link",d3.forceLink(links).id(d=>d.id).distance(d=>d.ty==="alumni"||d.ty==="spinoff"?90:d.ty==="investment"?140:110).strength(layout==="force"?0.2:0.05))
+      .force("charge",d3.forceManyBody().strength(d=>-d.r*(layout==="force"?20:12)))
+      .force("center",layout==="force"?d3.forceCenter(w/2,h/2).strength(0.04):null)
+      .force("collision",d3.forceCollide().radius(d=>d.r+5))
+      .force("x",d3.forceX(d=>layout==="cluster"&&catCenters[d.cat]?catCenters[d.cat].x:w/2).strength(layout==="cluster"?0.3:0.02))
+      .force("y",d3.forceY(d=>layout==="cluster"&&catCenters[d.cat]?catCenters[d.cat].y:h/2).strength(layout==="cluster"?0.3:0.02));
+
+    // Cluster labels
+    if(layout==="cluster") {
+      Object.entries(catCenters).forEach(([cat,pos])=>{
+        g.append("text").text(CC[cat]?.label||cat).attr("x",pos.x).attr("y",pos.y-60)
+          .attr("text-anchor","middle").attr("fill",CC[cat]?.color||"#666").attr("font-size","11px")
+          .attr("font-family","'Outfit',sans-serif").attr("font-weight","600").attr("opacity",0.5);
+      });
+    }
 
     // Edges
-    const link = g.append("g").selectAll("line").data(links).enter().append("line")
-      .attr("stroke", d => edgeTypeConfig[d.type]?.color || "#333")
-      .attr("stroke-width", d => d.type === "alumni" || d.type === "spinoff" ? 1.8 : 1)
-      .attr("stroke-opacity", 0.2)
-      .attr("stroke-dasharray", d => edgeTypeConfig[d.type]?.dash || null);
+    const link=g.append("g").selectAll("line").data(links).enter().append("line")
+      .attr("stroke",d=>EC[d.ty]?.color||"#333").attr("stroke-width",d=>d.ty==="alumni"?1.5:0.8).attr("stroke-opacity",0.18).attr("stroke-dasharray",d=>EC[d.ty]?.dash||null);
 
-    // Node groups
-    const node = g.append("g").selectAll("g").data(nodes).enter().append("g")
-      .attr("cursor", "pointer")
+    // Nodes
+    const node=g.append("g").selectAll("g").data(nodes).enter().append("g").attr("cursor","pointer")
       .call(d3.drag()
-        .on("start", (e,d) => { if(!e.active) sim.alphaTarget(0.3).restart(); d.fx=d.x; d.fy=d.y; })
-        .on("drag", (e,d) => { d.fx=e.x; d.fy=e.y; })
-        .on("end", (e,d) => { if(!e.active) sim.alphaTarget(0); d.fx=null; d.fy=null; }))
-      .on("click", (e,d) => { e.stopPropagation(); setSelected(p => p?.id===d.id ? null : companies.find(c=>c.id===d.id)); setDetailTab("info"); })
-      .on("mouseenter", (e,d) => setHovered(d.id))
-      .on("mouseleave", () => setHovered(null));
+        .on("start",(e,d)=>{if(!e.active)sim.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y;})
+        .on("drag",(e,d)=>{d.fx=e.x;d.fy=e.y;})
+        .on("end",(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}))
+      .on("click",(e,d)=>{e.stopPropagation();setSel(p=>p?.id===d.id?null:companies.find(c=>c.id===d.id));setTab("info");})
+      .on("mouseenter",(e,d)=>setHov(d.id)).on("mouseleave",()=>setHov(null));
 
-    // Outer glow ring
-    node.append("circle").attr("r", d => d.r + 3)
-      .attr("fill", "none")
-      .attr("stroke", d => categoryConfig[d.category]?.color || "#666")
-      .attr("stroke-width", 1)
-      .attr("stroke-opacity", 0.15)
-      .attr("filter", "url(#glow)");
+    // Glow ring
+    node.append("circle").attr("r",d=>d.r+2).attr("fill","none")
+      .attr("stroke",d=>CC[d.cat]?.color||"#666").attr("stroke-width",0.8).attr("stroke-opacity",0.12).attr("filter","url(#gl)");
 
     // Main circle
-    node.append("circle").attr("r", d => d.r)
-      .attr("fill", d => (categoryConfig[d.category]?.color || "#666") + "22")
-      .attr("stroke", d => categoryConfig[d.category]?.color || "#666")
-      .attr("stroke-width", 1.5);
+    node.append("circle").attr("r",d=>d.r)
+      .attr("fill",d=>(CC[d.cat]?.color||"#666")+"1A")
+      .attr("stroke",d=>CC[d.cat]?.color||"#666").attr("stroke-width",1.3);
+
+    // User connection indicator (outer ring)
+    node.filter(d=>userData[d.id]).append("circle").attr("r",d=>d.r+5)
+      .attr("fill","none")
+      .attr("stroke",d=>USER_STATUS[userData[d.id]?.status]?.color||"#30D158")
+      .attr("stroke-width",2).attr("stroke-dasharray","3,2").attr("stroke-opacity",0.8);
 
     // Icon
-    node.append("text")
-      .text(d => categoryConfig[d.category]?.icon || "")
-      .attr("text-anchor", "middle").attr("dominant-baseline", "central")
-      .attr("font-size", d => Math.max(d.r * 0.65, 9) + "px")
-      .attr("pointer-events", "none");
+    node.append("text").text(d=>CC[d.cat]?.icon||"")
+      .attr("text-anchor","middle").attr("dominant-baseline","central")
+      .attr("font-size",d=>Math.max(d.r*0.6,8)+"px").attr("pointer-events","none");
 
     // Label
-    node.append("text")
-      .text(d => (d.short || d.name).length > 16 ? (d.short || d.name).slice(0,14)+"…" : (d.short || d.name))
-      .attr("text-anchor", "middle").attr("dy", d => d.r + 13)
-      .attr("fill", "#94A3B8").attr("font-size", d => d.r > 18 ? "10px" : "8px")
-      .attr("font-family", "'JetBrains Mono', monospace")
-      .attr("pointer-events", "none");
+    node.append("text").text(d=>{const n=d.s||d.name; return n.length>15?n.slice(0,13)+"…":n;})
+      .attr("text-anchor","middle").attr("dy",d=>d.r+12)
+      .attr("fill","#8899AA").attr("font-size",d=>d.r>16?"9.5px":"7.5px")
+      .attr("font-family","'JetBrains Mono',monospace").attr("pointer-events","none");
 
-    svg.on("click", () => setSelected(null));
+    svg.on("click",()=>setSel(null));
 
-    sim.on("tick", () => {
+    sim.on("tick",()=>{
       link.attr("x1",d=>d.source.x).attr("y1",d=>d.source.y).attr("x2",d=>d.target.x).attr("y2",d=>d.target.y);
-      node.attr("transform", d => `translate(${d.x},${d.y})`);
+      node.attr("transform",d=>`translate(${d.x},${d.y})`);
     });
+    return()=>sim.stop();
+  },[filt,fEdges,dim,layout,userData]);
 
-    return () => sim.stop();
-  }, [filtered, filteredEdges, dim]);
-
-  // ── Hover highlight effect ────────────────────────────────────────────
-  useEffect(() => {
-    if (!svgRef.current) return;
-    const svg = d3.select(svgRef.current);
-    if (!hovered) {
-      svg.selectAll("g > g > g").attr("opacity", 1);
-      svg.selectAll("line").attr("stroke-opacity", 0.2);
-      return;
-    }
-    const conn = hoveredConnections;
-    svg.selectAll("g > g > g").each(function(d) {
-      d3.select(this).attr("opacity", conn?.has(d?.id) ? 1 : 0.12);
+  // Hover highlight
+  useEffect(()=>{
+    if(!svgRef.current) return;
+    const svg=d3.select(svgRef.current);
+    if(!hov){svg.selectAll("g>g>g").attr("opacity",1);svg.selectAll("line").attr("stroke-opacity",0.18);return;}
+    svg.selectAll("g>g>g").each(function(d){d3.select(this).attr("opacity",hovConn?.has(d?.id)?1:0.08);});
+    svg.selectAll("line").each(function(d){
+      const si=typeof d?.source==="object"?d.source.id:d?.source;
+      const ti=typeof d?.target==="object"?d.target.id:d?.target;
+      const c=si===hov||ti===hov;
+      d3.select(this).attr("stroke-opacity",c?0.65:0.03).attr("stroke-width",c?2.5:0.8);
     });
-    svg.selectAll("line").each(function(d) {
-      const srcId = typeof d?.source === "object" ? d.source.id : d?.source;
-      const tgtId = typeof d?.target === "object" ? d.target.id : d?.target;
-      const connected = srcId === hovered || tgtId === hovered;
-      d3.select(this).attr("stroke-opacity", connected ? 0.7 : 0.04).attr("stroke-width", connected ? 2.5 : 1);
-    });
-  }, [hovered, hoveredConnections]);
+  },[hov,hovConn]);
 
-  // ── Render ────────────────────────────────────────────────────────────
-  const cats = Object.entries(categoryConfig);
-  const connectedEdges = selected ? edges.filter(e => e.source === selected.id || e.target === selected.id) : [];
+  const ce=sel?edges.filter(e=>e.s===sel.id||e.t===sel.id):[];
+  const ud=sel?userData[sel.id]:null;
+  const myNetCount=Object.keys(userData).length;
 
   return (
-    <div style={{ width: "100vw", height: "100vh", background: "#080C18", overflow: "hidden", fontFamily: "'JetBrains Mono', 'SF Mono', monospace", position: "relative", color: "#E2E8F0" }}>
-      <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <div style={{width:"100vw",height:"100vh",background:"#060A14",overflow:"hidden",fontFamily:"'JetBrains Mono','SF Mono',monospace",position:"relative",color:"#E2E8F0"}}>
+      <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+      <style>{`
+        ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#1E293B;border-radius:4px}
+        input[type=range]{-webkit-appearance:none;background:transparent}input[type=range]::-webkit-slider-track{height:3px;background:#1E293B;border-radius:2px}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:#FF2D55;margin-top:-3.5px;cursor:pointer}
+      `}</style>
 
-      {/* ── HEADER ── */}
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "14px 20px", background: "linear-gradient(180deg, rgba(8,12,24,0.97) 0%, rgba(8,12,24,0) 100%)", zIndex: 10, display: "flex", alignItems: "center", gap: 14 }}>
-        <div style={{ flexShrink: 0 }}>
-          <h1 style={{ margin: 0, fontSize: 22, fontFamily: "'Outfit', sans-serif", fontWeight: 800, letterSpacing: "-0.5px", background: "linear-gradient(135deg, #FF2D55, #BF5AF2, #00D4FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-            London AI Ecosystem
-          </h1>
-          <p style={{ margin: "2px 0 0", fontSize: 10, color: "#475569" }}>
-            {filtered.length} entities · {filteredEdges.length} connections · v2.0
-          </p>
+      {/* HEADER */}
+      <div style={{position:"absolute",top:0,left:0,right:0,padding:"12px 16px",background:"linear-gradient(180deg,rgba(6,10,20,0.97),rgba(6,10,20,0))",zIndex:10,display:"flex",alignItems:"center",gap:12}}>
+        <div style={{flexShrink:0}}>
+          <h1 style={{margin:0,fontSize:20,fontFamily:"'Outfit',sans-serif",fontWeight:800,letterSpacing:"-0.5px",background:"linear-gradient(135deg,#FF2D55,#BF5AF2,#00D4FF)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>London AI Ecosystem</h1>
+          <p style={{margin:"1px 0 0",fontSize:9.5,color:"#475569"}}>{filt.length} entities · {fEdges.length} connections · {myNetCount>0?`${myNetCount} in your network · `:""}v3.0</p>
         </div>
-        <div style={{ flex: 1 }} />
-        {/* Search */}
-        <div style={{ position: "relative" }}>
-          <input type="text" placeholder="Search name, focus, founder…" value={search} onChange={e => setSearch(e.target.value)}
-            style={{ padding: "7px 12px 7px 30px", borderRadius: 8, border: "1px solid #1E293B", background: "#0F172A", color: "#E2E8F0", fontSize: 11, width: 220, outline: "none", fontFamily: "inherit" }} />
-          <span style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", fontSize: 12, color: "#475569" }}>🔍</span>
+        <div style={{flex:1}}/>
+        {/* Layout toggle */}
+        <div style={{display:"flex",gap:0,borderRadius:6,overflow:"hidden",border:"1px solid #1E293B"}}>
+          {[["force","Constellation"],["cluster","Cluster"]].map(([k,l])=>(
+            <button key={k} onClick={()=>setLayout(k)} style={{padding:"4px 10px",border:"none",background:layout===k?"#1E293B":"transparent",color:layout===k?"#E2E8F0":"#475569",fontSize:9,fontFamily:"inherit",cursor:"pointer"}}>{l}</button>
+          ))}
         </div>
+        {/* My Network toggle */}
+        <button onClick={()=>setShowMyNet(!showMyNet)} style={{padding:"4px 10px",borderRadius:6,border:`1px solid ${showMyNet?"#30D158":"#1E293B"}`,background:showMyNet?"#30D15822":"transparent",color:showMyNet?"#30D158":"#64748B",fontSize:9,fontFamily:"inherit",cursor:"pointer"}}>
+          {showMyNet?"🤝 My Network":"🤝 My Network"}
+        </button>
+        <input type="text" placeholder="Search…" value={search} onChange={e=>setSearch(e.target.value)}
+          style={{padding:"6px 10px 6px 26px",borderRadius:7,border:"1px solid #1E293B",background:"#0F172A",color:"#E2E8F0",fontSize:10.5,width:180,outline:"none",fontFamily:"inherit"}}/>
       </div>
 
-      {/* ── LEFT SIDEBAR: Filters ── */}
-      <div style={{ position: "absolute", top: 66, left: 10, zIndex: 10, background: "rgba(15,23,42,0.88)", borderRadius: 12, padding: "10px 10px 14px", backdropFilter: "blur(14px)", border: "1px solid #1E293B", maxHeight: "calc(100vh - 90px)", overflowY: "auto", width: 175 }}>
-        {/* Quick toggles */}
-        <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
-          <button onClick={() => setActiveCats(new Set(Object.keys(categoryConfig)))} style={btnStyle}>All</button>
-          <button onClick={() => setActiveCats(new Set())} style={btnStyle}>None</button>
-          <button onClick={() => setActiveCats(new Set(["frontier","frontier-emerging","autonomous","generative","biotech","enterprise","cybersecurity","hardware","fintech","defence","safety","governance","devtools"]))} style={btnStyle}>Cos</button>
+      {/* LEFT SIDEBAR */}
+      <div style={{position:"absolute",top:60,left:8,zIndex:10,background:"rgba(15,23,42,0.9)",borderRadius:11,padding:"8px 8px 12px",backdropFilter:"blur(14px)",border:"1px solid #1E293B",maxHeight:"calc(100vh - 80px)",overflowY:"auto",width:165}}>
+        <div style={{display:"flex",gap:3,marginBottom:6}}>
+          <button onClick={()=>setCats(new Set(Object.keys(CC)))} style={B}>All</button>
+          <button onClick={()=>setCats(new Set())} style={B}>None</button>
+          <button onClick={()=>setCats(new Set(Object.keys(CC).filter(k=>!["investor","academic","accelerator"].includes(k))))} style={B}>Cos</button>
         </div>
-        {/* Categories */}
-        {cats.map(([k, cfg]) => {
-          const active = activeCats.has(k);
-          const count = companies.filter(c => c.category === k).length;
-          return (
-            <div key={k} onClick={() => toggleCat(k)}
-              style={{ display: "flex", alignItems: "center", gap: 7, padding: "4px 5px", borderRadius: 5, cursor: "pointer", opacity: active ? 1 : 0.3, transition: "opacity 0.15s", marginBottom: 1 }}>
-              <div style={{ width: 9, height: 9, borderRadius: "50%", background: cfg.color, flexShrink: 0 }} />
-              <span style={{ fontSize: 9.5, color: "#CBD5E1", flex: 1 }}>{cfg.label}</span>
-              <span style={{ fontSize: 8, color: "#475569", minWidth: 14, textAlign: "right" }}>{count}</span>
+        {Object.entries(CC).map(([k,cfg])=>{
+          const a=cats.has(k), cnt=companies.filter(c=>c.cat===k).length;
+          return(
+            <div key={k} onClick={()=>tc(k)} style={{display:"flex",alignItems:"center",gap:6,padding:"3px 4px",borderRadius:4,cursor:"pointer",opacity:a?1:0.25,transition:"opacity 0.15s"}}>
+              <div style={{width:8,height:8,borderRadius:"50%",background:cfg.color,flexShrink:0}}/>
+              <span style={{fontSize:9,color:"#CBD5E1",flex:1}}>{cfg.label}</span>
+              <span style={{fontSize:7.5,color:"#475569"}}>{cnt}</span>
             </div>
           );
         })}
-        {/* Year filter */}
-        <div style={{ marginTop: 10, paddingTop: 8, borderTop: "1px solid #1E293B" }}>
-          <div style={{ fontSize: 9, color: "#475569", fontWeight: 600, marginBottom: 6 }}>FOUNDED: {yearRange[0]}–{yearRange[1]}</div>
-          <input type="range" min={1990} max={2026} value={yearRange[0]}
-            onChange={e => setYearRange([+e.target.value, yearRange[1]])}
-            style={{ width: "100%", accentColor: "#FF2D55", height: 3 }} />
-          <input type="range" min={1990} max={2026} value={yearRange[1]}
-            onChange={e => setYearRange([yearRange[0], +e.target.value])}
-            style={{ width: "100%", accentColor: "#BF5AF2", height: 3 }} />
+        <div style={{marginTop:8,paddingTop:6,borderTop:"1px solid #1E293B"}}>
+          <div style={{fontSize:8,color:"#475569",fontWeight:600,marginBottom:4}}>FOUNDED {yr[0]}–{yr[1]}</div>
+          <input type="range" min={1990} max={2026} value={yr[0]} onChange={e=>setYr([+e.target.value,yr[1]])} style={{width:"100%"}}/>
+          <input type="range" min={1990} max={2026} value={yr[1]} onChange={e=>setYr([yr[0],+e.target.value])} style={{width:"100%"}}/>
         </div>
-        {/* Edge legend */}
-        <div style={{ marginTop: 10, paddingTop: 8, borderTop: "1px solid #1E293B" }}>
-          <div style={{ fontSize: 9, color: "#475569", fontWeight: 600, marginBottom: 5 }}>CONNECTIONS</div>
-          {Object.entries(edgeTypeConfig).map(([t, cfg]) => (
-            <div key={t} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-              <div style={{ width: 14, height: 2, background: cfg.color, borderRadius: 1 }} />
-              <span style={{ fontSize: 8.5, color: "#64748B" }}>{cfg.label}</span>
+        <div style={{marginTop:8,paddingTop:6,borderTop:"1px solid #1E293B"}}>
+          <div style={{fontSize:8,color:"#475569",fontWeight:600,marginBottom:4}}>CONNECTIONS</div>
+          {Object.entries(EC).map(([t,cfg])=>(
+            <div key={t} style={{display:"flex",alignItems:"center",gap:5,marginBottom:1}}>
+              <div style={{width:12,height:1.5,background:cfg.color,borderRadius:1}}/>
+              <span style={{fontSize:8,color:"#64748B"}}>{cfg.label}</span>
             </div>
           ))}
         </div>
+        {myNetCount>0&&<div style={{marginTop:8,paddingTop:6,borderTop:"1px solid #1E293B"}}>
+          <div style={{fontSize:8,color:"#475569",fontWeight:600,marginBottom:4}}>YOUR NETWORK ({myNetCount})</div>
+          {Object.entries(USER_STATUS).map(([k,cfg])=>{
+            const cnt=Object.values(userData).filter(d=>d.status===k).length;
+            if(!cnt) return null;
+            return(<div key={k} style={{display:"flex",alignItems:"center",gap:5,marginBottom:1}}>
+              <span style={{fontSize:8}}>{cfg.icon}</span>
+              <span style={{fontSize:8,color:cfg.color}}>{cfg.label}: {cnt}</span>
+            </div>);
+          })}
+        </div>}
       </div>
 
-      {/* ── SVG CANVAS ── */}
-      <svg ref={svgRef} width={dim.w} height={dim.h} style={{ display: "block" }} />
+      {/* SVG */}
+      <svg ref={svgRef} width={dim.w} height={dim.h} style={{display:"block"}}/>
 
-      {/* ── DETAIL PANEL ── */}
-      {selected && (
-        <div style={{ position: "absolute", top: 66, right: 10, width: 350, maxHeight: "calc(100vh - 90px)", overflowY: "auto", background: "rgba(15,23,42,0.94)", borderRadius: 14, backdropFilter: "blur(16px)", border: "1px solid #1E293B", zIndex: 20 }}>
-          {/* Header */}
-          <div style={{ padding: "16px 18px 12px", borderBottom: "1px solid #1E293B" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-              <div>
-                <span style={{ fontSize: 9, color: categoryConfig[selected.category]?.color, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>
-                  {categoryConfig[selected.category]?.icon} {categoryConfig[selected.category]?.label}
-                </span>
-                <h2 style={{ margin: "4px 0 0", fontSize: 18, fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: "#F8FAFC" }}>{selected.name}</h2>
-                {selected.hq && <p style={{ margin: "2px 0 0", fontSize: 10, color: "#64748B" }}>📍 {selected.hq}{selected.founded ? ` · Est. ${selected.founded}` : ""}</p>}
-              </div>
-              <button onClick={() => setSelected(null)} style={{ background: "none", border: "none", color: "#475569", fontSize: 18, cursor: "pointer", padding: 0 }}>✕</button>
+      {/* DETAIL PANEL */}
+      {sel&&<div style={{position:"absolute",top:60,right:8,width:340,maxHeight:"calc(100vh - 80px)",overflowY:"auto",background:"rgba(15,23,42,0.95)",borderRadius:13,backdropFilter:"blur(16px)",border:"1px solid #1E293B",zIndex:20}}>
+        {/* Header */}
+        <div style={{padding:"14px 16px 10px",borderBottom:"1px solid #1E293B"}}>
+          <div style={{display:"flex",justifyContent:"space-between"}}>
+            <div>
+              <span style={{fontSize:8.5,color:CC[sel.cat]?.color,fontWeight:600,textTransform:"uppercase",letterSpacing:1}}>{CC[sel.cat]?.icon} {CC[sel.cat]?.label}</span>
+              <h2 style={{margin:"3px 0 0",fontSize:17,fontFamily:"'Outfit',sans-serif",fontWeight:700,color:"#F8FAFC"}}>{sel.name}</h2>
+              {sel.hq&&<p style={{margin:"2px 0 0",fontSize:9.5,color:"#64748B"}}>📍 {sel.hq}{sel.yr?` · ${sel.yr}`:""}</p>}
             </div>
-            {/* Tabs */}
-            <div style={{ display: "flex", gap: 0, marginTop: 12 }}>
-              {["info", "people", "connections"].map(t => (
-                <button key={t} onClick={() => setDetailTab(t)}
-                  style={{ flex: 1, padding: "6px 0", border: "none", borderBottom: detailTab === t ? `2px solid ${categoryConfig[selected.category]?.color}` : "2px solid transparent", background: "none", color: detailTab === t ? "#F8FAFC" : "#475569", fontSize: 10, fontFamily: "inherit", cursor: "pointer", textTransform: "uppercase", fontWeight: 600, letterSpacing: 0.5 }}>
-                  {t}
-                </button>
-              ))}
-            </div>
+            <button onClick={()=>setSel(null)} style={{background:"none",border:"none",color:"#475569",fontSize:16,cursor:"pointer",padding:0}}>✕</button>
           </div>
-
-          {/* Tab content */}
-          <div style={{ padding: "14px 18px 18px" }}>
-            {detailTab === "info" && <>
-              {/* Metrics */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 14 }}>
-                {selected.funding && <Metric label="Funding" value={selected.funding} />}
-                {selected.valuation && <Metric label="Valuation" value={selected.valuation} />}
-                {selected.employees && <Metric label="Team" value={selected.employees} />}
-                {selected.founded && <Metric label="Founded" value={selected.founded} />}
-              </div>
-              {selected.focus && <Section title="Focus" text={selected.focus} />}
-              {selected.ethos && <Section title="Ethos / Culture" text={selected.ethos} />}
-              {selected.milestones && <Section title="Key Milestones" text={selected.milestones} />}
-            </>}
-
-            {detailTab === "people" && <>
-              {selected.founders && <Section title="Founders" text={selected.founders} />}
-              {selected.keyPeople && <Section title="Key People" text={selected.keyPeople} />}
-              {selected.interviews && <Section title="Interviews & Podcasts" text={selected.interviews} />}
-            </>}
-
-            {detailTab === "connections" && <>
-              {connectedEdges.length === 0 ? (
-                <p style={{ fontSize: 11, color: "#475569" }}>No mapped connections for this entity.</p>
-              ) : (
-                connectedEdges.map((e, i) => {
-                  const otherId = e.source === selected.id ? e.target : e.source;
-                  const other = companies.find(c => c.id === otherId);
-                  if (!other) return null;
-                  return (
-                    <div key={i} onClick={() => { setSelected(other); setDetailTab("info"); }}
-                      style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", borderRadius: 6, cursor: "pointer", marginBottom: 3, background: "rgba(30,41,59,0.4)" }}>
-                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: edgeTypeConfig[e.type]?.color || "#444", flexShrink: 0 }} />
-                      <div style={{ flex: 1 }}>
-                        <span style={{ fontSize: 11, color: "#CBD5E1" }}>{other.name}</span>
-                        {e.label && <span style={{ fontSize: 9, color: "#475569", marginLeft: 6 }}>— {e.label}</span>}
-                      </div>
-                      <span style={{ fontSize: 8, color: "#475569", textTransform: "uppercase" }}>{e.type}</span>
-                    </div>
-                  );
-                })
-              )}
-            </>}
+          {/* User connection badge */}
+          {ud&&<div style={{marginTop:8,padding:"5px 8px",borderRadius:6,background:USER_STATUS[ud.status]?.color+"1A",border:`1px solid ${USER_STATUS[ud.status]?.color}33`,display:"flex",alignItems:"center",gap:6}}>
+            <span style={{fontSize:10}}>{USER_STATUS[ud.status]?.icon}</span>
+            <span style={{fontSize:10,color:USER_STATUS[ud.status]?.color,fontWeight:600}}>{USER_STATUS[ud.status]?.label}</span>
+            {ud.contact&&<span style={{fontSize:9,color:"#94A3B8",marginLeft:4}}>· {ud.contact}</span>}
+          </div>}
+          {/* Tabs */}
+          <div style={{display:"flex",gap:0,marginTop:10}}>
+            {["info","people","connections","my network"].map(t=>(
+              <button key={t} onClick={()=>setTab(t)} style={{flex:1,padding:"5px 0",border:"none",borderBottom:tab===t?`2px solid ${CC[sel.cat]?.color}`:"2px solid transparent",background:"none",color:tab===t?"#F8FAFC":"#475569",fontSize:9,fontFamily:"inherit",cursor:"pointer",textTransform:"uppercase",fontWeight:600,letterSpacing:0.3}}>{t==="my network"?"🤝 Mine":t}</button>
+            ))}
           </div>
         </div>
-      )}
 
-      {/* ── BOTTOM BAR ── */}
-      {!selected && (
-        <div style={{ position: "absolute", bottom: 14, left: "50%", transform: "translateX(-50%)", background: "rgba(15,23,42,0.8)", borderRadius: 10, padding: "7px 18px", backdropFilter: "blur(8px)", border: "1px solid #1E293B", zIndex: 10 }}>
-          <p style={{ margin: 0, fontSize: 10, color: "#475569", textAlign: "center" }}>
-            Click node → details · Hover → highlight connections · Drag nodes · Scroll zoom · Filter left panel
-          </p>
+        <div style={{padding:"12px 16px 16px"}}>
+          {tab==="info"&&<>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:5,marginBottom:12}}>
+              {sel.fund&&<M l="Funding" v={sel.fund}/>}
+              {sel.val&&<M l="Valuation" v={sel.val}/>}
+              {sel.emp&&<M l="Team" v={sel.emp}/>}
+              {sel.yr&&<M l="Founded" v={sel.yr}/>}
+            </div>
+            {sel.focus&&<S t="Focus" v={sel.focus}/>}
+            {sel.ethos&&<S t="Ethos" v={sel.ethos}/>}
+            {sel.ms&&<S t="Milestones" v={sel.ms}/>}
+            {sel.jobs&&<div style={{marginTop:10}}>
+              <a href={sel.jobs} target="_blank" rel="noopener noreferrer" style={{display:"inline-block",padding:"7px 14px",borderRadius:7,background:"#1E293B",color:"#E2E8F0",fontSize:10,textDecoration:"none",fontFamily:"inherit",fontWeight:500,border:"1px solid #334155"}}>
+                🔗 Careers Page →
+              </a>
+            </div>}
+          </>}
+          {tab==="people"&&<>
+            {sel.founders&&<S t="Founders" v={sel.founders}/>}
+            {sel.kp&&<S t="Key People" v={sel.kp}/>}
+            {sel.iv&&<S t="Interviews & Podcasts" v={sel.iv}/>}
+          </>}
+          {tab==="connections"&&<>
+            {ce.length===0?<p style={{fontSize:10,color:"#475569"}}>No mapped connections.</p>:
+              ce.map((e,i)=>{
+                const oid=e.s===sel.id?e.t:e.s;
+                const o=companies.find(c=>c.id===oid);
+                if(!o) return null;
+                return(<div key={i} onClick={()=>{setSel(o);setTab("info");}} style={{display:"flex",alignItems:"center",gap:7,padding:"5px 7px",borderRadius:5,cursor:"pointer",marginBottom:2,background:"rgba(30,41,59,0.3)"}}>
+                  <div style={{width:7,height:7,borderRadius:"50%",background:EC[e.ty]?.color||"#444",flexShrink:0}}/>
+                  <span style={{fontSize:10.5,color:"#CBD5E1",flex:1}}>{o.name}</span>
+                  {e.l&&<span style={{fontSize:8,color:"#475569"}}>{e.l}</span>}
+                  <span style={{fontSize:7.5,color:"#374151",textTransform:"uppercase"}}>{e.ty}</span>
+                </div>);
+              })
+            }
+          </>}
+          {tab==="my network"&&<>
+            <p style={{fontSize:9.5,color:"#64748B",marginBottom:10}}>Track your personal connection to {sel.name}. Saved across sessions.</p>
+            {editingConn===sel.id?<>
+              <div style={{marginBottom:8}}>
+                <label style={{fontSize:8.5,color:"#64748B",display:"block",marginBottom:3}}>STATUS</label>
+                <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
+                  {Object.entries(USER_STATUS).map(([k,cfg])=>(
+                    <button key={k} onClick={()=>setConnForm(p=>({...p,status:k}))} style={{padding:"3px 8px",borderRadius:5,border:`1px solid ${connForm.status===k?cfg.color:"#1E293B"}`,background:connForm.status===k?cfg.color+"22":"transparent",color:connForm.status===k?cfg.color:"#64748B",fontSize:9,cursor:"pointer",fontFamily:"inherit"}}>
+                      {cfg.icon} {cfg.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div style={{marginBottom:8}}>
+                <label style={{fontSize:8.5,color:"#64748B",display:"block",marginBottom:3}}>CONTACT NAME (optional)</label>
+                <input type="text" value={connForm.contact} onChange={e=>setConnForm(p=>({...p,contact:e.target.value}))} placeholder="e.g. Jane Smith, PM" style={{width:"100%",padding:"5px 8px",borderRadius:5,border:"1px solid #1E293B",background:"#0F172A",color:"#E2E8F0",fontSize:10,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}}/>
+              </div>
+              <div style={{marginBottom:10}}>
+                <label style={{fontSize:8.5,color:"#64748B",display:"block",marginBottom:3}}>NOTES (optional)</label>
+                <textarea value={connForm.notes} onChange={e=>setConnForm(p=>({...p,notes:e.target.value}))} placeholder="e.g. Met at conference, warm intro possible" rows={3} style={{width:"100%",padding:"5px 8px",borderRadius:5,border:"1px solid #1E293B",background:"#0F172A",color:"#E2E8F0",fontSize:10,fontFamily:"inherit",outline:"none",resize:"vertical",boxSizing:"border-box"}}/>
+              </div>
+              <div style={{display:"flex",gap:6}}>
+                <button onClick={()=>saveConn(sel.id,connForm)} style={{flex:1,padding:"6px",borderRadius:6,border:"none",background:"#30D158",color:"#000",fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Save</button>
+                <button onClick={()=>setEditingConn(null)} style={{padding:"6px 12px",borderRadius:6,border:"1px solid #1E293B",background:"transparent",color:"#64748B",fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>Cancel</button>
+                {ud&&<button onClick={()=>saveConn(sel.id,null)} style={{padding:"6px 12px",borderRadius:6,border:"1px solid #FF453A33",background:"transparent",color:"#FF453A",fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>Remove</button>}
+              </div>
+            </>:<>
+              {ud?<div>
+                <div style={{padding:"10px",borderRadius:8,background:"#0F172A",marginBottom:8}}>
+                  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
+                    <span style={{fontSize:14}}>{USER_STATUS[ud.status]?.icon}</span>
+                    <span style={{fontSize:12,color:USER_STATUS[ud.status]?.color,fontWeight:600}}>{USER_STATUS[ud.status]?.label}</span>
+                  </div>
+                  {ud.contact&&<div style={{fontSize:10.5,color:"#CBD5E1",marginBottom:2}}>Contact: {ud.contact}</div>}
+                  {ud.notes&&<div style={{fontSize:10,color:"#94A3B8",lineHeight:1.4,marginTop:4}}>{ud.notes}</div>}
+                </div>
+                <button onClick={()=>{setConnForm(ud);setEditingConn(sel.id);}} style={{padding:"5px 12px",borderRadius:6,border:"1px solid #1E293B",background:"transparent",color:"#94A3B8",fontSize:9.5,cursor:"pointer",fontFamily:"inherit"}}>Edit Connection</button>
+              </div>:<>
+                <p style={{fontSize:10,color:"#475569",marginBottom:8}}>No connection tracked yet.</p>
+                <button onClick={()=>{setConnForm({status:"target",contact:"",notes:""});setEditingConn(sel.id);}} style={{padding:"6px 14px",borderRadius:6,border:"1px solid #30D15855",background:"#30D15811",color:"#30D158",fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>+ Add Connection</button>
+              </>}
+            </>}
+          </>}
         </div>
-      )}
+      </div>}
 
-      {/* Stats bar */}
-      <div style={{ position: "absolute", bottom: 14, right: 14, display: "flex", gap: 8, zIndex: 10 }}>
-        <StatBadge label="Companies" value={filtered.filter(c => !["investor","academic","accelerator"].includes(c.category)).length} color="#FF2D55" />
-        <StatBadge label="Investors" value={filtered.filter(c => c.category === "investor").length} color="#FFD700" />
-        <StatBadge label="Academic" value={filtered.filter(c => c.category === "academic").length} color="#5AC8FA" />
+      {/* BOTTOM */}
+      {!sel&&<div style={{position:"absolute",bottom:12,left:"50%",transform:"translateX(-50%)",background:"rgba(15,23,42,0.8)",borderRadius:9,padding:"6px 16px",backdropFilter:"blur(8px)",border:"1px solid #1E293B",zIndex:10}}>
+        <p style={{margin:0,fontSize:9.5,color:"#475569",textAlign:"center"}}>Click → details · Hover → highlight · Drag · Scroll zoom · 🤝 My Network to track your connections</p>
+      </div>}
+
+      {/* Stats */}
+      <div style={{position:"absolute",bottom:12,right:12,display:"flex",gap:6,zIndex:10}}>
+        <SB l="Companies" v={filt.filter(c=>!["investor","academic","accelerator"].includes(c.cat)).length} c="#FF2D55"/>
+        <SB l="Investors" v={filt.filter(c=>c.cat==="investor").length} c="#FFD700"/>
+        {myNetCount>0&&<SB l="Your Net" v={myNetCount} c="#30D158"/>}
       </div>
     </div>
   );
 }
 
-// ── Sub-components ──────────────────────────────────────────────────────
-const btnStyle = { flex: 1, padding: "3px", borderRadius: 5, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 8.5, cursor: "pointer", fontFamily: "inherit" };
-
-function Metric({ label, value }) {
-  return (
-    <div style={{ background: "#0F172A", borderRadius: 7, padding: "7px 9px" }}>
-      <div style={{ fontSize: 8, color: "#475569", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 2 }}>{label}</div>
-      <div style={{ fontSize: 11.5, color: "#E2E8F0", fontWeight: 500 }}>{String(value)}</div>
-    </div>
-  );
-}
-
-function Section({ title, text }) {
-  return (
-    <div style={{ marginBottom: 12 }}>
-      <div style={{ fontSize: 9, color: "#64748B", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 3, fontWeight: 600 }}>{title}</div>
-      <div style={{ fontSize: 11, color: "#CBD5E1", lineHeight: 1.55 }}>{text}</div>
-    </div>
-  );
-}
-
-function StatBadge({ label, value, color }) {
-  return (
-    <div style={{ background: "rgba(15,23,42,0.85)", borderRadius: 8, padding: "5px 10px", backdropFilter: "blur(8px)", border: "1px solid #1E293B", textAlign: "center" }}>
-      <div style={{ fontSize: 14, fontWeight: 700, color, fontFamily: "'Outfit', sans-serif" }}>{value}</div>
-      <div style={{ fontSize: 8, color: "#475569", textTransform: "uppercase" }}>{label}</div>
-    </div>
-  );
-}
+// ── SUB-COMPONENTS ──────────────────────────────────────────────────────
+const B={flex:1,padding:"2px",borderRadius:4,border:"1px solid #1E293B",background:"transparent",color:"#64748B",fontSize:8,cursor:"pointer",fontFamily:"inherit"};
+function M({l,v}){return(<div style={{background:"#0F172A",borderRadius:6,padding:"6px 8px"}}><div style={{fontSize:7.5,color:"#475569",textTransform:"uppercase",letterSpacing:0.5,marginBottom:1}}>{l}</div><div style={{fontSize:11,color:"#E2E8F0",fontWeight:500}}>{String(v)}</div></div>);}
+function S({t,v}){return(<div style={{marginBottom:10}}><div style={{fontSize:8.5,color:"#64748B",textTransform:"uppercase",letterSpacing:0.5,marginBottom:2,fontWeight:600}}>{t}</div><div style={{fontSize:10.5,color:"#CBD5E1",lineHeight:1.5}}>{v}</div></div>);}
+function SB({l,v,c}){return(<div style={{background:"rgba(15,23,42,0.85)",borderRadius:7,padding:"4px 9px",backdropFilter:"blur(8px)",border:"1px solid #1E293B",textAlign:"center"}}><div style={{fontSize:13,fontWeight:700,color:c,fontFamily:"'Outfit',sans-serif"}}>{v}</div><div style={{fontSize:7.5,color:"#475569",textTransform:"uppercase"}}>{l}</div></div>);}
