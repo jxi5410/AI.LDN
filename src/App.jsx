@@ -127,13 +127,18 @@ export default function App() {
     if (fb) setMyFeedback(fb);
   };
 
+  const [signupSuccess, setSignupSuccess] = useState(false);
+
   const handleAuth = async (mode) => {
-    setAuthLoading(true); setAuthError("");
+    setAuthLoading(true); setAuthError(""); setSignupSuccess(false);
     try {
       if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
           email: authForm.email, password: authForm.password,
-          options: { data: { username: authForm.username } }
+          options: {
+            data: { username: authForm.username },
+            emailRedirectTo: "https://londonai.network",
+          }
         });
         if (error) throw error;
         // Update profile with extra fields
@@ -145,7 +150,7 @@ export default function App() {
             company: authForm.company || null,
           }).eq("id", data.user.id);
         }
-        setAuthMode(null);
+        setSignupSuccess(true);
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: authForm.email, password: authForm.password });
         if (error) throw error;
@@ -440,8 +445,17 @@ export default function App() {
       </div>
 
       {/* ── AUTH MODAL ────────────────────────────────────────────── */}
-      {authMode && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setAuthMode(null)}>
+      {authMode && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => { setAuthMode(null); setSignupSuccess(false); }}>
         <div onClick={e => e.stopPropagation()} style={{ background: "#0F172A", borderRadius: 14, padding: 24, border: "1px solid #1E293B", width: 360, maxWidth: "90vw" }}>
+          {signupSuccess ? <>
+            <div style={{ textAlign: "center", padding: "10px 0" }}>
+              <div style={{ fontSize: 36, marginBottom: 8 }}>📧</div>
+              <h2 style={{ margin: "0 0 8px", fontSize: 16, fontFamily: "'Outfit',sans-serif", color: "#F8FAFC" }}>Check your email</h2>
+              <p style={{ fontSize: 10.5, color: "#94A3B8", lineHeight: 1.5, marginBottom: 12 }}>We've sent a confirmation link to <strong style={{ color: "#E2E8F0" }}>{authForm.email}</strong>. Click the link in the email to activate your account.</p>
+              <p style={{ fontSize: 9, color: "#475569" }}>Didn't receive it? Check your spam folder, or try again in a few minutes.</p>
+              <button onClick={() => { setAuthMode(null); setSignupSuccess(false); }} style={{ marginTop: 12, padding: "8px 20px", borderRadius: 7, border: "1px solid #1E293B", background: "transparent", color: "#94A3B8", fontSize: 10, cursor: "pointer", fontFamily: "inherit" }}>Close</button>
+            </div>
+          </> : <>
           <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "'Outfit',sans-serif", color: "#F8FAFC" }}>{authMode === "signup" ? "Create Account" : "Welcome Back"}</h2>
           <p style={{ margin: "0 0 16px", fontSize: 9.5, color: "#64748B" }}>{authMode === "signup" ? "Join the London AI Ecosystem network" : "Sign in to track your connections"}</p>
           {authError && <div style={{ padding: "6px 10px", borderRadius: 6, background: "#FF453A18", border: "1px solid #FF453A33", color: "#FF453A", fontSize: 9.5, marginBottom: 10 }}>{authError}</div>}
@@ -458,8 +472,9 @@ export default function App() {
           </button>
           <p style={{ margin: "10px 0 0", fontSize: 9, color: "#64748B", textAlign: "center" }}>
             {authMode === "signup" ? "Already have an account?" : "Don't have an account?"}{" "}
-            <span onClick={() => { setAuthMode(authMode === "signup" ? "login" : "signup"); setAuthError(""); }} style={{ color: "#00D4FF", cursor: "pointer" }}>{authMode === "signup" ? "Log in" : "Sign up"}</span>
+            <span onClick={() => { setAuthMode(authMode === "signup" ? "login" : "signup"); setAuthError(""); setSignupSuccess(false); }} style={{ color: "#00D4FF", cursor: "pointer" }}>{authMode === "signup" ? "Log in" : "Sign up"}</span>
           </p>
+          </>}
         </div>
       </div>}
 

@@ -53,14 +53,14 @@ export const BADGES=[
 
 // ── PEOPLE WITH PODCASTS ────────────────────────────────────────────────
 export const PEOPLE={
-  "Demis Hassabis":{role:"CEO, Google DeepMind & Isomorphic Labs",tw:"https://x.com/demaboreal",li:"https://linkedin.com/in/demis-hassabis/",co:["deepmind","isomorphic"],pods:[
+  "Demis Hassabis":{role:"CEO, Google DeepMind & Isomorphic Labs",tw:"https://x.com/demishassabis",li:"https://linkedin.com/in/demishassabis/",co:["deepmind","isomorphic"],pods:[
     {label:"Lex Fridman #475 — Future of AI (2025)",url:"https://lexfridman.com/demis-hassabis-2/"},
     {label:"CBS 60 Minutes (Apr 2025)",url:"https://www.cbsnews.com/video/demis-hassabis-ai-deepmind-60-minutes-video-2025-04-20/"},
     {label:"Nobel Chemistry 2024 — Official lecture",url:"https://www.nobelprize.org/prizes/chemistry/2024/hassabis/interview/"},
     {label:"Lex Fridman #299 — Superintelligence",url:"https://lexfridman.com/demis-hassabis/"},
     {label:"BBC Desert Island Discs",url:"https://www.bbc.co.uk/programmes/b08qy1sl"},
   ]},
-  "Dario Amodei":{role:"CEO, Anthropic",tw:"https://x.com/DarioAmodei",li:"https://linkedin.com/in/dario-amodei/",co:["anthropic"],pods:[
+  "Dario Amodei":{role:"CEO, Anthropic",tw:"https://x.com/DarioAmodei",li:"https://linkedin.com/in/dario-amodei-3934934/",co:["anthropic"],pods:[
     {label:"Dwarkesh Patel — Near end of exponential (Feb 2026)",url:"https://www.dwarkesh.com/p/dario-amodei-2"},
     {label:"Lex Fridman #452 — Claude, AGI (5h, Nov 2024)",url:"https://www.youtube.com/watch?v=ugvHCXCOmm4"},
     {label:"Dwarkesh Patel — $10B Models (Aug 2023)",url:"https://www.dwarkesh.com/p/dario-amodei"},
@@ -73,7 +73,7 @@ export const PEOPLE={
     {label:"All-In Podcast — In Conversation (May 2024)",url:"https://open.spotify.com/episode/0rka7b2zunmx6f0etLWRGB"},
     {label:"Joe Rogan #2044",url:"https://open.spotify.com/episode/66edV3LAbUXa26HG1ZQaKB"},
   ]},
-  "Arthur Mensch":{role:"CEO, Mistral AI",tw:"https://x.com/arthurmensch",li:"https://linkedin.com/in/arthur-mensch-a3b95ab8/",co:["mistral"],pods:[
+  "Arthur Mensch":{role:"CEO, Mistral AI",tw:"https://x.com/arthurmensch",li:"https://linkedin.com/in/arthur-mensch/",co:["mistral"],pods:[
     {label:"CNBC India AI Summit (Feb 2026)",url:"https://www.cnbc.com/video/2026/02/18/watch-cnbcs-full-interview-with-mistral-ai-ceo-arthur-mensch.html"},
     {label:"CNBC Squawk Box (Sep 2025)",url:"https://www.cnbc.com/video/2025/09/09/watch-cnbcs-full-interview-with-mistral-ai-founder-and-ceo-arthur-mensch.html"},
     {label:"No Priors #40 — Open Source Revolution",url:"https://open.spotify.com/episode/2H7gV2CgfzS7jXK4Mx8v9j"},
@@ -84,7 +84,7 @@ export const PEOPLE={
     {label:"MAD Podcast — Paper That Changed AI Forever",url:"https://open.spotify.com/episode/70RgbeBY38bhP4wSshSEGW"},
     {label:"MLST — AI's Inner Monologue (Jun 2024)",url:"https://open.spotify.com/episode/0oFwBJG0lBdbBaHK1M8L8H"},
   ]},
-  "Alex Kendall":{role:"CEO, Wayve",tw:"https://x.com/alexloukendall",li:"https://linkedin.com/in/alexgkendall/",co:["wayve"],pods:[
+  "Alex Kendall":{role:"CEO, Wayve",tw:"https://x.com/alexgkendall",li:"https://linkedin.com/in/alexgkendall/",co:["wayve"],pods:[
     {label:"Sequoia Training Data — AV 2.0 (Nov 2025)",url:"https://sequoiacap.com/podcast/how-end-to-end-learning-created-autonomous-driving-2-0-wayve-ceo-alex-kendall/"},
     {label:"Sifted — Vindicated by Elon Musk",url:"https://sifted.eu/articles/wayves-alex-kendall-sifted-podcast"},
     {label:"TechCrunch — Autonomous future (May 2024)",url:"https://techcrunch.com/2024/05/07/exclusive-wayve-cofounder-alex-kendall-on-the-autonomous-future-for-cars-and-robots/"},
@@ -95,12 +95,12 @@ export const PEOPLE={
     {label:"This Week in Startups — $1B AI Avatar Business",url:"https://thisweekinstartups.com/episodes/EbY2M03ANMs"},
     {label:"Accel Spotlight On",url:"https://www.accel.com/podcast-episodes/synthesia-victor-riparbelli"},
   ]},
-  "Mati Staniszewski":{role:"CEO, ElevenLabs",tw:"https://x.com/maborosh1",li:"https://linkedin.com/in/matistaniszewski/",co:["elevenlabs"],pods:[
+  "Mati Staniszewski":{role:"CEO, ElevenLabs",tw:"https://x.com/matistanis",li:"https://linkedin.com/in/matiii/",co:["elevenlabs"],pods:[
     {label:"Sequoia — Scaling AI Rocketships",url:"https://sequoiacap.com/podcast/scaling-ai-rocketships-elevenlabs-mati-staniszewski-lovables-anton-osika/"},
     {label:"20VC — $200M ARR Untold Story (Sep 2025)",url:"https://open.spotify.com/episode/12pXbRQVhbx91MyBydH64i"},
     {label:"Bloomberg TV — $330M ARR (Jan 2026)",url:"https://www.bloomberg.com/news/videos/2026-01-12/elevenlabs-330m-crossed-in-arr-video"},
   ]},
-  "Connor Leahy":{role:"CEO, Conjecture",tw:"https://x.com/NPCollapse",li:"https://linkedin.com/in/connor-leahy/",co:["conjecture"],pods:[
+  "Connor Leahy":{role:"CEO, Conjecture",tw:"https://x.com/NPCollapse",li:"https://linkedin.com/in/connor-j-leahy/",co:["conjecture"],pods:[
     {label:"FLI — Why Humanity Risks Extinction from AGI",url:"https://futureoflife.org/podcast/connor-leahy-on-why-humanity-risks-extinction-from-agi/"},
     {label:"MLST — e/acc vs Doomer Showdown",url:"https://www.youtube.com/watch?v=0zxi0xSBOaQ"},
     {label:"FLI — AGI and Cognitive Emulation",url:"https://futureoflife.org/podcast/connor-leahy-on-agi-and-cognitive-emulation/"},
@@ -110,7 +110,7 @@ export const PEOPLE={
     {label:"TED — Future of AI (2021)",url:"https://www.ted.com/talks/yann_lecun_deep_learning_neural_networks_and_the_future_of_ai"},
     {label:"Lex Fridman #258 — Dark Matter of Intelligence",url:"https://lexfridman.com/yann-lecun-2/"},
   ]},
-  "Mustafa Suleyman":{role:"CEO Microsoft AI, DeepMind co-founder",tw:"https://x.com/mustaboreal",li:"https://linkedin.com/in/mustafa-suleyman/",co:["ms-research","deepmind"],pods:[
+  "Mustafa Suleyman":{role:"CEO Microsoft AI, DeepMind co-founder",tw:"https://x.com/mustafasuleyman",li:"https://linkedin.com/in/mustafa-suleyman/",co:["ms-research","deepmind"],pods:[
     {label:"Bloomberg — AI Is Already Superhuman (Dec 2025)",url:"https://www.bloomberg.com/features/2025-mustafa-suleyman-weekend-interview/"},
     {label:"TED 2024 — What is an AI Anyway?",url:"https://www.youtube.com/watch?v=KKNCiRWd_j0"},
     {label:"CNBC — Full interview (Apr 2025)",url:"https://www.cnbc.com/video/2025/04/04/watch-cnbcs-full-interview-with-microsoft-ai-ceo-mustafa-suleyman.html"},
@@ -125,17 +125,17 @@ export const PEOPLE={
     {label:"State of AI 2025 — Launch video + report",url:"https://www.stateof.ai/2025-report-launch"},
     {label:"The PEEL — 2-hour deep dive",url:"https://www.thespl.it/p/the-state-of-ai-with-nathan-benaich"},
   ]},
-  "Ian Hogarth":{role:"AISI Chair, Plural co-founder",tw:"https://x.com/ianhogarth",li:"https://linkedin.com/in/ianhogarth/",co:["plural"],pods:[
+  "Ian Hogarth":{role:"AISI Chair, Plural co-founder",tw:"https://x.com/soundboy",li:"https://linkedin.com/in/ianhogarth/",co:["plural"],pods:[
     {label:"AI Breakdown — Head of UK AI Taskforce (Jun 2023)",url:"https://podcasts.apple.com/us/podcast/what-the-head-of-the-new-uk-ai-foundation/id1680633614?i=1000618244541"},
     {label:"Sifted — ML will eat the world",url:"https://sifted.eu/articles/ian-hogarth-machine-learning-will-eat-the-world"},
     {label:"TIME 100 AI profile",url:"https://time.com/collection/time100-ai/6309473/ian-hogarth/"},
   ]},
-  "Poppy Gustafsson":{role:"Baroness, ex-Darktrace CEO, UK Min. for Investment",tw:"https://x.com/PoppyGustafsson",li:"https://linkedin.com/in/poppygustafsson/",co:["darktrace"],pods:[
+  "Poppy Gustafsson":{role:"Baroness, ex-Darktrace CEO, UK Min. for Investment",tw:"https://x.com/PoppyGustafsson",li:"https://linkedin.com/in/poppy-gustafsson-41464ba0/",co:["darktrace"],pods:[
     {label:"BoS Europe — Scaling AI at Warp Speed",url:"https://businessofsoftware.org/talks/billion-dollar-business/"},
     {label:"csuite Podcast — Unicorn CEOs",url:"https://www.csuitepodcast.com/show-92-unicorn-ceos-poppy-gustafsson-obe-ceo-of-darktrace/"},
     {label:"TIME — Fighting Cyber Attacks (May 2021)",url:"https://time.com/6048319/poppy-gustafsson-darktrace-cyber-attacks/"},
   ]},
-  "Nikola Mrkšić":{role:"CEO, PolyAI",tw:"https://x.com/nmrksic",li:"https://linkedin.com/in/nikola-mrksic/",co:["polyai"],pods:[
+  "Nikola Mrkšić":{role:"CEO, PolyAI",tw:"https://x.com/nikola_mrksic",li:"https://linkedin.com/in/nikola-mrksic/",co:["polyai"],pods:[
     {label:"Practical AI — Next-Gen Voice Assistants",url:"https://poly.ai/blog/nikola-mrksic-on-the-practical-ai-podcast/"},
     {label:"tech.eu — Our future is American (Feb 2025)",url:"https://tech.eu/2025/02/19/our-future-is-predominantly-american-says-founder-of-nvidia-backed-london-startup-polyai/"},
     {label:"Unite.AI — Interview Series",url:"https://www.unite.ai/nikola-mrksic-co-founder-and-ceo-of-polyai-interview-series/"},
@@ -145,17 +145,17 @@ export const PEOPLE={
     {label:"PMF Show — $4M to $4.5M in 12 months",url:"https://www.pmf.show/guy-podjarny-snyk-product-buyer-fit-growth/"},
     {label:"Changelog Founders Talk #71",url:"https://changelog.com/founderstalk/71"},
   ]},
-  "Torsten Reil":{role:"Co-CEO, Helsing",tw:null,li:"https://linkedin.com/in/torsten-reil/",co:["helsing"],pods:[
+  "Torsten Reil":{role:"Co-CEO, Helsing",tw:"https://x.com/torstenreil",li:"https://linkedin.com/in/torstenreil/",co:["helsing"],pods:[
     {label:"Bloomberg — AI in Defence (Oct 2025)",url:"https://www.bloomberg.com/news/videos/2025-10-21/helsing-s-reil-on-ai-s-role-in-defense-innovation-video"},
     {label:"20VC — Raising $828M for Defence",url:"https://www.thetwentyminutevc.com/torsten-reil"},
     {label:"FT Lunch — AI drones & VC herd (Mar 2025)",url:"https://www.techmeme.com/250323/p11"},
   ]},
-  "Barney Hussey-Yeo":{role:"CEO, Cleo AI",tw:"https://x.com/barneyhy",li:"https://linkedin.com/in/barneyhy/",co:["cleo"],pods:[
+  "Barney Hussey-Yeo":{role:"CEO, Cleo AI",tw:"https://x.com/Barney_H_Y",li:"https://linkedin.com/in/bhusseyyeo/",co:["cleo"],pods:[
     {label:"Sifted — Build £100bn company & save democracy",url:"https://sifted.eu/articles/cleo-big-interview"},
     {label:"Jimmy's Jobs — UK Unicorns (Nov 2024)",url:"https://open.spotify.com/episode/4kX02ccyFWYXgsFmEa1nOA"},
     {label:"11:FS — AI for Financial Wellbeing",url:"https://content.11fs.com/videos/harnessing-the-power-of-ai-to-improve-financial-wellbeing"},
   ]},
-  "Alex Dalyac":{role:"CEO, Tractable",tw:"https://x.com/alexdalyac",li:"https://linkedin.com/in/alexdalyac/",co:["tractable"],pods:[
+  "Alex Dalyac":{role:"CEO, Tractable",tw:"https://x.com/alexdalyac",li:"https://linkedin.com/in/adalyac/",co:["tractable"],pods:[
     {label:"EF Podcast — Billion Dollar Story (w/ Reid Hoffman)",url:"https://podcasts.apple.com/gb/podcast/the-billion-dollar-story-of-tractable/id1581333327?i=1000533165537"},
     {label:"World of DaaS — Building a CV Unicorn (Feb 2022)",url:"https://podcasts.apple.com/us/podcast/alex-dalyac-the-secret-to-building-a-computer/id1570644971?i=1000551139486"},
     {label:"EF — From EF to $1B (written)",url:"https://www.joinef.com/stories/the-story-of-tractable/"},
