@@ -80,6 +80,7 @@ export default function App() {
   const [tab, setTab] = useState("info");
   const [layout, setLayout] = useState("force");
   const [panel, setPanel] = useState("graph");
+  const [highlightPerson, setHighlightPerson] = useState(null);
   const [showMyNet, setShowMyNet] = useState(false);
   const [updateFilter, setUpdateFilter] = useState("all");
 
@@ -365,7 +366,7 @@ export default function App() {
     node.append("text").text(d => CC[d.cat]?.i || "").attr("text-anchor", "middle").attr("dominant-baseline", "central")
       .attr("font-size", d => Math.max(d.r * 0.55, 7) + "px").attr("pointer-events", "none");
     node.append("text").text(d => { const n = d.s || d.name; return n.length > 14 ? n.slice(0, 12) + "…" : n; })
-      .attr("text-anchor", "middle").attr("dy", d => d.r + 11).attr("fill", "#7888A0")
+      .attr("text-anchor", "middle").attr("dy", d => d.r + 11).attr("fill", "#8a8a85")
       .attr("font-size", d => d.r > 14 ? "9px" : "7px").attr("font-family", "'JetBrains Mono',monospace").attr("pointer-events", "none");
 
     svg.on("click", () => setSel(null));
@@ -392,54 +393,54 @@ export default function App() {
 
   // ── RENDER ──────────────────────────────────────────────────────────
   return (
-    <div style={{ width: "100vw", height: "100vh", background: "#060A14", overflow: "hidden", fontFamily: "'JetBrains Mono','SF Mono',monospace", position: "relative", color: "#E2E8F0" }}>
+    <div style={{ width: "100vw", height: "100vh", background: "#faf9f5", overflow: "hidden", fontFamily: "'Libre Baskerville',Georgia,serif", position: "relative", color: "#1a1a18" }}>
       <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-      <style>{`::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#1E293B;border-radius:4px}input[type=range]{-webkit-appearance:none;background:transparent}input[type=range]::-webkit-slider-track{height:2px;background:#1E293B;border-radius:2px}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:#FF2D55;margin-top:-3px;cursor:pointer}`}</style>
+      <style>{`::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#c5c3ba;border-radius:4px}input[type=range]{-webkit-appearance:none;background:transparent}input[type=range]::-webkit-slider-track{height:2px;background:#e8e6dc;border-radius:2px}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:#FF2D55;margin-top:-3px;cursor:pointer}`}</style>
 
       {/* ── HEADER ──────────────────────────────────────────────────── */}
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "10px 14px", background: "linear-gradient(180deg,rgba(6,10,20,0.97),rgba(6,10,20,0))", zIndex: 10, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, padding: "10px 14px", background: "linear-gradient(180deg,rgba(250,249,245,0.97),rgba(250,249,245,0))", zIndex: 10, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
         <div style={{ flexShrink: 0, cursor: "pointer" }} onClick={() => { setPanel("graph"); setSel(null); }}>
-          <h1 style={{ margin: 0, fontSize: 22, fontFamily: "'Outfit'',sans-serif", fontWeight: 800, background: "linear-gradient(135deg,#FF2D55,#BF5AF2,#00D4FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>London AI Ecosystem</h1>
-          <p style={{ margin: 0, fontSize: 10, color: "#475569" }}>
+          <h1 style={{ margin: 0, fontSize: 22, fontFamily: "'Outfit'',sans-serif", fontWeight: 800, background: "linear-gradient(135deg,#C15F3C,#d97757,#e8a87c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>London AI Ecosystem</h1>
+          <p style={{ margin: 0, fontSize: 10, color: "#b0aea5" }}>
             {companies.filter(c => !["investor", "academic", "accelerator"].includes(c.cat)).length} companies · {edges.length} connections{mn > 0 ? ` · ${mn} tracked` : ""}
           </p>
         </div>
         <div style={{ flex: 1 }} />
         {/* Nav */}
-        <div style={{ display: "flex", gap: 0, borderRadius: 6, overflow: "hidden", border: "1px solid #1E293B" }}>
+        <div style={{ display: "flex", gap: 0, borderRadius: 6, overflow: "hidden", border: "1px solid #e8e6dc" }}>
           {[["graph", "🌌 Map"], ["updates", "📡 Updates"], ["people", "👤 People"], ["score", "🏆 Score"]].map(([k, l]) => (
-            <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "4px 9px", border: "none", background: panel === k ? "#1E293B" : "transparent", color: panel === k ? "#E2E8F0" : "#475569", fontSize: 10, fontFamily: "inherit", cursor: "pointer" }}>{l}</button>
+            <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "4px 9px", border: "none", background: panel === k ? "#e8e6dc" : "transparent", color: panel === k ? "#E2E8F0" : "#475569", fontSize: 10, fontFamily: "inherit", cursor: "pointer" }}>{l}</button>
           ))}
         </div>
         {panel === "graph" && <>
-          <div style={{ display: "flex", gap: 0, borderRadius: 5, overflow: "hidden", border: "1px solid #1E293B" }}>
+          <div style={{ display: "flex", gap: 0, borderRadius: 5, overflow: "hidden", border: "1px solid #e8e6dc" }}>
             {[["force", "✦"], ["cluster", "⊞"]].map(([k, l]) => (
-              <button key={k} onClick={() => setLayout(k)} style={{ padding: "4px 8px", border: "none", background: layout === k ? "#1E293B" : "transparent", color: layout === k ? "#E2E8F0" : "#475569", fontSize: 9, cursor: "pointer" }} title={k === "force" ? "Constellation" : "Cluster"}>{l}</button>
+              <button key={k} onClick={() => setLayout(k)} style={{ padding: "4px 8px", border: "none", background: layout === k ? "#e8e6dc" : "transparent", color: layout === k ? "#E2E8F0" : "#475569", fontSize: 9, cursor: "pointer" }} title={k === "force" ? "Constellation" : "Cluster"}>{l}</button>
             ))}
           </div>
-          <button onClick={() => setShowMyNet(!showMyNet)} style={{ padding: "4px 8px", borderRadius: 5, border: `1px solid ${showMyNet ? "#30D158" : "#1E293B"}`, background: showMyNet ? "#30D15818" : "transparent", color: showMyNet ? "#30D158" : "#475569", fontSize: 8.5, cursor: "pointer", fontFamily: "inherit" }}>🤝</button>
+          <button onClick={() => setShowMyNet(!showMyNet)} style={{ padding: "4px 8px", borderRadius: 5, border: `1px solid ${showMyNet ? "#30D158" : "#e8e6dc"}`, background: showMyNet ? "#30D15818" : "transparent", color: showMyNet ? "#30D158" : "#475569", fontSize: 8.5, cursor: "pointer", fontFamily: "inherit" }}>🤝</button>
         </>}
         {/* Search */}
         <div style={{ position: "relative" }}>
           <input type="text" placeholder="Search companies, people, contacts…" value={search} onChange={e => setSearch(e.target.value)}
-            style={{ padding: "5px 8px", borderRadius: 6, border: "1px solid #1E293B", background: "#0F172A", color: "#E2E8F0", fontSize: 12, width: 240, outline: "none", fontFamily: "inherit" }} />
-          {searchResults && search && <div style={{ position: "absolute", top: "100%", right: 0, width: 320, maxHeight: 400, overflowY: "auto", background: "#0F172A", borderRadius: 8, border: "1px solid #1E293B", marginTop: 4, zIndex: 30 }}>
-            {searchResults.companies.length > 0 && <div style={{ padding: "6px 10px", borderBottom: "1px solid #111827" }}>
-              <div style={{ fontSize: 8, color: "#475569", fontWeight: 600, marginBottom: 4 }}>COMPANIES</div>
+            style={{ padding: "5px 8px", borderRadius: 6, border: "1px solid #e8e6dc", background: "#ffffff", color: "#1a1a18", fontSize: 12, width: 240, outline: "none", fontFamily: "inherit" }} />
+          {searchResults && search && <div style={{ position: "absolute", top: "100%", right: 0, width: 320, maxHeight: 400, overflowY: "auto", background: "#ffffff", borderRadius: 8, border: "1px solid #e8e6dc", marginTop: 4, zIndex: 30 }}>
+            {searchResults.companies.length > 0 && <div style={{ padding: "6px 10px", borderBottom: "1px solid #f0efe8" }}>
+              <div style={{ fontSize: 8, color: "#b0aea5", fontWeight: 600, marginBottom: 4 }}>COMPANIES</div>
               {searchResults.companies.map(c => (
                 <div key={c.id} onClick={() => { setSel(c); setPanel("graph"); setTab("info"); setSearch(""); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", cursor: "pointer" }}>
                   <span style={{ fontSize: 10 }}>{CC[c.cat]?.i}</span>
-                  <span style={{ fontSize: 12, color: "#E2E8F0" }}>{c.name}</span>
+                  <span style={{ fontSize: 12, color: "#1a1a18" }}>{c.name}</span>
                   {ud[c.id] && <span style={{ fontSize: 7, color: US[ud[c.id].status]?.c }}>{US[ud[c.id].status]?.i}</span>}
                 </div>
               ))}
             </div>}
-            {searchResults.people.length > 0 && <div style={{ padding: "6px 10px", borderBottom: "1px solid #111827" }}>
-              <div style={{ fontSize: 8, color: "#475569", fontWeight: 600, marginBottom: 4 }}>PEOPLE</div>
+            {searchResults.people.length > 0 && <div style={{ padding: "6px 10px", borderBottom: "1px solid #f0efe8" }}>
+              <div style={{ fontSize: 8, color: "#b0aea5", fontWeight: 600, marginBottom: 4 }}>PEOPLE</div>
               {searchResults.people.map(([name, p]) => (
-                <div key={name} onClick={() => { setPanel("people"); setSearch(""); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", cursor: "pointer" }}>
-                  <span style={{ fontSize: 10.5, color: "#E2E8F0" }}>{name}</span>
-                  <span style={{ fontSize: 8, color: "#64748B" }}>{p.role}</span>
+                <div key={name} onClick={() => { setPanel("people"); setSearch(""); setHighlightPerson(name); setTimeout(() => { const el = document.getElementById(`person-${name.replace(/\s+/g, "-")}`); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 100); setTimeout(() => setHighlightPerson(null), 3000); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", cursor: "pointer" }}>
+                  <span style={{ fontSize: 10.5, color: "#1a1a18" }}>{name}</span>
+                  <span style={{ fontSize: 8, color: "#8a8a85" }}>{p.role}</span>
                 </div>
               ))}
             </div>}
@@ -448,27 +449,27 @@ export default function App() {
               {searchResults.connections.map((m, i) => (
                 <div key={i} onClick={() => { setSel(m.company); setPanel("graph"); setTab("🤝"); setSearch(""); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", cursor: "pointer" }}>
                   <span style={{ fontSize: 9 }}>{US[m.status]?.i}</span>
-                  <span style={{ fontSize: 10.5, color: "#E2E8F0" }}>{m.company.name}</span>
-                  {m.contact_name && <span style={{ fontSize: 8, color: "#94A3B8" }}>· {m.contact_name}</span>}
+                  <span style={{ fontSize: 10.5, color: "#1a1a18" }}>{m.company.name}</span>
+                  {m.contact_name && <span style={{ fontSize: 8, color: "#6b6b66" }}>· {m.contact_name}</span>}
                 </div>
               ))}
             </div>}
             {searchResults.companies.length === 0 && searchResults.people.length === 0 && searchResults.connections.length === 0 &&
-              <div style={{ padding: 12, fontSize: 10, color: "#475569", textAlign: "center" }}>No results</div>}
+              <div style={{ padding: 12, fontSize: 10, color: "#b0aea5", textAlign: "center" }}>No results</div>}
           </div>}
         </div>
         {/* Feedback button */}
-        <button onClick={() => setShowFeedback(true)} style={{ padding: "4px 8px", borderRadius: 5, border: "1px solid #1E293B", background: "transparent", color: "#475569", fontSize: 8.5, cursor: "pointer", fontFamily: "inherit" }}>💬</button>
+        <button onClick={() => setShowFeedback(true)} style={{ padding: "4px 8px", borderRadius: 5, border: "1px solid #e8e6dc", background: "transparent", color: "#b0aea5", fontSize: 8.5, cursor: "pointer", fontFamily: "inherit" }}>💬</button>
         {/* Auth */}
         {user ? (
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ fontSize: 11, color: "#94A3B8" }}>{profile?.username || user.email}</span>
+            <span style={{ fontSize: 11, color: "#6b6b66" }}>{profile?.username || user.email}</span>
             {score.score > 0 && <span style={{ fontSize: 8, color: "#FFD700", cursor: "pointer" }} onClick={() => setPanel("score")}>{score.emoji} {score.score}</span>}
-            <button onClick={signOut} style={{ padding: "3px 6px", borderRadius: 4, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 8, cursor: "pointer" }}>Sign out</button>
+            <button onClick={signOut} style={{ padding: "3px 6px", borderRadius: 4, border: "1px solid #e8e6dc", background: "transparent", color: "#8a8a85", fontSize: 8, cursor: "pointer" }}>Sign out</button>
           </div>
         ) : (
           <div style={{ display: "flex", gap: 4 }}>
-            <button onClick={() => setAuthMode("login")} style={{ padding: "4px 8px", borderRadius: 5, border: "1px solid #1E293B", background: "transparent", color: "#94A3B8", fontSize: 8.5, cursor: "pointer", fontFamily: "inherit" }}>Log in</button>
+            <button onClick={() => setAuthMode("login")} style={{ padding: "4px 8px", borderRadius: 5, border: "1px solid #e8e6dc", background: "transparent", color: "#6b6b66", fontSize: 8.5, cursor: "pointer", fontFamily: "inherit" }}>Log in</button>
             <button onClick={() => setAuthMode("signup")} style={{ padding: "4px 8px", borderRadius: 5, border: "1px solid #30D158", background: "#30D15818", color: "#30D158", fontSize: 8.5, cursor: "pointer", fontFamily: "inherit" }}>Sign up</button>
           </div>
         )}
@@ -476,18 +477,18 @@ export default function App() {
 
       {/* ── AUTH MODAL ────────────────────────────────────────────── */}
       {authMode && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => { setAuthMode(null); setSignupSuccess(false); }}>
-        <div onClick={e => e.stopPropagation()} style={{ background: "#0F172A", borderRadius: 14, padding: 24, border: "1px solid #1E293B", width: 360, maxWidth: "90vw" }}>
+        <div onClick={e => e.stopPropagation()} style={{ background: "#ffffff", borderRadius: 14, padding: 24, border: "1px solid #e8e6dc", width: 360, maxWidth: "90vw" }}>
           {signupSuccess ? <>
             <div style={{ textAlign: "center", padding: "10px 0" }}>
               <div style={{ fontSize: 36, marginBottom: 8 }}>📧</div>
-              <h2 style={{ margin: "0 0 8px", fontSize: 16, fontFamily: "'Outfit',sans-serif", color: "#F8FAFC" }}>Check your email</h2>
-              <p style={{ fontSize: 10.5, color: "#94A3B8", lineHeight: 1.5, marginBottom: 12 }}>We've sent a confirmation link to <strong style={{ color: "#E2E8F0" }}>{authForm.email}</strong>. Click the link in the email to activate your account.</p>
-              <p style={{ fontSize: 9, color: "#475569" }}>Didn't receive it? Check your spam folder, or try again in a few minutes.</p>
-              <button onClick={() => { setAuthMode(null); setSignupSuccess(false); }} style={{ marginTop: 12, padding: "8px 20px", borderRadius: 7, border: "1px solid #1E293B", background: "transparent", color: "#94A3B8", fontSize: 10, cursor: "pointer", fontFamily: "inherit" }}>Close</button>
+              <h2 style={{ margin: "0 0 8px", fontSize: 16, fontFamily: "'Inter',sans-serif", color: "#141413" }}>Check your email</h2>
+              <p style={{ fontSize: 10.5, color: "#6b6b66", lineHeight: 1.5, marginBottom: 12 }}>We've sent a confirmation link to <strong style={{ color: "#1a1a18" }}>{authForm.email}</strong>. Click the link in the email to activate your account.</p>
+              <p style={{ fontSize: 9, color: "#b0aea5" }}>Didn't receive it? Check your spam folder, or try again in a few minutes.</p>
+              <button onClick={() => { setAuthMode(null); setSignupSuccess(false); }} style={{ marginTop: 12, padding: "8px 20px", borderRadius: 7, border: "1px solid #e8e6dc", background: "transparent", color: "#6b6b66", fontSize: 10, cursor: "pointer", fontFamily: "inherit" }}>Close</button>
             </div>
           </> : <>
-          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "'Outfit',sans-serif", color: "#F8FAFC" }}>{authMode === "signup" ? "Create Account" : "Welcome Back"}</h2>
-          <p style={{ margin: "0 0 16px", fontSize: 11, color: "#64748B" }}>{authMode === "signup" ? "Join the London AI Ecosystem network" : "Sign in to track your connections"}</p>
+          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "'Inter',sans-serif", color: "#141413" }}>{authMode === "signup" ? "Create Account" : "Welcome Back"}</h2>
+          <p style={{ margin: "0 0 16px", fontSize: 11, color: "#8a8a85" }}>{authMode === "signup" ? "Join the London AI Ecosystem network" : "Sign in to track your connections"}</p>
           {authError && <div style={{ padding: "6px 10px", borderRadius: 6, background: "#FF453A18", border: "1px solid #FF453A33", color: "#FF453A", fontSize: 9.5, marginBottom: 10 }}>{authError}</div>}
           {authMode === "signup" && <input type="text" placeholder="Username *" value={authForm.username} onChange={e => setAuthForm(p => ({ ...p, username: e.target.value }))} style={inputStyle} />}
           <input type="email" placeholder="Email *" value={authForm.email} onChange={e => setAuthForm(p => ({ ...p, email: e.target.value }))} style={inputStyle} />
@@ -497,10 +498,10 @@ export default function App() {
             <input type="text" placeholder="LinkedIn URL (optional)" value={authForm.linkedin} onChange={e => setAuthForm(p => ({ ...p, linkedin: e.target.value }))} style={inputStyle} />
             <input type="text" placeholder="Company (optional)" value={authForm.company} onChange={e => setAuthForm(p => ({ ...p, company: e.target.value }))} style={inputStyle} />
           </>}
-          <button onClick={() => handleAuth(authMode)} disabled={authLoading} style={{ width: "100%", padding: "8px", borderRadius: 7, border: "none", background: "#30D158", color: "#000", fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", marginTop: 4, opacity: authLoading ? 0.6 : 1 }}>
+          <button onClick={() => handleAuth(authMode)} disabled={authLoading} style={{ width: "100%", padding: "8px", borderRadius: 7, border: "none", background: "#C15F3C", color: "#000", fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", marginTop: 4, opacity: authLoading ? 0.6 : 1 }}>
             {authLoading ? "..." : authMode === "signup" ? "Create Account" : "Sign In"}
           </button>
-          <p style={{ margin: "10px 0 0", fontSize: 9, color: "#64748B", textAlign: "center" }}>
+          <p style={{ margin: "10px 0 0", fontSize: 9, color: "#8a8a85", textAlign: "center" }}>
             {authMode === "signup" ? "Already have an account?" : "Don't have an account?"}{" "}
             <span onClick={() => { setAuthMode(authMode === "signup" ? "login" : "signup"); setAuthError(""); setSignupSuccess(false); }} style={{ color: "#00D4FF", cursor: "pointer" }}>{authMode === "signup" ? "Log in" : "Sign up"}</span>
           </p>
@@ -510,29 +511,29 @@ export default function App() {
 
       {/* ── FEEDBACK MODAL ────────────────────────────────────────── */}
       {showFeedback && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setShowFeedback(false)}>
-        <div onClick={e => e.stopPropagation()} style={{ background: "#0F172A", borderRadius: 14, padding: 24, border: "1px solid #1E293B", width: 400, maxWidth: "90vw", maxHeight: "80vh", overflowY: "auto" }}>
-          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "'Outfit',sans-serif", color: "#F8FAFC" }}>💬 Feedback</h2>
-          <p style={{ margin: "0 0 14px", fontSize: 9.5, color: "#64748B" }}>Help us improve London AI Ecosystem</p>
+        <div onClick={e => e.stopPropagation()} style={{ background: "#ffffff", borderRadius: 14, padding: 24, border: "1px solid #e8e6dc", width: 400, maxWidth: "90vw", maxHeight: "80vh", overflowY: "auto" }}>
+          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "'Inter',sans-serif", color: "#141413" }}>💬 Feedback</h2>
+          <p style={{ margin: "0 0 14px", fontSize: 9.5, color: "#8a8a85" }}>Help us improve London AI Ecosystem</p>
           {fbSubmitted ? <div style={{ padding: 20, textAlign: "center" }}><span style={{ fontSize: 28 }}>✅</span><p style={{ color: "#30D158", marginTop: 8 }}>Thank you! Feedback submitted.</p></div> : <>
             <div style={{ display: "flex", gap: 4, marginBottom: 10 }}>
               {["feature", "bug", "data", "general"].map(c => (
-                <button key={c} onClick={() => setFbForm(p => ({ ...p, category: c }))} style={{ padding: "3px 8px", borderRadius: 4, border: `1px solid ${fbForm.category === c ? "#30D158" : "#1E293B"}`, background: fbForm.category === c ? "#30D15818" : "transparent", color: fbForm.category === c ? "#30D158" : "#64748B", fontSize: 9, cursor: "pointer", fontFamily: "inherit", textTransform: "capitalize" }}>{c}</button>
+                <button key={c} onClick={() => setFbForm(p => ({ ...p, category: c }))} style={{ padding: "3px 8px", borderRadius: 4, border: `1px solid ${fbForm.category === c ? "#30D158" : "#e8e6dc"}`, background: fbForm.category === c ? "#30D15818" : "transparent", color: fbForm.category === c ? "#30D158" : "#64748B", fontSize: 9, cursor: "pointer", fontFamily: "inherit", textTransform: "capitalize" }}>{c}</button>
               ))}
             </div>
             <textarea value={fbForm.message} onChange={e => setFbForm(p => ({ ...p, message: e.target.value }))} placeholder="What would you like to see improved?" rows={4} style={{ ...inputStyle, resize: "vertical" }} />
-            <button onClick={submitFeedback} disabled={!fbForm.message.trim()} style={{ width: "100%", padding: "8px", borderRadius: 7, border: "none", background: "#30D158", color: "#000", fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", opacity: fbForm.message.trim() ? 1 : 0.4 }}>Submit Feedback</button>
+            <button onClick={submitFeedback} disabled={!fbForm.message.trim()} style={{ width: "100%", padding: "8px", borderRadius: 7, border: "none", background: "#C15F3C", color: "#000", fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", opacity: fbForm.message.trim() ? 1 : 0.4 }}>Submit Feedback</button>
           </>}
           {/* My feedback history */}
-          {myFeedback.length > 0 && <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid #1E293B" }}>
-            <div style={{ fontSize: 9, color: "#64748B", fontWeight: 600, marginBottom: 6 }}>YOUR FEEDBACK HISTORY</div>
+          {myFeedback.length > 0 && <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid #e8e6dc" }}>
+            <div style={{ fontSize: 9, color: "#8a8a85", fontWeight: 600, marginBottom: 6 }}>YOUR FEEDBACK HISTORY</div>
             {myFeedback.map(fb => (
-              <div key={fb.id} style={{ padding: "6px 0", borderBottom: "1px solid #111827" }}>
+              <div key={fb.id} style={{ padding: "6px 0", borderBottom: "1px solid #f0efe8" }}>
                 <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                  <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: fb.status === "resolved" ? "#30D15818" : fb.status === "in_progress" ? "#FFD60A18" : "#1E293B", color: fb.status === "resolved" ? "#30D158" : fb.status === "in_progress" ? "#FFD60A" : "#64748B", textTransform: "uppercase" }}>{fb.status}</span>
-                  <span style={{ fontSize: 8, color: "#475569" }}>{fb.category}</span>
-                  <span style={{ fontSize: 7.5, color: "#374151" }}>{new Date(fb.created_at).toLocaleDateString()}</span>
+                  <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: fb.status === "resolved" ? "#30D15818" : fb.status === "in_progress" ? "#FFD60A18" : "#e8e6dc", color: fb.status === "resolved" ? "#30D158" : fb.status === "in_progress" ? "#FFD60A" : "#64748B", textTransform: "uppercase" }}>{fb.status}</span>
+                  <span style={{ fontSize: 8, color: "#b0aea5" }}>{fb.category}</span>
+                  <span style={{ fontSize: 7.5, color: "#c5c3ba" }}>{new Date(fb.created_at).toLocaleDateString()}</span>
                 </div>
-                <div style={{ fontSize: 10, color: "#CBD5E1", marginTop: 2 }}>{fb.message}</div>
+                <div style={{ fontSize: 10, color: "#3d3d3a", marginTop: 2 }}>{fb.message}</div>
                 {fb.admin_response && <div style={{ fontSize: 9.5, color: "#30D158", marginTop: 3, padding: "3px 6px", background: "#30D15810", borderRadius: 4 }}>↳ {fb.admin_response}</div>}
               </div>
             ))}
@@ -541,30 +542,30 @@ export default function App() {
       </div>}
 
       {/* ── LEFT SIDEBAR (graph) ──────────────────────────────────── */}
-      {panel === "graph" && <div style={{ position: "absolute", top: 55, left: 6, zIndex: 10, background: "rgba(15,23,42,0.9)", borderRadius: 10, padding: "7px 7px 10px", backdropFilter: "blur(14px)", border: "1px solid #1E293B", maxHeight: "calc(100vh - 75px)", overflowY: "auto", width: 155 }}>
+      {panel === "graph" && <div style={{ position: "absolute", top: 55, left: 6, zIndex: 10, background: "rgba(255,255,255,0.95)", borderRadius: 10, padding: "7px 7px 10px", backdropFilter: "blur(14px)", border: "1px solid #e8e6dc", maxHeight: "calc(100vh - 75px)", overflowY: "auto", width: 155 }}>
         <div style={{ display: "flex", gap: 2, marginBottom: 5 }}>
           {[["All", () => setCats(new Set(Object.keys(CC)))], ["None", () => setCats(new Set())], ["Cos", () => setCats(new Set(Object.keys(CC).filter(k => !["investor", "academic", "accelerator"].includes(k))))]].map(([l, fn]) => (
-            <button key={l} onClick={fn} style={{ flex: 1, padding: "2px", borderRadius: 4, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 7.5, cursor: "pointer", fontFamily: "inherit" }}>{l}</button>
+            <button key={l} onClick={fn} style={{ flex: 1, padding: "2px", borderRadius: 4, border: "1px solid #e8e6dc", background: "transparent", color: "#8a8a85", fontSize: 7.5, cursor: "pointer", fontFamily: "inherit" }}>{l}</button>
           ))}
         </div>
         {Object.entries(CC).map(([k, cfg]) => (
           <div key={k} onClick={() => tc(k)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "2px 3px", borderRadius: 3, cursor: "pointer", opacity: cats.has(k) ? 1 : 0.22 }}>
             <div style={{ width: 7, height: 7, borderRadius: "50%", background: cfg.c, flexShrink: 0 }} />
-            <span style={{ fontSize: 10, color: "#CBD5E1", flex: 1 }}>{cfg.l}</span>
-            <span style={{ fontSize: 7, color: "#475569" }}>{companies.filter(c => c.cat === k).length}</span>
+            <span style={{ fontSize: 10, color: "#3d3d3a", flex: 1 }}>{cfg.l}</span>
+            <span style={{ fontSize: 7, color: "#b0aea5" }}>{companies.filter(c => c.cat === k).length}</span>
           </div>
         ))}
-        <div style={{ marginTop: 6, paddingTop: 5, borderTop: "1px solid #1E293B" }}>
-          <div style={{ fontSize: 9, color: "#475569", fontWeight: 600, marginBottom: 3 }}>CONNECTIONS</div>
-          {Object.entries(ECfg).map(([t, cfg]) => (<div key={t} style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 1 }}><div style={{ width: 10, height: 1.5, background: cfg.c }} /><span style={{ fontSize: 7.5, color: "#64748B" }}>{cfg.l}</span></div>))}
+        <div style={{ marginTop: 6, paddingTop: 5, borderTop: "1px solid #e8e6dc" }}>
+          <div style={{ fontSize: 9, color: "#b0aea5", fontWeight: 600, marginBottom: 3 }}>CONNECTIONS</div>
+          {Object.entries(ECfg).map(([t, cfg]) => (<div key={t} style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 1 }}><div style={{ width: 10, height: 1.5, background: cfg.c }} /><span style={{ fontSize: 7.5, color: "#8a8a85" }}>{cfg.l}</span></div>))}
         </div>
-        <div style={{ marginTop: 6, paddingTop: 5, borderTop: "1px solid #1E293B" }}>
-          <div style={{ fontSize: 9, color: "#475569", fontWeight: 600, marginBottom: 3 }}>BUBBLE SIZE = FUNDING</div>
+        <div style={{ marginTop: 6, paddingTop: 5, borderTop: "1px solid #e8e6dc" }}>
+          <div style={{ fontSize: 9, color: "#b0aea5", fontWeight: 600, marginBottom: 3 }}>BUBBLE SIZE = FUNDING</div>
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
             <div style={{ width: 6, height: 6, borderRadius: "50%", border: "1px solid #475569" }} />
-            <span style={{ fontSize: 7, color: "#475569" }}>Small</span>
+            <span style={{ fontSize: 7, color: "#b0aea5" }}>Small</span>
             <div style={{ width: 12, height: 12, borderRadius: "50%", border: "1px solid #475569" }} />
-            <span style={{ fontSize: 7, color: "#475569" }}>Large = more funding</span>
+            <span style={{ fontSize: 7, color: "#b0aea5" }}>Large = more funding</span>
           </div>
         </div>
       </div>}
@@ -574,26 +575,26 @@ export default function App() {
 
       {/* ── UPDATES PANEL ────────────────────────────────────────── */}
       {panel === "updates" && <div style={{ position: "absolute", top: 55, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: "0 20px 20px" }}>
-        <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 20, fontWeight: 700, color: "#F8FAFC", margin: "10px 0 4px" }}>Ecosystem Updates</h2>
-        <p style={{ fontSize: 11, color: "#475569", marginBottom: 10 }}>Funding, acquisitions, people moves, milestones, interviews</p>
+        <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 20, fontWeight: 700, color: "#141413", margin: "10px 0 4px" }}>Ecosystem Updates</h2>
+        <p style={{ fontSize: 11, color: "#b0aea5", marginBottom: 10 }}>Funding, acquisitions, people moves, milestones, interviews</p>
         {/* Category tabs */}
         <div style={{ display: "flex", gap: 4, marginBottom: 14, flexWrap: "wrap" }}>
           {Object.entries(UPDATE_TYPES).map(([k, cfg]) => (
-            <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "3px 8px", borderRadius: 4, border: `1px solid ${updateFilter === k ? cfg.c : "#1E293B"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#64748B", fontSize: 9, cursor: "pointer", fontFamily: "inherit" }}>{cfg.label}</button>
+            <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "3px 8px", borderRadius: 4, border: `1px solid ${updateFilter === k ? cfg.c : "#e8e6dc"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#64748B", fontSize: 9, cursor: "pointer", fontFamily: "inherit" }}>{cfg.label}</button>
           ))}
         </div>
         {filteredUpdates.map((u, i) => {
           const co = companies.find(c => c.id === u.company);
-          return (<div key={i} style={{ display: "flex", gap: 12, padding: "10px 0", borderBottom: "1px solid #111827" }}>
+          return (<div key={i} style={{ display: "flex", gap: 12, padding: "10px 0", borderBottom: "1px solid #f0efe8" }}>
             <div style={{ flexShrink: 0, width: 75 }}>
-              <div style={{ fontSize: 9, color: "#475569" }}>{u.date}</div>
+              <div style={{ fontSize: 9, color: "#b0aea5" }}>{u.date}</div>
               <div style={{ fontSize: 8, color: UPDATE_TYPES[u.type]?.c || "#666", textTransform: "uppercase", fontWeight: 600, marginTop: 2 }}>{u.type}</div>
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 13, color: "#E2E8F0", lineHeight: 1.5 }}>{u.text}</div>
+              <div style={{ fontSize: 13, color: "#1a1a18", lineHeight: 1.5 }}>{u.text}</div>
               <div style={{ display: "flex", gap: 8, marginTop: 4, alignItems: "center" }}>
                 {co && <span onClick={() => { setSel(co); setPanel("graph"); setTab("info"); }} style={{ fontSize: 9, color: CC[co.cat]?.c || "#666", cursor: "pointer" }}>{CC[co.cat]?.i} {co.name} →</span>}
-                {u.link && <a href={u.link} target="_blank" rel="noopener" style={{ fontSize: 8.5, color: "#64748B", textDecoration: "none" }}>📰 Source →</a>}
+                {u.link && <a href={u.link} target="_blank" rel="noopener" style={{ fontSize: 8.5, color: "#8a8a85", textDecoration: "none" }}>📰 Source →</a>}
               </div>
             </div>
           </div>);
@@ -602,21 +603,21 @@ export default function App() {
 
       {/* ── PEOPLE PANEL ─────────────────────────────────────────── */}
       {panel === "people" && <div style={{ position: "absolute", top: 55, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: "0 20px 20px" }}>
-        <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 20, fontWeight: 700, color: "#F8FAFC", margin: "10px 0 4px" }}>Key People</h2>
-        <p style={{ fontSize: 11, color: "#475569", marginBottom: 14 }}>Founders, CEOs, and leaders with interviews & social links</p>
+        <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 20, fontWeight: 700, color: "#141413", margin: "10px 0 4px" }}>Key People</h2>
+        <p style={{ fontSize: 11, color: "#b0aea5", marginBottom: 14 }}>Founders, CEOs, and leaders with interviews & social links</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 8 }}>
           {Object.entries(PEOPLE).map(([name, p]) => {
             const isStarred = stars.has(`person:${name}`);
             return (
-              <div key={name} style={{ background: "#0F172A", borderRadius: 8, padding: "12px", border: "1px solid #1E293B" }}>
+              <div key={name} id={`person-${name.replace(/\s+/g, "-")}`} style={{ background: highlightPerson === name ? "#fff3e0" : "#ffffff", borderRadius: 8, padding: "12px", border: `1px solid ${highlightPerson === name ? "#C15F3C" : "#e8e6dc"}`, transition: "all 0.5s ease", boxShadow: highlightPerson === name ? "0 0 0 3px rgba(193,95,60,0.2)" : "none" }}>
                 <div style={{ display: "flex", alignItems: "start", gap: 8 }}>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 14, color: "#F8FAFC", fontWeight: 600 }}>{name}</div>
-                    <div style={{ fontSize: 11, color: "#64748B", marginTop: 1 }}>{p.role}</div>
+                    <div style={{ fontSize: 14, color: "#141413", fontWeight: 600 }}>{name}</div>
+                    <div style={{ fontSize: 11, color: "#8a8a85", marginTop: 1 }}>{p.role}</div>
                   </div>
                   <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
                     <span onClick={() => toggleStar("person", name)} style={{ cursor: "pointer" }}><StarIcon filled={isStarred} /></span>
-                    {p.tw && <a href={p.tw} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, borderRadius: 4, background: "#1a1a1a", border: "1px solid #333" }} title="X"><XIcon size={12} /></a>}
+                    {p.tw && <a href={p.tw} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, borderRadius: 4, background: "#2a2a28", border: "1px solid #333" }} title="X"><XIcon size={12} /></a>}
                     {p.li && <a href={p.li} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, borderRadius: 4, background: "#0A66C2" }} title="LinkedIn"><LIIcon size={12} /></a>}
                   </div>
                 </div>
@@ -625,8 +626,8 @@ export default function App() {
                   {p.co.map(cid => { const co = companies.find(c => c.id === cid); return co ? <span key={cid} onClick={() => { setSel(co); setPanel("graph"); setTab("info"); }} style={{ fontSize: 8, color: CC[co.cat]?.c, cursor: "pointer", padding: "1px 5px", borderRadius: 3, background: (CC[co.cat]?.c || "#666") + "18" }}>{co.s || co.name}</span> : null; })}
                 </div>
                 {/* Podcasts — top 3 + more */}
-                {p.pods && p.pods.length > 0 && <div style={{ marginTop: 8, paddingTop: 6, borderTop: "1px solid #1E293B" }}>
-                  <div style={{ fontSize: 9, color: "#475569", fontWeight: 600, marginBottom: 3 }}>INTERVIEWS & PODCASTS</div>
+                {p.pods && p.pods.length > 0 && <div style={{ marginTop: 8, paddingTop: 6, borderTop: "1px solid #e8e6dc" }}>
+                  <div style={{ fontSize: 9, color: "#b0aea5", fontWeight: 600, marginBottom: 3 }}>INTERVIEWS & PODCASTS</div>
                   <PodcastList pods={p.pods} />
                 </div>}
               </div>
@@ -637,38 +638,38 @@ export default function App() {
 
       {/* ── SCORE PANEL ──────────────────────────────────────────── */}
       {panel === "score" && <div style={{ position: "absolute", top: 55, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: "0 20px 20px" }}>
-        <h2 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 20, fontWeight: 700, color: "#F8FAFC", margin: "10px 0 4px" }}>Network Score & Badges</h2>
+        <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 20, fontWeight: 700, color: "#141413", margin: "10px 0 4px" }}>Network Score & Badges</h2>
         {!user && <div style={{ padding: "12px", borderRadius: 8, background: "#FF9F0A18", border: "1px solid #FF9F0A33", marginBottom: 12 }}>
           <span style={{ fontSize: 10, color: "#FF9F0A" }}>⚠️ Sign up to save your score, appear on the leaderboard, and track connections across devices.</span>
           <button onClick={() => setAuthMode("signup")} style={{ marginLeft: 8, padding: "3px 8px", borderRadius: 4, border: "1px solid #30D158", background: "#30D15818", color: "#30D158", fontSize: 9, cursor: "pointer" }}>Sign up</button>
         </div>}
         {/* Score card */}
-        <div style={{ background: "linear-gradient(135deg,#1E293B,#0F172A)", borderRadius: 12, padding: "20px", border: "1px solid #334155", marginBottom: 12, textAlign: "center" }}>
+        <div style={{ background: "linear-gradient(135deg,#e8e6dc,#ffffff)", borderRadius: 12, padding: "20px", border: "1px solid #d5d3ca", marginBottom: 12, textAlign: "center" }}>
           <div style={{ fontSize: 40 }}>{score.emoji || "🔭"}</div>
-          <div style={{ fontSize: 34, fontWeight: 800, fontFamily: "'Outfit',sans-serif", color: "#FFD700", marginTop: 4 }}>{score.score}</div>
-          <div style={{ fontSize: 16, color: "#E2E8F0", fontWeight: 600 }}>{score.level || "Explorer"}</div>
+          <div style={{ fontSize: 34, fontWeight: 800, fontFamily: "'Inter',sans-serif", color: "#FFD700", marginTop: 4 }}>{score.score}</div>
+          <div style={{ fontSize: 16, color: "#1a1a18", fontWeight: 600 }}>{score.level || "Explorer"}</div>
           {score.nextLevel && <>
-            <div style={{ width: "100%", height: 4, background: "#1E293B", borderRadius: 2, marginTop: 10 }}>
+            <div style={{ width: "100%", height: 4, background: "#e8e6dc", borderRadius: 2, marginTop: 10 }}>
               <div style={{ width: score.pct + "%", height: 4, background: "linear-gradient(90deg,#FF2D55,#FFD700)", borderRadius: 2 }} />
             </div>
-            <div style={{ fontSize: 8.5, color: "#475569", marginTop: 4 }}>{score.pct}% to {score.nextLevel} ({score.nextMin} pts)</div>
+            <div style={{ fontSize: 8.5, color: "#b0aea5", marginTop: 4 }}>{score.pct}% to {score.nextLevel} ({score.nextMin} pts)</div>
           </>}
           <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 12 }}>
-            <div><div style={{ fontSize: 16, fontWeight: 700, color: "#E2E8F0" }}>{mn}</div><div style={{ fontSize: 8, color: "#475569" }}>Tracked</div></div>
-            <div><div style={{ fontSize: 16, fontWeight: 700, color: "#E2E8F0" }}>{score.breakdown.catCount || 0}</div><div style={{ fontSize: 8, color: "#475569" }}>Categories</div></div>
-            <div><div style={{ fontSize: 16, fontWeight: 700, color: "#E2E8F0" }}>{score.breakdown.frontierCoverage || 0}/7</div><div style={{ fontSize: 8, color: "#475569" }}>Frontier</div></div>
-            <div><div style={{ fontSize: 16, fontWeight: 700, color: "#E2E8F0" }}>{earnedBadges.length}/{BADGES.length}</div><div style={{ fontSize: 8, color: "#475569" }}>Badges</div></div>
+            <div><div style={{ fontSize: 16, fontWeight: 700, color: "#1a1a18" }}>{mn}</div><div style={{ fontSize: 8, color: "#b0aea5" }}>Tracked</div></div>
+            <div><div style={{ fontSize: 16, fontWeight: 700, color: "#1a1a18" }}>{score.breakdown.catCount || 0}</div><div style={{ fontSize: 8, color: "#b0aea5" }}>Categories</div></div>
+            <div><div style={{ fontSize: 16, fontWeight: 700, color: "#1a1a18" }}>{score.breakdown.frontierCoverage || 0}/7</div><div style={{ fontSize: 8, color: "#b0aea5" }}>Frontier</div></div>
+            <div><div style={{ fontSize: 16, fontWeight: 700, color: "#1a1a18" }}>{earnedBadges.length}/{BADGES.length}</div><div style={{ fontSize: 8, color: "#b0aea5" }}>Badges</div></div>
           </div>
         </div>
         {/* Badges */}
-        <div style={{ fontSize: 11, color: "#94A3B8", fontWeight: 600, marginBottom: 8 }}>BADGES</div>
+        <div style={{ fontSize: 11, color: "#6b6b66", fontWeight: 600, marginBottom: 8 }}>BADGES</div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(140px,1fr))", gap: 6, marginBottom: 16 }}>
           {BADGES.map(b => {
             const earned = earnedBadges.find(e => e.id === b.id);
-            return (<div key={b.id} style={{ background: earned ? "#1E293B" : "#0B1120", borderRadius: 8, padding: "10px", border: `1px solid ${earned ? "#334155" : "#111827"}`, opacity: earned ? 1 : 0.4, textAlign: "center" }}>
+            return (<div key={b.id} style={{ background: earned ? "#e8e6dc" : "#f8f7f3", borderRadius: 8, padding: "10px", border: `1px solid ${earned ? "#d5d3ca" : "#f0efe8"}`, opacity: earned ? 1 : 0.4, textAlign: "center" }}>
               <div style={{ fontSize: 22 }}>{b.icon}</div>
-              <div style={{ fontSize: 10, color: "#E2E8F0", fontWeight: 600, marginTop: 3 }}>{b.name}</div>
-              <div style={{ fontSize: 8, color: "#475569", marginTop: 2 }}>{b.desc}</div>
+              <div style={{ fontSize: 10, color: "#1a1a18", fontWeight: 600, marginTop: 3 }}>{b.name}</div>
+              <div style={{ fontSize: 8, color: "#b0aea5", marginTop: 2 }}>{b.desc}</div>
               {earned && <div style={{ fontSize: 7.5, color: "#30D158", marginTop: 3 }}>✓ Earned</div>}
             </div>);
           })}
@@ -676,23 +677,23 @@ export default function App() {
       </div>}
 
       {/* ── DETAIL PANEL (graph) ──────────────────────────────────── */}
-      {sel && panel === "graph" && <div style={{ position: "absolute", top: 55, right: 6, width: 320, maxHeight: "calc(100vh - 75px)", overflowY: "auto", background: "rgba(15,23,42,0.95)", borderRadius: 12, backdropFilter: "blur(16px)", border: "1px solid #1E293B", zIndex: 20 }}>
-        <div style={{ padding: "12px 14px 8px", borderBottom: "1px solid #1E293B" }}>
+      {sel && panel === "graph" && <div style={{ position: "absolute", top: 55, right: 6, width: 320, maxHeight: "calc(100vh - 75px)", overflowY: "auto", background: "rgba(255,255,255,0.97)", borderRadius: 12, backdropFilter: "blur(16px)", border: "1px solid #e8e6dc", zIndex: 20 }}>
+        <div style={{ padding: "12px 14px 8px", borderBottom: "1px solid #e8e6dc" }}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ flex: 1 }}>
               <span style={{ fontSize: 8, color: CC[sel.cat]?.c, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>{CC[sel.cat]?.i} {CC[sel.cat]?.l}</span>
-              <h2 style={{ margin: "2px 0 0", fontSize: 18, fontFamily: "'Outfit',sans-serif", fontWeight: 700, color: "#F8FAFC" }}>{sel.name}</h2>
-              {sel.hq && <p style={{ margin: "1px 0 0", fontSize: 9, color: "#64748B" }}>📍 {sel.hq}</p>}
+              <h2 style={{ margin: "2px 0 0", fontSize: 18, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#141413" }}>{sel.name}</h2>
+              {sel.hq && <p style={{ margin: "1px 0 0", fontSize: 9, color: "#8a8a85" }}>📍 {sel.hq}</p>}
             </div>
             <div style={{ display: "flex", gap: 4, alignItems: "start" }}>
               <span onClick={() => toggleStar("company", sel.id)} style={{ cursor: "pointer" }}><StarIcon filled={stars.has(`company:${sel.id}`)} /></span>
-              <button onClick={() => setSel(null)} style={{ background: "none", border: "none", color: "#475569", fontSize: 15, cursor: "pointer" }}>✕</button>
+              <button onClick={() => setSel(null)} style={{ background: "none", border: "none", color: "#b0aea5", fontSize: 15, cursor: "pointer" }}>✕</button>
             </div>
           </div>
           {selUD && <div style={{ marginTop: 6, padding: "4px 7px", borderRadius: 5, background: US[selUD.status]?.c + "18", border: `1px solid ${US[selUD.status]?.c}30`, display: "flex", alignItems: "center", gap: 5 }}>
             <span style={{ fontSize: 9 }}>{US[selUD.status]?.i}</span>
             <span style={{ fontSize: 9, color: US[selUD.status]?.c, fontWeight: 600 }}>{US[selUD.status]?.l}</span>
-            {(selUD.contact_name || selUD.contact) && <span style={{ fontSize: 8, color: "#94A3B8" }}>· {selUD.contact_name || selUD.contact}</span>}
+            {(selUD.contact_name || selUD.contact) && <span style={{ fontSize: 8, color: "#6b6b66" }}>· {selUD.contact_name || selUD.contact}</span>}
           </div>}
           <div style={{ display: "flex", gap: 0, marginTop: 8 }}>
             {["info", "people", "links", "🤝"].map(t => (
@@ -708,26 +709,26 @@ export default function App() {
             {sel.focus && <S t="Focus" v={sel.focus} />}
             {sel.ethos && <S t="Ethos" v={sel.ethos} />}
             {sel.ms && <S t="Milestones" v={sel.ms} />}
-            {sel.jobs && <a href={sel.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#1E293B", color: "#E2E8F0", fontSize: 9.5, textDecoration: "none", fontFamily: "inherit", border: "1px solid #334155", marginTop: 6 }}>🔗 Careers →</a>}
+            {sel.jobs && <a href={sel.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#e8e6dc", color: "#1a1a18", fontSize: 9.5, textDecoration: "none", fontFamily: "inherit", border: "1px solid #d5d3ca", marginTop: 6 }}>🔗 Careers →</a>}
           </>}
           {tab === "people" && <>
             {sel.founders && <S t="Founders" v={sel.founders} />}
             {sel.kp && <S t="Key People" v={sel.kp} />}
             {relatedPeople.length > 0 && <div style={{ marginTop: 8 }}>
-              <div style={{ fontSize: 8, color: "#64748B", fontWeight: 600, textTransform: "uppercase", marginBottom: 4 }}>Social Links</div>
+              <div style={{ fontSize: 8, color: "#8a8a85", fontWeight: 600, textTransform: "uppercase", marginBottom: 4 }}>Social Links</div>
               {relatedPeople.map(([name, p]) => (
                 <div key={name} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0" }}>
-                  <span style={{ fontSize: 10, color: "#CBD5E1", flex: 1 }}>{name}</span>
-                  {p.tw && <a href={p.tw} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 20, height: 20, borderRadius: 4, background: "#1a1a1a", border: "1px solid #333" }}><XIcon size={11} /></a>}
+                  <span style={{ fontSize: 10, color: "#3d3d3a", flex: 1 }}>{name}</span>
+                  {p.tw && <a href={p.tw} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 20, height: 20, borderRadius: 4, background: "#2a2a28", border: "1px solid #333" }}><XIcon size={11} /></a>}
                   {p.li && <a href={p.li} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 20, height: 20, borderRadius: 4, background: "#0A66C2" }}><LIIcon size={11} /></a>}
                 </div>
               ))}
               {/* Podcasts for this company's people */}
               {relatedPeople.some(([, p]) => p.pods?.length > 0) && <div style={{ marginTop: 8 }}>
-                <div style={{ fontSize: 8, color: "#64748B", fontWeight: 600, textTransform: "uppercase", marginBottom: 4 }}>Interviews & Podcasts</div>
+                <div style={{ fontSize: 8, color: "#8a8a85", fontWeight: 600, textTransform: "uppercase", marginBottom: 4 }}>Interviews & Podcasts</div>
                 {relatedPeople.map(([name, p]) => p.pods?.length > 0 ? (
                   <div key={name} style={{ marginBottom: 6 }}>
-                    <div style={{ fontSize: 9, color: "#94A3B8", marginBottom: 2 }}>{name}</div>
+                    <div style={{ fontSize: 9, color: "#6b6b66", marginBottom: 2 }}>{name}</div>
                     <PodcastList pods={p.pods} compact />
                   </div>
                 ) : null)}
@@ -735,37 +736,37 @@ export default function App() {
             </div>}
           </>}
           {tab === "links" && <>
-            {ce.length === 0 ? <p style={{ fontSize: 9, color: "#475569" }}>No connections.</p> :
-              ce.map((e, i) => { const oid = e.s === sel.id ? e.t : e.s; const o = companies.find(c => c.id === oid); if (!o) return null; return (<div key={i} onClick={() => { setSel(o); setTab("info"); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", borderRadius: 4, cursor: "pointer", marginBottom: 2, background: "rgba(30,41,59,0.3)" }}><div style={{ width: 6, height: 6, borderRadius: "50%", background: ECfg[e.ty]?.c || "#444" }} /><span style={{ fontSize: 10, color: "#CBD5E1", flex: 1 }}>{o.name}</span>{e.l && <span style={{ fontSize: 7.5, color: "#475569" }}>{e.l}</span>}<span style={{ fontSize: 7, color: "#374151", textTransform: "uppercase" }}>{e.ty}</span></div>); })}
+            {ce.length === 0 ? <p style={{ fontSize: 9, color: "#b0aea5" }}>No connections.</p> :
+              ce.map((e, i) => { const oid = e.s === sel.id ? e.t : e.s; const o = companies.find(c => c.id === oid); if (!o) return null; return (<div key={i} onClick={() => { setSel(o); setTab("info"); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", borderRadius: 4, cursor: "pointer", marginBottom: 2, background: "rgba(0,0,0,0.03)" }}><div style={{ width: 6, height: 6, borderRadius: "50%", background: ECfg[e.ty]?.c || "#444" }} /><span style={{ fontSize: 10, color: "#3d3d3a", flex: 1 }}>{o.name}</span>{e.l && <span style={{ fontSize: 7.5, color: "#b0aea5" }}>{e.l}</span>}<span style={{ fontSize: 7, color: "#c5c3ba", textTransform: "uppercase" }}>{e.ty}</span></div>); })}
           </>}
           {tab === "🤝" && <>
-            <p style={{ fontSize: 9, color: "#64748B", marginBottom: 8 }}>Your connection to {sel.s || sel.name}.</p>
+            <p style={{ fontSize: 9, color: "#8a8a85", marginBottom: 8 }}>Your connection to {sel.s || sel.name}.</p>
             {!user && <div style={{ padding: "6px 8px", borderRadius: 5, background: "#FF9F0A18", border: "1px solid #FF9F0A33", marginBottom: 8, fontSize: 9, color: "#FF9F0A" }}>Sign up to save connections across devices. <span onClick={() => setAuthMode("signup")} style={{ textDecoration: "underline", cursor: "pointer" }}>Sign up</span></div>}
             {editConn === sel.id ? <>
               <div style={{ marginBottom: 6 }}>
-                <div style={{ fontSize: 8, color: "#64748B", marginBottom: 3 }}>STATUS</div>
+                <div style={{ fontSize: 8, color: "#8a8a85", marginBottom: 3 }}>STATUS</div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
                   {Object.entries(US).map(([k, cfg]) => (
-                    <button key={k} onClick={() => setCf(p => ({ ...p, status: k }))} style={{ padding: "2px 6px", borderRadius: 4, border: `1px solid ${cf.status === k ? cfg.c : "#1E293B"}`, background: cf.status === k ? cfg.c + "20" : "transparent", color: cf.status === k ? cfg.c : "#64748B", fontSize: 8, cursor: "pointer", fontFamily: "inherit" }}>{cfg.i} {cfg.l}</button>
+                    <button key={k} onClick={() => setCf(p => ({ ...p, status: k }))} style={{ padding: "2px 6px", borderRadius: 4, border: `1px solid ${cf.status === k ? cfg.c : "#e8e6dc"}`, background: cf.status === k ? cfg.c + "20" : "transparent", color: cf.status === k ? cfg.c : "#64748B", fontSize: 8, cursor: "pointer", fontFamily: "inherit" }}>{cfg.i} {cfg.l}</button>
                   ))}
                 </div>
               </div>
               <input type="text" value={cf.contact_name || ""} onChange={e => setCf(p => ({ ...p, contact_name: e.target.value }))} placeholder="Contact name" style={{ ...inputStyle, marginBottom: 5 }} />
               <textarea value={cf.notes || ""} onChange={e => setCf(p => ({ ...p, notes: e.target.value }))} placeholder="Notes" rows={2} style={{ ...inputStyle, resize: "vertical", marginBottom: 6 }} />
               <div style={{ display: "flex", gap: 4 }}>
-                <button onClick={() => saveConn(sel.id, cf)} style={{ flex: 1, padding: "5px", borderRadius: 5, border: "none", background: "#30D158", color: "#000", fontSize: 9, fontWeight: 600, cursor: "pointer" }}>Save</button>
-                <button onClick={() => setEditConn(null)} style={{ padding: "5px 10px", borderRadius: 5, border: "1px solid #1E293B", background: "transparent", color: "#64748B", fontSize: 9, cursor: "pointer" }}>Cancel</button>
+                <button onClick={() => saveConn(sel.id, cf)} style={{ flex: 1, padding: "5px", borderRadius: 5, border: "none", background: "#C15F3C", color: "#000", fontSize: 9, fontWeight: 600, cursor: "pointer" }}>Save</button>
+                <button onClick={() => setEditConn(null)} style={{ padding: "5px 10px", borderRadius: 5, border: "1px solid #e8e6dc", background: "transparent", color: "#8a8a85", fontSize: 9, cursor: "pointer" }}>Cancel</button>
                 {selUD && <button onClick={() => saveConn(sel.id, null)} style={{ padding: "5px 10px", borderRadius: 5, border: "1px solid #FF453A33", background: "transparent", color: "#FF453A", fontSize: 9, cursor: "pointer" }}>Remove</button>}
               </div>
             </> : <>
               {selUD ? <div>
-                <div style={{ padding: "8px", borderRadius: 6, background: "#0F172A", marginBottom: 6 }}>
+                <div style={{ padding: "8px", borderRadius: 6, background: "#ffffff", marginBottom: 6 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ fontSize: 12 }}>{US[selUD.status]?.i}</span><span style={{ fontSize: 11, color: US[selUD.status]?.c, fontWeight: 600 }}>{US[selUD.status]?.l}</span></div>
-                  {(selUD.contact_name || selUD.contact) && <div style={{ fontSize: 10, color: "#CBD5E1", marginTop: 3 }}>Contact: {selUD.contact_name || selUD.contact}</div>}
-                  {selUD.notes && <div style={{ fontSize: 9.5, color: "#94A3B8", marginTop: 3 }}>{selUD.notes}</div>}
+                  {(selUD.contact_name || selUD.contact) && <div style={{ fontSize: 10, color: "#3d3d3a", marginTop: 3 }}>Contact: {selUD.contact_name || selUD.contact}</div>}
+                  {selUD.notes && <div style={{ fontSize: 9.5, color: "#6b6b66", marginTop: 3 }}>{selUD.notes}</div>}
                 </div>
                 <div style={{ display: "flex", gap: 4 }}>
-                  <button onClick={() => { setCf({ status: selUD.status, contact_name: selUD.contact_name || selUD.contact || "", notes: selUD.notes || "" }); setEditConn(sel.id); }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid #1E293B", background: "transparent", color: "#94A3B8", fontSize: 9, cursor: "pointer" }}>Edit</button>
+                  <button onClick={() => { setCf({ status: selUD.status, contact_name: selUD.contact_name || selUD.contact || "", notes: selUD.notes || "" }); setEditConn(sel.id); }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid #e8e6dc", background: "transparent", color: "#6b6b66", fontSize: 9, cursor: "pointer" }}>Edit</button>
                   <button onClick={() => { setCf({ status: "target", contact_name: "", notes: "" }); setEditConn(sel.id); }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid #30D15850", background: "#30D15810", color: "#30D158", fontSize: 9, cursor: "pointer" }}>+ Add another</button>
                 </div>
               </div> : <button onClick={() => { setCf({ status: "target", contact_name: "", notes: "" }); setEditConn(sel.id); }} style={{ padding: "5px 12px", borderRadius: 5, border: "1px solid #30D15850", background: "#30D15810", color: "#30D158", fontSize: 9.5, cursor: "pointer" }}>+ Add Connection</button>}
@@ -775,11 +776,11 @@ export default function App() {
       </div>}
 
       {/* ── BOTTOM HINTS ─────────────────────────────────────────── */}
-      {panel === "graph" && !sel && <div style={{ position: "absolute", bottom: 10, left: "50%", transform: "translateX(-50%)", background: "rgba(15,23,42,0.8)", borderRadius: 8, padding: "5px 14px", border: "1px solid #1E293B", zIndex: 10 }}>
-        <p style={{ margin: 0, fontSize: 10.5, color: "#475569" }}>Click → details · Hover → highlight · ⭐ star to follow · 🤝 track connections</p>
+      {panel === "graph" && !sel && <div style={{ position: "absolute", bottom: 10, left: "50%", transform: "translateX(-50%)", background: "rgba(255,255,255,0.85)", borderRadius: 8, padding: "5px 14px", border: "1px solid #e8e6dc", zIndex: 10 }}>
+        <p style={{ margin: 0, fontSize: 10.5, color: "#b0aea5" }}>Click → details · Hover → highlight · ⭐ star to follow · 🤝 track connections</p>
       </div>}
       {panel === "graph" && <div style={{ position: "absolute", bottom: 10, right: 10, display: "flex", gap: 5, zIndex: 10 }}>
-        <SB l="Companies" v={filt.filter(c => !["investor", "academic", "accelerator"].includes(c.cat)).length} c="#FF2D55" />
+        <SB l="Companies" v={filt.filter(c => !["investor", "academic", "accelerator"].includes(c.cat)).length} c="#C15F3C" />
         <SB l="Investors" v={filt.filter(c => c.cat === "investor").length} c="#FFD700" />
         {mn > 0 && <SB l="Tracked" v={mn} c="#30D158" />}
       </div>}
@@ -788,22 +789,22 @@ export default function App() {
 }
 
 // ── SUBCOMPONENTS ───────────────────────────────────────────────────────
-const inputStyle = { width: "100%", padding: "6px 8px", borderRadius: 5, border: "1px solid #1E293B", background: "#111827", color: "#E2E8F0", fontSize: 12, fontFamily: "'JetBrains Mono',monospace", outline: "none", marginBottom: 8, boxSizing: "border-box" };
+const inputStyle = { width: "100%", padding: "6px 8px", borderRadius: 5, border: "1px solid #e8e6dc", background: "#f0efe8", color: "#1a1a18", fontSize: 12, fontFamily: "'Inter',sans-serif", outline: "none", marginBottom: 8, boxSizing: "border-box" };
 
-function M({ l, v }) { return (<div style={{ background: "#0F172A", borderRadius: 5, padding: "5px 7px" }}><div style={{ fontSize: 7, color: "#475569", textTransform: "uppercase", letterSpacing: 0.3 }}>{l}</div><div style={{ fontSize: 12, color: "#E2E8F0", fontWeight: 500 }}>{String(v)}</div></div>); }
-function S({ t, v }) { return (<div style={{ marginBottom: 8 }}><div style={{ fontSize: 8, color: "#64748B", textTransform: "uppercase", letterSpacing: 0.3, marginBottom: 1.5, fontWeight: 600 }}>{t}</div><div style={{ fontSize: 11.5, color: "#CBD5E1", lineHeight: 1.5 }}>{v}</div></div>); }
-function SB({ l, v, c }) { return (<div style={{ background: "rgba(15,23,42,0.85)", borderRadius: 6, padding: "3px 8px", border: "1px solid #1E293B", textAlign: "center" }}><div style={{ fontSize: 14, fontWeight: 700, color: c, fontFamily: "'Outfit',sans-serif" }}>{v}</div><div style={{ fontSize: 7, color: "#475569", textTransform: "uppercase" }}>{l}</div></div>); }
+function M({ l, v }) { return (<div style={{ background: "#ffffff", borderRadius: 5, padding: "5px 7px" }}><div style={{ fontSize: 7, color: "#b0aea5", textTransform: "uppercase", letterSpacing: 0.3 }}>{l}</div><div style={{ fontSize: 12, color: "#1a1a18", fontWeight: 500 }}>{String(v)}</div></div>); }
+function S({ t, v }) { return (<div style={{ marginBottom: 8 }}><div style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase", letterSpacing: 0.3, marginBottom: 1.5, fontWeight: 600 }}>{t}</div><div style={{ fontSize: 11.5, color: "#3d3d3a", lineHeight: 1.5 }}>{v}</div></div>); }
+function SB({ l, v, c }) { return (<div style={{ background: "rgba(255,255,255,0.9)", borderRadius: 6, padding: "3px 8px", border: "1px solid #e8e6dc", textAlign: "center" }}><div style={{ fontSize: 14, fontWeight: 700, color: c, fontFamily: "'Inter',sans-serif" }}>{v}</div><div style={{ fontSize: 7, color: "#b0aea5", textTransform: "uppercase" }}>{l}</div></div>); }
 
 function PodcastList({ pods, compact }) {
   const [showAll, setShowAll] = useState(false);
   const visible = showAll ? pods : pods.slice(0, 3);
   return (<div>
     {visible.map((pod, i) => (
-      <a key={i} href={pod.url} target="_blank" rel="noopener" style={{ display: "block", fontSize: compact ? 9 : 9.5, color: "#94A3B8", textDecoration: "none", padding: "2px 0", lineHeight: 1.4 }}>
-        <span style={{ color: "#64748B" }}>🎙️</span> <span style={{ color: "#CBD5E1" }}>{pod.label}</span>
+      <a key={i} href={pod.url} target="_blank" rel="noopener" style={{ display: "block", fontSize: compact ? 9 : 9.5, color: "#6b6b66", textDecoration: "none", padding: "2px 0", lineHeight: 1.4 }}>
+        <span style={{ color: "#8a8a85" }}>🎙️</span> <span style={{ color: "#3d3d3a" }}>{pod.label}</span>
       </a>
     ))}
     {pods.length > 3 && !showAll && <span onClick={() => setShowAll(true)} style={{ fontSize: 8.5, color: "#00D4FF", cursor: "pointer", display: "inline-block", marginTop: 2 }}>+ {pods.length - 3} more</span>}
-    {showAll && pods.length > 3 && <span onClick={() => setShowAll(false)} style={{ fontSize: 8.5, color: "#475569", cursor: "pointer", display: "inline-block", marginTop: 2 }}>show less</span>}
+    {showAll && pods.length > 3 && <span onClick={() => setShowAll(false)} style={{ fontSize: 8.5, color: "#b0aea5", cursor: "pointer", display: "inline-block", marginTop: 2 }}>show less</span>}
   </div>);
 }
