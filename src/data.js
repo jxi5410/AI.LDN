@@ -171,6 +171,7 @@ export const PEOPLE={
   "Steve Basher":{role:"CEO & Founder, SolveAI (ex-Palantir 8yr)",tw:null,li:null,co:["solveai"],pods:[]},
   "Joelle Pineau":{role:"Chief AI Officer, Cohere (ex-Meta FAIR VP)",tw:"https://x.com/jpineau_",li:null,co:["cohere"],pods:[]},
   "Azeem Azhar":{role:"Founder, Exponential View · AI analyst",tw:"https://x.com/azaboreal",li:"https://linkedin.com/in/azeem/",co:[],pods:[]},
+  "Danyal Akarca":{role:"Co-founder & CEO, Callosum (Cambridge neuroscience PhD, Schmidt Fellow)",tw:"https://x.com/DanAkarca",li:null,co:["callosum"],pods:[]},
   // ── INVESTOR PEOPLE ──
   "Nathan Benaich":{role:"Founder & GP, Air Street Capital · State of AI Report",tw:"https://x.com/nathanbenaich",li:"https://linkedin.com/in/nathanbenaich/",co:["air-street"],pods:[
     {label:"20VC — State of AI 2025",url:"https://www.youtube.com/watch?v=IxMp4QBQLYE"},
