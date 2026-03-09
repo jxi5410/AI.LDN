@@ -686,7 +686,7 @@ export default function App() {
       {/* ── INSIGHTS PANEL ────────────────────────────────────────── */}
       {panel === "bits" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", background: "#faf9f5" }}>
         {/* Subtitle */}
-        <p style={{ fontSize: 13, color: "#a0a09b", margin: "8px 20px 0" }}>Data, charts, ecosystem signals, and curated reads from London's AI scene</p>
+        <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 20px 12px" }}>Data, charts, ecosystem signals, and curated reads from London's AI scene</p>
         {/* Admin scrape button */}
         {user?.id === ADMIN_UID && <div style={{ padding: "6px 20px 0", display: "flex", justifyContent: "flex-end" }}>
           <button onClick={async () => {
@@ -758,7 +758,7 @@ export default function App() {
       {panel === "updates" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, background: "#faf9f5", display: "flex", flexDirection: "column" }}>
         {/* Sticky header with subtitle + filter buttons */}
         <div style={{ padding: isMobile ? "8px 12px" : "8px 20px", background: "#faf9f5", borderBottom: "1px solid #e8e5dc", flexShrink: 0, zIndex: 10 }}>
-          <p style={{ fontSize: 13, color: "#a0a09b", margin: "0 0 8px" }}>Funding, acquisitions, people moves, milestones, interviews</p>
+          <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 12px" }}>Funding, acquisitions, people moves, milestones, interviews</p>
           <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
             {Object.entries(UPDATE_TYPES).map(([k, cfg]) => (
               <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${updateFilter === k ? cfg.c : "#e8e5dc"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: k === "regulation" ? "'Inter',sans-serif" : "inherit", fontWeight: updateFilter === k ? 600 : (k === "regulation" ? 700 : 400), letterSpacing: k === "regulation" ? 0.3 : 0 }}>{cfg.label}</button>
@@ -878,7 +878,7 @@ export default function App() {
       {/* ── PEOPLE PANEL (collapsible categories) ─────────────────── */}
       {panel === "people" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <p style={{ fontSize: 13, color: "#a0a09b", margin: "12px 0 0" }}>Founders, CEOs, investors, and leaders</p>
+          <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 12px" }}>Founders, CEOs, investors, and leaders</p>
           <button onClick={() => {
             if (allPeopleOpen) { setOpenCats(new Set()); setAllPeopleOpen(false); }
             else { const allCats = new Set(); Object.values(PEOPLE).forEach(p => { const co = companies.find(c => p.co.includes(c.id)); if (co) allCats.add(co.cat); }); setOpenCats(allCats); setAllPeopleOpen(true); }
@@ -979,7 +979,7 @@ export default function App() {
 
       {/* ── EVENTS PANEL ─────────────────────────────────────────── */}
       {panel === "events" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
-        <p style={{ fontSize: 13, color: "#a0a09b", margin: "12px 0 14px" }}>Curated meetups, conferences, and community gatherings</p>
+        <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 12px" }}>Curated meetups, conferences, and community gatherings</p>
         {eventsLoading ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>Loading events...</div> :
         events.length === 0 ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>No events found</div> :
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(340px,1fr))", gap: 12 }}>
