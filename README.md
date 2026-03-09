@@ -51,6 +51,8 @@ Then fill in:
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 
+If these are not set, the app falls back to the current public project values and logs a warning in the browser console.
+
 ## Usage
 
 Drop `london-ai-map.jsx` into any React project, or render it in Claude.ai artifacts.
