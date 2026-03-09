@@ -685,11 +685,11 @@ export default function App() {
       {/* ── INSIGHTS PANEL ────────────────────────────────────────── */}
       {panel === "insights" && <InsightsPanel isMobile={isMobile} />}
 
-      {/* ── NEWS TIMELINE ──────────────────────────────────────────── */}
-      {panel === "updates" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: isMobile ? "auto" : "hidden", overflowX: isMobile ? "hidden" : "auto", background: "#faf9f5" }}>
+      {/* ── NEWS ──────────────────────────────────────────────────── */}
+      {panel === "updates" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", background: "#faf9f5" }}>
         <div style={{ padding: isMobile ? "0 12px" : "0 20px" }}>
           <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 26, fontWeight: 700, color: "#1a1a18", margin: "16px 0 6px" }}>News</h2>
-          <p style={{ fontSize: 11, color: "#a0a09b", marginBottom: 10 }}>Scroll {isMobile ? "down" : "right"} for latest →</p>
+          <p style={{ fontSize: 11, color: "#a0a09b", marginBottom: 10 }}>Funding, acquisitions, people moves, milestones, interviews</p>
           <div style={{ display: "flex", gap: 4, marginBottom: 14, flexWrap: "wrap" }}>
             {Object.entries(UPDATE_TYPES).map(([k, cfg]) => (
               <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${updateFilter === k ? cfg.c : "#e8e5dc"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit", fontWeight: updateFilter === k ? 600 : 400 }}>{cfg.label}</button>
@@ -697,11 +697,9 @@ export default function App() {
           </div>
         </div>
         {isMobile ? (
-          /* ── MOBILE: vertical timeline ── */
+          /* ── MOBILE: vertical arrow timeline ── */
           <div style={{ position: "relative", padding: "0 12px 40px 40px" }}>
-            {/* Vertical arrow line */}
             <div style={{ position: "absolute", left: 23, top: 0, bottom: 20, width: 2, background: "linear-gradient(to bottom, #C15F3C, #e8e5dc)" }} />
-            {/* Arrow head at bottom */}
             <div style={{ position: "absolute", left: 18, bottom: 10, width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: "10px solid #e8e5dc" }} />
             {filteredUpdates.map((u, i) => {
               const co = companies.find(c => c.id === u.company);
@@ -709,12 +707,9 @@ export default function App() {
               const dateObj = new Date(u.date);
               return (
                 <div key={i} style={{ position: "relative", marginBottom: 16 }}>
-                  {/* Dot on the line */}
                   <div style={{ position: "absolute", left: -23, top: 14, width: 12, height: 12, borderRadius: "50%", background: tc.c, border: "3px solid #faf9f5", boxShadow: `0 0 0 2px ${tc.c}50`, zIndex: 2 }} />
-                  {/* Connector line from dot to card */}
                   <div style={{ position: "absolute", left: -11, top: 19, width: 11, height: 2, background: tc.c + "60" }} />
-                  {/* Card */}
-                  <div style={{ background: "#ffffff", borderRadius: 10, border: `1px solid ${tc.c}30`, borderLeft: `3px solid ${tc.c}`, padding: 12, transition: "transform 0.2s" }}>
+                  <div style={{ background: "#ffffff", borderRadius: 10, border: `1px solid ${tc.c}30`, borderLeft: `3px solid ${tc.c}`, padding: 12 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
                       <span style={{ fontSize: 10, color: tc.c, fontWeight: 600, textTransform: "uppercase" }}>{tc.label}</span>
                       <span style={{ fontSize: 10, color: "#a0a09b" }}>{dateObj.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "2-digit" })}</span>
@@ -731,64 +726,29 @@ export default function App() {
             })}
           </div>
         ) : (
-          /* ── DESKTOP: horizontal timeline with arrow, cards above/below ── */
-          <div style={{ position: "relative", height: "calc(100vh - 200px)", overflowX: "auto", overflowY: "hidden", scrollBehavior: "smooth" }}>
-            {/* The scrollable inner container */}
-            <div style={{ display: "inline-flex", alignItems: "center", minWidth: "100%", height: "100%", padding: "0 60px 0 20px", position: "relative" }}>
-              {/* Horizontal arrow line — spans full width */}
-              <div style={{ position: "absolute", left: 0, right: 0, top: "50%", height: 3, background: "linear-gradient(to right, #e8e5dc, #C15F3C)", transform: "translateY(-50%)", zIndex: 1 }} />
-              {/* Arrow head at right end */}
-              <div style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", width: 0, height: 0, borderTop: "8px solid transparent", borderBottom: "8px solid transparent", borderLeft: "14px solid #C15F3C", zIndex: 2 }} />
-              {/* Cards */}
-              {[...filteredUpdates].reverse().map((u, i) => {
-                const co = companies.find(c => c.id === u.company);
-                const tc = UPDATE_TYPES[u.type] || { c: "#94A3B8", label: u.type };
-                const dateObj = new Date(u.date);
-                const isAbove = i % 2 === 0;
-                return (
-                  <div key={i} style={{ flexShrink: 0, width: 260, position: "relative", display: "flex", flexDirection: "column", alignItems: "center", marginRight: 12 }}>
-                    {/* Top card (even items) */}
-                    {isAbove && <div style={{ marginBottom: 8, width: "100%" }}>
-                      <div style={{ background: "#ffffff", borderRadius: 10, border: `1px solid ${tc.c}30`, borderLeft: `3px solid ${tc.c}`, padding: 12, transition: "transform 0.2s, box-shadow 0.2s" }}
-                        onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 6px 16px rgba(0,0,0,0.1)"; }}
-                        onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
-                          <span style={{ fontSize: 9, color: tc.c, fontWeight: 600, textTransform: "uppercase" }}>{tc.label}</span>
-                          <span style={{ fontSize: 9, color: "#a0a09b" }}>{dateObj.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "2-digit" })}</span>
-                        </div>
-                        <div style={{ fontSize: 12, color: "#2d2d2a", lineHeight: 1.4, marginBottom: 4 }}>{u.text}</div>
-                        <div style={{ display: "flex", gap: 5, alignItems: "center", flexWrap: "wrap" }}>
-                          {co && <span onClick={() => { setSel(co); setPanel("graph"); setTab("info"); }} style={{ fontSize: 10, color: CC[co.cat]?.c || "#666", cursor: "pointer" }}>{CC[co.cat]?.i} {co.s || co.name} →</span>}
-                          {u.link && <a href={u.link} target="_blank" rel="noopener" style={{ fontSize: 9, color: "#a0a09b", textDecoration: "none" }}>Source →</a>}
-                        </div>
-                      </div>
-                      {/* Connector down to line */}
-                      <div style={{ width: 2, height: 16, background: tc.c + "50", margin: "0 auto" }} />
-                    </div>}
-                    {/* Dot on the arrow */}
-                    <div style={{ width: 14, height: 14, borderRadius: "50%", background: tc.c, border: "3px solid #faf9f5", boxShadow: `0 0 0 2px ${tc.c}50`, zIndex: 3, flexShrink: 0 }} />
-                    {/* Bottom card (odd items) */}
-                    {!isAbove && <div style={{ marginTop: 8, width: "100%" }}>
-                      {/* Connector up from line */}
-                      <div style={{ width: 2, height: 16, background: tc.c + "50", margin: "0 auto" }} />
-                      <div style={{ background: "#ffffff", borderRadius: 10, border: `1px solid ${tc.c}30`, borderLeft: `3px solid ${tc.c}`, padding: 12, transition: "transform 0.2s, box-shadow 0.2s" }}
-                        onMouseEnter={e => { e.currentTarget.style.transform = "translateY(3px)"; e.currentTarget.style.boxShadow = "0 6px 16px rgba(0,0,0,0.1)"; }}
-                        onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
-                          <span style={{ fontSize: 9, color: tc.c, fontWeight: 600, textTransform: "uppercase" }}>{tc.label}</span>
-                          <span style={{ fontSize: 9, color: "#a0a09b" }}>{dateObj.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "2-digit" })}</span>
-                        </div>
-                        <div style={{ fontSize: 12, color: "#2d2d2a", lineHeight: 1.4, marginBottom: 4 }}>{u.text}</div>
-                        <div style={{ display: "flex", gap: 5, alignItems: "center", flexWrap: "wrap" }}>
-                          {co && <span onClick={() => { setSel(co); setPanel("graph"); setTab("info"); }} style={{ fontSize: 10, color: CC[co.cat]?.c || "#666", cursor: "pointer" }}>{CC[co.cat]?.i} {co.s || co.name} →</span>}
-                          {u.link && <a href={u.link} target="_blank" rel="noopener" style={{ fontSize: 9, color: "#a0a09b", textDecoration: "none" }}>Source →</a>}
-                        </div>
-                      </div>
-                    </div>}
+          /* ── DESKTOP: list format ── */
+          <div style={{ padding: "0 20px 20px" }}>
+            {filteredUpdates.map((u, i) => {
+              const co = companies.find(c => c.id === u.company);
+              const tc = UPDATE_TYPES[u.type] || { c: "#94A3B8", label: u.type };
+              return (
+                <div key={i} style={{ display: "flex", gap: 14, padding: "12px 0", borderBottom: "1px solid #f5f3ee" }}>
+                  <div style={{ flexShrink: 0, width: 90 }}>
+                    <div style={{ fontSize: 14, color: "#a0a09b" }}>{u.date}</div>
+                    <div style={{ fontSize: 10, color: tc.c, textTransform: "uppercase", fontWeight: 600, marginTop: 2 }}>{tc.label}</div>
                   </div>
-                );
-              })}
-            </div>
+                  <div style={{ width: 3, borderRadius: 2, background: tc.c, flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 16, color: "#2d2d2a", lineHeight: 1.5 }}>{u.text}</div>
+                    <div style={{ display: "flex", gap: 8, marginTop: 4, alignItems: "center", flexWrap: "wrap" }}>
+                      {co && <span onClick={() => { setSel(co); setPanel("graph"); setTab("info"); }} style={{ fontSize: 12, color: CC[co.cat]?.c || "#666", cursor: "pointer" }}>{CC[co.cat]?.i} {co.name} →</span>}
+                      {u.link && <a href={u.link} target="_blank" rel="noopener" style={{ fontSize: 11, color: "#8a8a85", textDecoration: "none" }}>📰 Source →</a>}
+                      {u.type === "interview" && u.link && <UpdateSummariseBtn url={u.link} label={u.text} person={u.text.split(" on ")[0] || ""} />}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>}
