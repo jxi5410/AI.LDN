@@ -92,6 +92,8 @@ export default function App() {
   const layout = "force";
   const [panel, setPanel] = useState("graph");
   const [highlightPerson, setHighlightPerson] = useState(null);
+  const [openCats, setOpenCats] = useState(new Set());
+  const [allPeopleOpen, setAllPeopleOpen] = useState(false);
   const [showMyNet, setShowMyNet] = useState(false);
   const [updateFilter, setUpdateFilter] = useState("all");
   const [mapView, setMapView] = useState("companies"); // "companies" | "investors"
@@ -523,7 +525,7 @@ export default function App() {
         <div style={{ flex: 1 }} />
         {/* Nav */}
         <div style={{ display: "flex", gap: 0, borderRadius: 6, overflow: "hidden", border: "1px solid #e8e5dc" }}>
-          {[["graph", "🌌 Map"], ["insights", "📊 Insights"], ["updates", "📡 Updates"], ["people", "👤 People"], ["events", "📅 Events"], ...(user?.id === ADMIN_UID ? [["bits", "⚡ Bits"]] : [])].map(([k, l]) => (
+          {[["graph", "🌌 Map"], ["insights", "📊 Insights"], ["updates", "📰 News"], ["people", "👤 People"], ["events", "📅 Events"], ...(user?.id === ADMIN_UID ? [["bits", "⚡ Bits"]] : [])].map(([k, l]) => (
             <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "6px 12px", border: "none", height: 36, lineHeight: "24px", background: panel === k ? "#e8e5dc" : "transparent", color: panel === k ? "#1a1a18" : "#8a8a85", fontSize: isMobile ? 11 : 14, fontFamily: "inherit", cursor: "pointer", fontWeight: panel === k ? 600 : 400 }}>{l}</button>
           ))}
         </div>
@@ -683,86 +685,140 @@ export default function App() {
       {/* ── INSIGHTS PANEL ────────────────────────────────────────── */}
       {panel === "insights" && <InsightsPanel isMobile={isMobile} />}
 
-      {/* ── UPDATES PANEL ────────────────────────────────────────── */}
-      {panel === "updates" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
-        <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 26, fontWeight: 700, color: "#1a1a18", margin: "16px 0 6px" }}>Ecosystem Updates</h2>
-        <p style={{ fontSize: 11, color: "#a0a09b", marginBottom: 10 }}>Funding, acquisitions, people moves, milestones, interviews</p>
-        {/* Category tabs */}
-        <div style={{ display: "flex", gap: 4, marginBottom: 14, flexWrap: "wrap" }}>
-          {Object.entries(UPDATE_TYPES).map(([k, cfg]) => (
-            <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "3px 8px", borderRadius: 4, border: `1px solid ${updateFilter === k ? cfg.c : "#e8e5dc"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#64748B", fontSize: 9, cursor: "pointer", fontFamily: "inherit" }}>{cfg.label}</button>
-          ))}
+      {/* ── NEWS TIMELINE ──────────────────────────────────────────── */}
+      {panel === "updates" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: isMobile ? "auto" : "hidden", overflowX: isMobile ? "hidden" : "auto", padding: isMobile ? "0 0 20px" : "0", background: "#faf9f5" }}>
+        <div style={{ padding: isMobile ? "0 12px" : "0 20px" }}>
+          <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 26, fontWeight: 700, color: "#1a1a18", margin: "16px 0 6px" }}>News</h2>
+          <p style={{ fontSize: 11, color: "#a0a09b", marginBottom: 10 }}>Funding, acquisitions, people moves, milestones, interviews</p>
+          <div style={{ display: "flex", gap: 4, marginBottom: 14, flexWrap: "wrap" }}>
+            {Object.entries(UPDATE_TYPES).map(([k, cfg]) => (
+              <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${updateFilter === k ? cfg.c : "#e8e5dc"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit", fontWeight: updateFilter === k ? 600 : 400 }}>{cfg.label}</button>
+            ))}
+          </div>
         </div>
-        {filteredUpdates.map((u, i) => {
-          const co = companies.find(c => c.id === u.company);
-          return (<div key={i} style={{ display: "flex", gap: 12, padding: "10px 0", borderBottom: "1px solid #f5f3ee" }}>
-            <div style={{ flexShrink: 0, width: 85 }}>
-              <div style={{ fontSize: 14, color: "#a0a09b" }}>{u.date}</div>
-              <div style={{ fontSize: 10, color: UPDATE_TYPES[u.type]?.c || "#666", textTransform: "uppercase", fontWeight: 600, marginTop: 2 }}>{u.type}</div>
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 16, color: "#2d2d2a", lineHeight: 1.5 }}>{u.text}</div>
-              <div style={{ display: "flex", gap: 8, marginTop: 4, alignItems: "center", flexWrap: "wrap" }}>
-                {co && <span onClick={() => { setSel(co); setPanel("graph"); setTab("info"); }} style={{ fontSize: 12, color: CC[co.cat]?.c || "#666", cursor: "pointer" }}>{CC[co.cat]?.i} {co.name} →</span>}
-                {u.link && <a href={u.link} target="_blank" rel="noopener" style={{ fontSize: 11, color: "#8a8a85", textDecoration: "none" }}>📰 Source →</a>}
-                {u.type === "interview" && u.link && <UpdateSummariseBtn url={u.link} label={u.text} person={u.text.split(" on ")[0] || ""} />}
+        {/* Timeline */}
+        <div style={isMobile ? { padding: "0 12px" } : { display: "flex", flexDirection: "row-reverse", gap: 0, padding: "0 20px 20px", overflowX: "auto", scrollBehavior: "smooth", height: "calc(100vh - 200px)", alignItems: "flex-start" }}>
+          {/* Timeline line */}
+          {!isMobile && <div style={{ position: "sticky", top: 0, flexShrink: 0, width: 0 }} />}
+          {filteredUpdates.map((u, i) => {
+            const co = companies.find(c => c.id === u.company);
+            const tc = UPDATE_TYPES[u.type] || { c: "#94A3B8", label: u.type };
+            const dateObj = new Date(u.date);
+            const showYear = i === 0 || new Date(filteredUpdates[i-1]?.date).getFullYear() !== dateObj.getFullYear();
+            return (
+              <div key={i} style={isMobile ? {
+                display: "flex", gap: 12, marginBottom: 0, position: "relative",
+              } : {
+                flexShrink: 0, width: 300, marginRight: 16, position: "relative",
+              }}>
+                {/* Vertical line (mobile) / marker (desktop) */}
+                {isMobile ? (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, width: 20 }}>
+                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: tc.c, flexShrink: 0, marginTop: 4, border: "2px solid #faf9f5", boxShadow: `0 0 0 2px ${tc.c}40` }} />
+                    <div style={{ width: 2, flex: 1, background: "#e8e5dc", minHeight: 20 }} />
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: tc.c, border: "2px solid #faf9f5", boxShadow: `0 0 0 2px ${tc.c}40` }} />
+                    <span style={{ fontSize: 10, color: "#a0a09b" }}>{dateObj.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</span>
+                  </div>
+                )}
+                {/* Card */}
+                <div style={{ background: "#ffffff", borderRadius: 10, border: `1px solid ${tc.c}30`, borderLeft: `3px solid ${tc.c}`, padding: 14, marginBottom: isMobile ? 0 : 0, flex: isMobile ? 1 : "none", transition: "transform 0.2s, box-shadow 0.2s" }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                    <span style={{ fontSize: 10, color: tc.c, fontWeight: 600, textTransform: "uppercase" }}>{tc.label}</span>
+                    {isMobile && <span style={{ fontSize: 10, color: "#a0a09b" }}>{dateObj.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "2-digit" })}</span>}
+                  </div>
+                  <div style={{ fontSize: 14, color: "#2d2d2a", lineHeight: 1.5, marginBottom: 6 }}>{u.text}</div>
+                  <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+                    {co && <span onClick={() => { setSel(co); setPanel("graph"); setTab("info"); }} style={{ fontSize: 11, color: CC[co.cat]?.c || "#666", cursor: "pointer" }}>{CC[co.cat]?.i} {co.name} →</span>}
+                    {u.link && <a href={u.link} target="_blank" rel="noopener" style={{ fontSize: 10, color: "#a0a09b", textDecoration: "none" }}>Source →</a>}
+                    {u.type === "interview" && u.link && <UpdateSummariseBtn url={u.link} label={u.text} person={u.text.split(" on ")[0] || ""} />}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>);
-        })}
+            );
+          })}
+        </div>
       </div>}
 
-      {/* ── PEOPLE PANEL ─────────────────────────────────────────── */}
+      {/* ── PEOPLE PANEL (collapsible categories) ─────────────────── */}
       {panel === "people" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
-        <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 26, fontWeight: 700, color: "#1a1a18", margin: "16px 0 6px" }}>Key People</h2>
-        <p style={{ fontSize: 13, color: "#a0a09b", marginBottom: 14 }}>Founders, CEOs, and leaders with interviews & social links</p>
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(300px,1fr))", gap: 8 }}>
-          {(() => {
-            // Sort people by their company's sector funding (highest first)
-            const sectorFunding = {};
-            companies.forEach(c => { sectorFunding[c.cat] = (sectorFunding[c.cat] || 0) + (c.fn || 0); });
-            const sorted = Object.entries(PEOPLE).sort(([,a], [,b]) => {
-              const aCat = companies.find(c => a.co.includes(c.id))?.cat || "";
-              const bCat = companies.find(c => b.co.includes(c.id))?.cat || "";
-              return (sectorFunding[bCat] || 0) - (sectorFunding[aCat] || 0);
-            });
-            let lastCat = "";
-            return sorted.map(([name, p]) => {
-              const co = companies.find(c => p.co.includes(c.id));
-              const cat = co?.cat || "";
-              const showHeader = cat !== lastCat;
-              lastCat = cat;
-              const isStarred = stars.has(`person:${name}`);
-              return (<>
-                {showHeader && <div key={`hdr-${cat}`} style={{ gridColumn: "1 / -1", padding: "8px 0 2px", borderBottom: "1px solid #e8e5dc", marginTop: 6 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: CC[cat]?.c || "#666" }}>{CC[cat]?.i} {CC[cat]?.l}</span>
-                </div>}
-                <div key={name} id={`person-${name.replace(/\s+/g, "-")}`} style={{ background: highlightPerson === name ? "#fff3e0" : "#ffffff", borderRadius: 8, padding: "12px", border: `1px solid ${highlightPerson === name ? "#C15F3C" : "#e8e5dc"}`, transition: "all 0.5s ease", boxShadow: highlightPerson === name ? "0 0 0 3px rgba(193,95,60,0.2)" : "none" }}>
-                <div style={{ display: "flex", alignItems: "start", gap: 8 }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 16, color: "#1a1a18", fontWeight: 600 }}>{name}</div>
-                    <div style={{ fontSize: 13, color: "#8a8a85", marginTop: 1 }}>{p.role}</div>
-                  </div>
-                  <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-                    <span onClick={() => toggleStar("person", name)} style={{ cursor: "pointer" }}><StarIcon filled={isStarred} /></span>
-                    {p.tw && <a href={p.tw} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, borderRadius: 4, background: "#2a2a28", border: "1px solid #333" }} title="X"><XIcon size={12} /></a>}
-                    {p.li && <a href={p.li} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, borderRadius: 4, background: "#0A66C2" }} title="LinkedIn"><LIIcon size={12} /></a>}
-                  </div>
-                </div>
-                {/* Companies */}
-                <div style={{ display: "flex", gap: 3, marginTop: 6, flexWrap: "wrap" }}>
-                  {p.co.map(cid => { const co = companies.find(c => c.id === cid); return co ? <span key={cid} onClick={() => { setSel(co); setPanel("graph"); setTab("info"); }} style={{ fontSize: 8, color: CC[co.cat]?.c, cursor: "pointer", padding: "1px 5px", borderRadius: 3, background: (CC[co.cat]?.c || "#666") + "18" }}>{co.s || co.name}</span> : null; })}
-                </div>
-                {/* Podcasts — top 3 + more */}
-                {p.pods && p.pods.length > 0 && <div style={{ marginTop: 8, paddingTop: 6, borderTop: "1px solid #e8e5dc" }}>
-                  <div style={{ fontSize: 12, color: "#a0a09b", fontWeight: 600, marginBottom: 3 }}>INTERVIEWS & PODCASTS</div>
-                  <PodcastList pods={p.pods} personName={name} />
-                </div>}
-              </div>
-              </>);
-            });
-          })()}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 26, fontWeight: 700, color: "#1a1a18", margin: "16px 0 4px" }}>Key People</h2>
+            <p style={{ fontSize: 13, color: "#a0a09b", marginBottom: 14 }}>Founders, CEOs, investors, and leaders</p>
+          </div>
+          <button onClick={() => {
+            if (allPeopleOpen) { setOpenCats(new Set()); setAllPeopleOpen(false); }
+            else { const allCats = new Set(); Object.values(PEOPLE).forEach(p => { const co = companies.find(c => p.co.includes(c.id)); if (co) allCats.add(co.cat); }); setOpenCats(allCats); setAllPeopleOpen(true); }
+          }} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit", height: 36 }}>{allPeopleOpen ? "Collapse All" : "Expand All"}</button>
         </div>
+        {(() => {
+          const sectorFunding = {};
+          companies.forEach(c => { sectorFunding[c.cat] = (sectorFunding[c.cat] || 0) + (c.fn || 0); });
+          // Group people by category
+          const groups = {};
+          Object.entries(PEOPLE).forEach(([name, p]) => {
+            const co = companies.find(c => p.co.includes(c.id));
+            const cat = co?.cat || "other";
+            if (!groups[cat]) groups[cat] = [];
+            groups[cat].push([name, p]);
+          });
+          // Sort categories by funding
+          const sortedCats = Object.keys(groups).sort((a, b) => (sectorFunding[b] || 0) - (sectorFunding[a] || 0));
+          return sortedCats.map(cat => {
+            const isOpen = openCats.has(cat);
+            const people = groups[cat];
+            const cfg = CC[cat] || { c: "#666", l: cat, i: "👤" };
+            return (
+              <div key={cat} style={{ marginBottom: 8 }}>
+                {/* Category header — clickable */}
+                <div onClick={() => setOpenCats(prev => { const n = new Set(prev); n.has(cat) ? n.delete(cat) : n.add(cat); return n; })}
+                  style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 10, background: "#ffffff", border: `1px solid ${isOpen ? cfg.c + "40" : "#e8e5dc"}`, cursor: "pointer", transition: "all 0.2s" }}>
+                  <span style={{ fontSize: 18 }}>{cfg.i}</span>
+                  <div style={{ flex: 1 }}>
+                    <span style={{ fontSize: 15, fontWeight: 700, color: cfg.c }}>{cfg.l}</span>
+                    <span style={{ fontSize: 12, color: "#a0a09b", marginLeft: 8 }}>{people.length} {people.length === 1 ? "person" : "people"}</span>
+                  </div>
+                  <span style={{ fontSize: 14, color: "#a0a09b", transition: "transform 0.2s", transform: isOpen ? "rotate(180deg)" : "rotate(0)" }}>▾</span>
+                </div>
+                {/* People cards — collapsible */}
+                <div style={{ maxHeight: isOpen ? people.length * 200 : 0, overflow: "hidden", transition: "max-height 0.3s ease-in-out" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(300px,1fr))", gap: 8, padding: "8px 0" }}>
+                    {people.map(([name, p]) => {
+                      const isStarred = stars.has(`person:${name}`);
+                      return (
+                        <div key={name} id={`person-${name.replace(/\s+/g, "-")}`} style={{ background: highlightPerson === name ? "#fff3e0" : "#ffffff", borderRadius: 8, padding: "12px", border: `1px solid ${highlightPerson === name ? "#C15F3C" : "#e8e5dc"}`, transition: "all 0.3s ease" }}>
+                          <div style={{ display: "flex", alignItems: "start", gap: 8 }}>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontSize: 16, color: "#1a1a18", fontWeight: 600 }}>{name}</div>
+                              <div style={{ fontSize: 13, color: "#8a8a85", marginTop: 1 }}>{p.role}</div>
+                            </div>
+                            <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+                              <span onClick={() => toggleStar("person", name)} style={{ cursor: "pointer" }}><StarIcon filled={isStarred} /></span>
+                              {p.tw && <a href={p.tw} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, borderRadius: 4, background: "#2a2a28", border: "1px solid #333" }}><XIcon size={12} /></a>}
+                              {p.li && <a href={p.li} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, borderRadius: 4, background: "#0A66C2" }}><LIIcon size={12} /></a>}
+                            </div>
+                          </div>
+                          <div style={{ display: "flex", gap: 3, marginTop: 6, flexWrap: "wrap" }}>
+                            {p.co.map(cid => { const co2 = companies.find(c => c.id === cid); return co2 ? <span key={cid} onClick={() => { setSel(co2); setPanel("graph"); setTab("info"); }} style={{ fontSize: 8, color: CC[co2.cat]?.c, cursor: "pointer", padding: "1px 5px", borderRadius: 3, background: (CC[co2.cat]?.c || "#666") + "18" }}>{co2.s || co2.name}</span> : null; })}
+                          </div>
+                          {p.pods && p.pods.length > 0 && <div style={{ marginTop: 8, paddingTop: 6, borderTop: "1px solid #e8e5dc" }}>
+                            <div style={{ fontSize: 12, color: "#a0a09b", fontWeight: 600, marginBottom: 3 }}>INTERVIEWS & PODCASTS</div>
+                            <PodcastList pods={p.pods} personName={name} />
+                          </div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            );
+          });
+        })()}
       </div>}
 
       {/* ── EVENTS PANEL ─────────────────────────────────────────── */}
