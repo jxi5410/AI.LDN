@@ -451,6 +451,7 @@ export const companies=[
   {id:"basecamp-res",name:"Basecamp Research",s:"Basecamp",cat:"biotech",yr:2020,emp:"50+",fund:"~$80M",fn:80,val:"Undisclosed",founders:"Mayall",focus:"Biodiversity DNA→protein AI",ethos:"Nature-first",hq:"London",kp:"Mayall (CEO)",ms:"$60M B Nvidia",jobs:null},
   {id:"papercup",name:"Papercup",s:"Papercup",cat:"generative",yr:2017,emp:"50+",fund:"~$20M",fn:20,val:"Undisclosed",founders:"Sherwood, Gao",focus:"AI video dubbing",ethos:"Every voice, every lang",hq:"London",kp:null,ms:"Sky/Bloomberg clients",jobs:null},
   {id:"mozart-ai",name:"Mozart AI",s:"Mozart AI",cat:"generative",yr:2025,emp:"Growing",fund:"$7.1M",fn:7,val:"Undisclosed",founders:"Sundar Arvind, Arjun Khanna & Pascual Merita Torres",focus:"AI Generative Audio Workstation · music creation · prompt-driven workflows · stems, MIDI, synths, video · built on ElevenLabs models",ethos:"Amplify creativity, not replace it",hq:"London",kp:"Sundar Arvind (CEO), Arjun Khanna (CPO), Pascual Merita Torres (CTO)",ms:"$6M Seed (Feb 2026, Balderton) · 100K+ users in 2 months · 1M songs · 10M+ Spotify streams · Mobile app",jobs:"https://www.mozartai.com/"},
+  {id:"veed",name:"VEED.io",s:"VEED",cat:"generative",yr:2018,emp:"200+",fund:"$40.7M",fn:41,val:"$140-210M",founders:"Sabba Keynejad & Tim Sherwood",focus:"AI-powered online video creation & editing · subtitles, AI avatars, background removal, live streaming · browser-based",ethos:"Make video creation accessible",hq:"London (Shoreditch)",kp:"Sabba Keynejad (CEO)",ms:"$35M A (Sequoia, 2022) · Millions of users · 50+ AI Avatars · #46 a16z Top 50 GenAI Web Products (Jan 2026)",jobs:"https://www.veed.io/careers"},
   // INVESTORS
   {id:"balderton",name:"Balderton Capital",s:"Balderton",cat:"investor",yr:2000,focus:"$3B+ AUM · Europe's most active Series A investor · Wayve, Cleo, Convergence, Revolut, Darktrace",hq:"King's Cross, London",kp:"Bernard Liautaud (Managing Partner, founder Business Objects) · Suranga Chandratillake (GP, founder Blinkx) · Rob Moffat (GP) · Daniel Waterhouse (GP) · James Wise (GP, Chair Sovereign AI) · Rana Yared (GP, ex-Goldman) · Tim Bunting (GP)",fn:0,jobs:"https://www.balderton.com/careers/"},
   {id:"atomico",name:"Atomico",s:"Atomico",cat:"investor",yr:2006,focus:"$5B+ AUM · Founded by Niklas Zennström (Skype) · Graphcore, Synthesia, PhysicsX, Healx",hq:"London",kp:"Niklas Zennström (Founder & CEO) · Siraj Khaliq (GP, AI lead) · Hiro Tamura (GP) · Carolina Brochado (GP) · Ben Blume (GP) · Lina Wenner (Partner)",fn:0,jobs:"https://www.atomico.com/careers/"},
@@ -565,5 +566,6 @@ export const edges=[
   {s:"deepmind",t:"finster",ty:"alumni",l:"Jayakumar 7yr"},
   {s:"plural",t:"callosum",ty:"investment",l:"Led $10.25M Seed"},
   {s:"balderton",t:"mozart-ai",ty:"investment",l:"Led $6M Seed"},
+  {s:"sequoia-eu",t:"veed",ty:"investment",l:"Led $35M Series A"},
   {s:"cambridge",t:"callosum",ty:"academic",l:"Both founders PhD"},
 ];
