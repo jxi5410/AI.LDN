@@ -508,14 +508,14 @@ export default function App() {
 
   // ── RENDER ──────────────────────────────────────────────────────────
   return (
-    <div style={{ width: "100vw", height: "100vh", background: "#faf9f5", overflow: "hidden", fontFamily: "'Libre Baskerville',Georgia,serif", position: "relative", color: "#2d2d2a" }}>
+    <div style={{ width: "100%", height: "100vh", background: "#faf9f5", overflow: "hidden", fontFamily: "'Libre Baskerville',Georgia,serif", position: "relative", color: "#2d2d2a" }}>
       <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#c5c3ba;border-radius:4px}input[type=range]{-webkit-appearance:none;background:transparent}input[type=range]::-webkit-slider-track{height:2px;background:#e8e5dc;border-radius:2px}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:#FF2D55;margin-top:-3px;cursor:pointer}`}</style>
 
       {/* ── HEADER ──────────────────────────────────────────────────── */}
-      <div style={{ position: "fixed", top: 0, left: 0, right: 0, padding: isMobile ? "6px 8px" : "10px 14px", background: "#faf9f5", borderBottom: "1px solid #e8e5dc", zIndex: 1000, display: "flex", alignItems: "center", gap: isMobile ? 6 : 10, flexWrap: "wrap" }}>
+      <div style={{ position: "fixed", top: 0, left: 0, right: 0, padding: isMobile ? "6px 8px" : "10px 14px", background: "#faf9f5", borderBottom: "1px solid #e8e5dc", zIndex: 1000, display: "flex", alignItems: "center", gap: isMobile ? 4 : 10, overflowX: "auto", overflowY: "hidden", maxWidth: "100%" }}>
         <div style={{ flexShrink: 0, cursor: "pointer" }} onClick={() => { setPanel("graph"); setSel(null); }}>
-          <h1 style={{ margin: 0, fontSize: isMobile ? 20 : 30, fontFamily: "'Inter',sans-serif", fontWeight: 800, background: "linear-gradient(135deg,#C15F3C,#d97757,#e8a87c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>London AI Ecosystem</h1>
+          <h1 style={{ margin: 0, fontSize: isMobile ? 16 : 30, fontFamily: "'Inter',sans-serif", fontWeight: 800, background: "linear-gradient(135deg,#C15F3C,#d97757,#e8a87c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", whiteSpace: "nowrap" }}>London AI</h1>
           {!isMobile && <p style={{ margin: 0, fontSize: 13, color: "#a0a09b" }}>
             {companies.filter(c => !["investor", "academic", "accelerator"].includes(c.cat)).length} companies · {edges.length} connections{mn > 0 ? ` · ${mn} tracked` : ""}
           </p>}
