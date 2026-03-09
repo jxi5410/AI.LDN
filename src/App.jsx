@@ -531,7 +531,7 @@ export default function App() {
         <div style={{ position: "relative" }}>
           <input type="text" placeholder="Search companies, people, contacts…" value={search} onChange={e => setSearch(e.target.value)}
             style={{ padding: "6px 10px", borderRadius: 6, height: 36, boxSizing: "border-box", border: "1px solid #e8e5dc", background: "#ffffff", color: "#2d2d2a", fontSize: isMobile ? 13 : 16, width: isMobile ? 150 : 260, outline: "none", fontFamily: "inherit" }} />
-          {searchResults && search && <div style={{ position: "absolute", top: "100%", right: isMobile ? -60 : 0, width: isMobile ? "90vw" : 320, maxHeight: 400, overflowY: "auto", background: "#ffffff", borderRadius: 8, border: "1px solid #e8e5dc", marginTop: 4, zIndex: 1100 }}>
+          {searchResults && search && <div style={{ position: isMobile ? "fixed" : "absolute", top: isMobile ? 56 : "100%", left: isMobile ? 8 : "auto", right: isMobile ? 8 : 0, width: isMobile ? "auto" : 320, maxHeight: isMobile ? "60vh" : 400, overflowY: "auto", background: "#ffffff", borderRadius: 8, border: "1px solid #e8e5dc", marginTop: isMobile ? 0 : 4, zIndex: 1100, boxShadow: "0 4px 20px rgba(0,0,0,0.12)" }}>
             {searchResults.companies.length > 0 && <div style={{ padding: "6px 10px", borderBottom: "1px solid #f5f3ee" }}>
               <div style={{ fontSize: 8, color: "#a0a09b", fontWeight: 600, marginBottom: 4 }}>COMPANIES</div>
               {searchResults.companies.map(c => (
