@@ -65,6 +65,7 @@ const UPDATE_TYPES = {
   milestone: { label: "Milestones", c: "#FFD60A" },
   partnership: { label: "Partnerships", c: "#64D2FF" },
   interview: { label: "Interviews", c: "#FF9F0A" },
+  regulation: { label: "AI Reg", c: "#6a9bcc" },
 };
 
 const ADMIN_UID = "6d8a370c-854a-4672-856f-f68050ca907a";
@@ -686,16 +687,69 @@ export default function App() {
       {panel === "insights" && <InsightsPanel isMobile={isMobile} />}
 
       {/* ── NEWS ──────────────────────────────────────────────────── */}
-      {panel === "updates" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", background: "#faf9f5" }}>
-        <div style={{ padding: isMobile ? "0 12px" : "0 20px" }}>
-          <p style={{ fontSize: 11, color: "#a0a09b", margin: "12px 0 10px" }}>Funding, acquisitions, people moves, milestones, interviews</p>
-          <div style={{ display: "flex", gap: 4, marginBottom: 14, flexWrap: "wrap" }}>
+      {panel === "updates" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, background: "#faf9f5", display: "flex", flexDirection: "column" }}>
+        {/* Sticky header with subtitle + filter buttons */}
+        <div style={{ padding: isMobile ? "8px 12px" : "8px 20px", background: "#faf9f5", borderBottom: "1px solid #e8e5dc", flexShrink: 0, zIndex: 10 }}>
+          <p style={{ fontSize: 13, color: "#a0a09b", margin: "0 0 8px" }}>Funding, acquisitions, people moves, milestones, interviews</p>
+          <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
             {Object.entries(UPDATE_TYPES).map(([k, cfg]) => (
-              <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${updateFilter === k ? cfg.c : "#e8e5dc"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit", fontWeight: updateFilter === k ? 600 : 400 }}>{cfg.label}</button>
+              <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${updateFilter === k ? cfg.c : "#e8e5dc"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: k === "regulation" ? "'Inter',sans-serif" : "inherit", fontWeight: updateFilter === k ? 600 : (k === "regulation" ? 700 : 400), letterSpacing: k === "regulation" ? 0.3 : 0 }}>{cfg.label}</button>
             ))}
           </div>
         </div>
-        {isMobile ? (
+        {/* Scrollable content */}
+        <div style={{ flex: 1, overflowY: "auto" }}>
+        {updateFilter === "regulation" ? (
+          /* ── AI REGULATION SECTION ── */
+          <div style={{ padding: isMobile ? "12px" : "16px 20px" }}>
+            <div style={{ background: "#ffffff", borderRadius: 10, border: "1px solid #e8e5dc", padding: isMobile ? "12px 10px" : "16px 18px", marginBottom: 16 }}>
+              <h3 style={{ fontFamily: "'Inter',sans-serif", fontSize: 20, fontWeight: 700, margin: "0 0 4px", color: "#4a4a45" }}>🏛️ UK AI Regulation</h3>
+              <p style={{ fontSize: 13, color: "#8a8a85", margin: "0 0 14px" }}>The UK is charting a distinct path — pro-innovation, sector-specific, and deliberately avoiding the EU's prescriptive model</p>
+              <div style={{ fontSize: 14, color: "#4a4a45", lineHeight: 1.7, marginBottom: 14 }}>
+                <p style={{ margin: "0 0 10px" }}>The UK government has opted against comprehensive AI legislation, instead relying on <strong style={{ color: "#1a1a18" }}>existing regulators</strong> (FCA, ICO, CMA, Ofcom) to apply five cross-sector principles: safety, transparency, fairness, accountability, and contestability. A dedicated <strong style={{ color: "#1a1a18" }}>UK AI Bill</strong> is expected no earlier than H2 2026.</p>
+                <p style={{ margin: "0 0 10px" }}>The government is betting heavily on <strong style={{ color: "#1a1a18" }}>AI Growth Zones</strong>, <strong style={{ color: "#1a1a18" }}>AI Growth Labs</strong> (regulatory sandboxes), and the <strong style={{ color: "#1a1a18" }}>£500M Sovereign AI fund</strong> (launching April 2026, chaired by Balderton's James Wise) to attract investment — £40B+ in private commitments in 2025 alone.</p>
+                <p style={{ margin: 0 }}>The tension is real. Creative industries want mandatory licensing of copyrighted works for AI training. AI developers want broad exceptions. The government's copyright impact assessment is due by <strong style={{ color: "#1a1a18" }}>18 March 2026</strong>.</p>
+              </div>
+              <div style={{ fontSize: 11, color: "#a0a09b", fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Regulatory Timeline</div>
+              <div style={{ borderLeft: "2px solid #6a9bcc44", paddingLeft: 12, marginBottom: 14 }}>
+                {[
+                  { date: "H2 2026", text: "UK AI Bill expected — frontier AI models, copyright, possibly new AI regulatory body", highlight: true, src: "https://www.taylorwessing.com/en/interface/2025/predictions-2026/uk-tech-and-digital-regulatory-policy-in-2026" },
+                  { date: "Apr 2026", text: "UK Sovereign AI Unit launches £500M fund (chaired by James Wise of Balderton)", highlight: true, src: "https://sovereignai.gov.uk/" },
+                  { date: "Mar 2026", text: "Government due to publish AI copyright impact assessment — pivotal decision point", highlight: true, src: "https://www.osborneclarke.com/insights/regulatory-outlook-february-2026-artificial-intelligence" },
+                  { date: "Feb 2026", text: "Deepfake intimate images criminalised. Automated decision-making rules relaxed", src: "https://www.osborneclarke.com/insights/regulatory-outlook-february-2026-artificial-intelligence" },
+                  { date: "Dec 2025", text: "Copyright consultation: majority favour mandatory licensing", src: "https://www.osborneclarke.com/insights/regulatory-outlook-january-2026-artificial-intelligence" },
+                  { date: "Nov 2025", text: "£24B+ private AI investment committed in a single month", src: "https://www.gov.uk/government/news/ai-to-power-national-renewal-as-government-announces-billions-of-additional-investment-and-new-plans-to-boost-uk-businesses-jobs-and-innovation" },
+                  { date: "Nov 2025", text: "Getty v Stability AI dismissed in UK High Court", src: "https://www.kslaw.com/news-and-insights/eu-uk-ai-round-up-december-2025" },
+                  { date: "Oct 2025", text: "MI5 warns of 'potential future risks from autonomous AI systems'", src: "https://lordslibrary.parliament.uk/potential-future-risks-from-autonomous-ai-systems/" },
+                  { date: "Oct 2025", text: "Government proposes AI Growth Labs — regulatory sandboxes", src: "https://www.whitecase.com/insight-our-thinking/ai-watch-global-regulatory-tracker-united-kingdom" },
+                  { date: "Jun 2025", text: "Hassabis calls for 'smart regulation' at SXSW London", src: "https://www.cityam.com/ai-regulation-needs-to-be-smarter-in-the-uk-urges-deepmind-boss/" },
+                  { date: "Jun 2025", text: "UK AI Bill delayed until H2 2026. Data Use and Access Act passes", src: "https://www.moorebarlow.com/blog/ai-regulation-in-the-uk-september-2025-update/" },
+                  { date: "Nov 2023", text: "Bletchley Park AI Safety Summit. Ian Hogarth chairs AI Safety Institute", src: "https://www.gov.uk/government/publications/international-ai-safety-report-2025" },
+                ].map((item, i) => (
+                  <div key={i} style={{ marginBottom: 8, display: "flex", gap: 8 }}>
+                    <div style={{ flexShrink: 0, fontSize: 11, color: item.highlight ? "#6a9bcc" : "#8a8a85", fontWeight: 600, minWidth: isMobile ? 65 : 95 }}>{item.date}</div>
+                    <div style={{ flex: 1, fontSize: 13, color: item.highlight ? "#1a1a18" : "#4a4a45", lineHeight: 1.5 }}>{item.text}{item.src && <>{" "}<a href={item.src} target="_blank" rel="noopener" style={{ fontSize: 10, color: "#6a9bcc", textDecoration: "none" }}>📄</a></>}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Key Voices</div>
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 8, marginBottom: 14 }}>
+                {[
+                  { name: "Demis Hassabis", role: "CEO, Google DeepMind", view: "Pro 'smart regulation' — warns against 'move fast and break things' for AI." },
+                  { name: "Ian Hogarth", role: "Chair, AI Safety Institute", view: "Coined 'compute governance'. Leads UK frontier AI evaluation." },
+                  { name: "Dario Amodei", role: "CEO, Anthropic", view: "Supports targeted frontier model regulation. 'Constitutional AI' as self-regulation." },
+                  { name: "Connor Leahy", role: "CEO, Conjecture", view: "Strongest safety hawk. Warns of existential risk. Advocates compute caps." },
+                ].map((v, i) => (
+                  <div key={i} style={{ background: "#f8f6f188", borderRadius: 6, padding: "8px 10px", border: "1px solid #e8e5dc" }}>
+                    <div style={{ fontSize: 11, color: "#1a1a18", fontWeight: 600 }}>{v.name}</div>
+                    <div style={{ fontSize: 11, color: "#8a8a85", marginBottom: 3 }}>{v.role}</div>
+                    <div style={{ fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{v.view}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : isMobile ? (
           /* ── MOBILE: vertical arrow timeline ── */
           <div style={{ position: "relative", padding: "0 12px 40px 40px" }}>
             <div style={{ position: "absolute", left: 23, top: 0, bottom: 20, width: 2, background: "linear-gradient(to bottom, #C15F3C, #e8e5dc)" }} />
@@ -750,6 +804,7 @@ export default function App() {
             })}
           </div>
         )}
+        </div>
       </div>}
 
       {/* ── PEOPLE PANEL (collapsible categories) ─────────────────── */}
@@ -795,24 +850,32 @@ export default function App() {
                   <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(300px,1fr))", gap: 8, padding: "8px 0" }}>
                     {people.map(([name, p]) => {
                       const isStarred = stars.has(`person:${name}`);
+                      const initials = name.split(" ").map(n => n[0]).join("").slice(0, 2);
+                      const coObj = companies.find(c => p.co.includes(c.id));
+                      const accentColor = CC[coObj?.cat]?.c || "#C15F3C";
                       return (
-                        <div key={name} id={`person-${name.replace(/\s+/g, "-")}`} style={{ background: highlightPerson === name ? "#fff3e0" : "#ffffff", borderRadius: 8, padding: "12px", border: `1px solid ${highlightPerson === name ? "#C15F3C" : "#e8e5dc"}`, transition: "all 0.3s ease" }}>
-                          <div style={{ display: "flex", alignItems: "start", gap: 8 }}>
+                        <div key={name} id={`person-${name.replace(/\s+/g, "-")}`} style={{ background: highlightPerson === name ? "#fff3e0" : "#ffffff", borderRadius: 10, padding: "14px", border: `1px solid ${highlightPerson === name ? "#C15F3C" : "#e8e5dc"}`, transition: "all 0.3s ease", borderTop: `3px solid ${accentColor}30` }}>
+                          <div style={{ display: "flex", alignItems: "start", gap: 10 }}>
+                            {/* Avatar circle with initials */}
+                            <div style={{ width: 38, height: 38, borderRadius: "50%", background: `${accentColor}18`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: `2px solid ${accentColor}30` }}>
+                              <span style={{ fontSize: 14, fontWeight: 700, color: accentColor }}>{initials}</span>
+                            </div>
                             <div style={{ flex: 1 }}>
-                              <div style={{ fontSize: 16, color: "#1a1a18", fontWeight: 600 }}>{name}</div>
-                              <div style={{ fontSize: 13, color: "#8a8a85", marginTop: 1 }}>{p.role}</div>
+                              <div style={{ fontSize: 16, color: "#1a1a18", fontWeight: 700 }}>{name}</div>
+                              <div style={{ fontSize: 12, color: "#8a8a85", marginTop: 1 }}>{p.role}</div>
                             </div>
                             <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
                               <span onClick={() => toggleStar("person", name)} style={{ cursor: "pointer" }}><StarIcon filled={isStarred} /></span>
-                              {p.tw && <a href={p.tw} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, borderRadius: 4, background: "#2a2a28", border: "1px solid #333" }}><XIcon size={12} /></a>}
-                              {p.li && <a href={p.li} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, borderRadius: 4, background: "#0A66C2" }}><LIIcon size={12} /></a>}
+                              {p.tw && <a href={p.tw} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 5, background: "#2a2a28", border: "1px solid #333" }}><XIcon size={12} /></a>}
+                              {p.li && <a href={p.li} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 5, background: "#0A66C2" }}><LIIcon size={12} /></a>}
                             </div>
                           </div>
-                          <div style={{ display: "flex", gap: 3, marginTop: 6, flexWrap: "wrap" }}>
-                            {p.co.map(cid => { const co2 = companies.find(c => c.id === cid); return co2 ? <span key={cid} onClick={() => { setSel(co2); setPanel("graph"); setTab("info"); }} style={{ fontSize: 8, color: CC[co2.cat]?.c, cursor: "pointer", padding: "1px 5px", borderRadius: 3, background: (CC[co2.cat]?.c || "#666") + "18" }}>{co2.s || co2.name}</span> : null; })}
+                          {/* Company tags — bigger */}
+                          <div style={{ display: "flex", gap: 4, marginTop: 8, flexWrap: "wrap" }}>
+                            {p.co.map(cid => { const co2 = companies.find(c => c.id === cid); return co2 ? <span key={cid} onClick={() => { setSel(co2); setPanel("graph"); setTab("info"); }} style={{ fontSize: 11, color: CC[co2.cat]?.c, cursor: "pointer", padding: "3px 8px", borderRadius: 5, background: (CC[co2.cat]?.c || "#666") + "15", fontWeight: 600, border: `1px solid ${(CC[co2.cat]?.c || "#666")}25` }}>{CC[co2.cat]?.i} {co2.s || co2.name}</span> : null; })}
                           </div>
-                          {p.pods && p.pods.length > 0 && <div style={{ marginTop: 8, paddingTop: 6, borderTop: "1px solid #e8e5dc" }}>
-                            <div style={{ fontSize: 12, color: "#a0a09b", fontWeight: 600, marginBottom: 3 }}>INTERVIEWS & PODCASTS</div>
+                          {p.pods && p.pods.length > 0 && <div style={{ marginTop: 10, paddingTop: 8, borderTop: "1px solid #f0ede8" }}>
+                            <div style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Interviews & Podcasts</div>
                             <PodcastList pods={p.pods} personName={name} />
                           </div>}
                         </div>
