@@ -299,7 +299,7 @@ export default function App() {
   const mn = Object.keys(ud).length;
 
   const filteredUpdates = useMemo(() => {
-    let u = UPDATES;
+    let u = [...UPDATES];
     if (updateFilter !== "all") u = u.filter(x => x.type === updateFilter);
     return u.sort((a, b) => b.date.localeCompare(a.date));
   }, [updateFilter]);
