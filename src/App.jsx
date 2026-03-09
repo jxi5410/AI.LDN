@@ -1159,7 +1159,6 @@ export default function App() {
             { l: "Companies", v: companies.filter(c => !["investor", "academic"].includes(c.cat)).length, i: "🏢" },
             { l: "Funding", v: `$${Math.round(companies.reduce((s, c) => s + (c.fn || 0), 0) / 1000)}B+`, i: "💰" },
             { l: "Unicorns", v: companies.filter(c => c.fn >= 500).length, i: "🦄" },
-            { l: "People", v: Object.keys(PEOPLE).length, i: "👥" },
           ].map((s, i) => (
             <div key={i} style={{ background: "rgba(255,255,255,0.92)", backdropFilter: "blur(8px)", borderRadius: 8, padding: "6px 12px", border: "1px solid #e8e5dc", minWidth: 80, textAlign: "center" }}>
               <div style={{ fontSize: 10, color: "#a0a09b", textTransform: "uppercase", letterSpacing: 0.3 }}>{s.i} {s.l}</div>
@@ -1195,7 +1194,7 @@ export default function App() {
         </div>
         {legendOpen && <div style={{ padding: "0 10px 8px" }}>
           <p style={{ margin: "0 0 4px", fontSize: 12, color: "#4a4a45", lineHeight: 1.4 }}>
-            <strong>{companies.filter(c => !["investor", "academic"].includes(c.cat)).length}</strong> companies · <strong>${Math.round(companies.reduce((s, c) => s + (c.fn || 0), 0) / 1000)}B+</strong> raised · <strong>{companies.filter(c => c.fn >= 500).length}</strong> unicorns · <strong>{Object.keys(PEOPLE).length}</strong> people tracked
+            <strong>{companies.filter(c => !["investor", "academic"].includes(c.cat)).length}</strong> companies · <strong>${Math.round(companies.reduce((s, c) => s + (c.fn || 0), 0) / 1000)}B+</strong> raised · <strong>{companies.filter(c => c.fn >= 500).length}</strong> unicorns
           </p>
           <p style={{ margin: 0, fontSize: 11, color: "#a0a09b" }}>Tap node → details · Drag to rearrange · Tap here to hide</p>
         </div>}
