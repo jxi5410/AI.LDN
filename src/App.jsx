@@ -67,6 +67,8 @@ const UPDATE_TYPES = {
   interview: { label: "Interviews", c: "#FF9F0A" },
 };
 
+const ADMIN_UID = "6d8a370c-854a-4672-856f-f68050ca907a";
+
 /* ═══════════════════════════════════════════════════════════════════════ */
 export default function App() {
   // Auth
@@ -110,6 +112,12 @@ export default function App() {
   const [events, setEvents] = useState([]);
   const [eventsLoading, setEventsLoading] = useState(false);
   const [eventsFetched, setEventsFetched] = useState(false);
+
+  // Bits (curated content)
+  const [bits, setBits] = useState([]);
+  const [bitsLoading, setBitsLoading] = useState(false);
+  const [bitsFetched, setBitsFetched] = useState(false);
+  const [bitsFilter, setBitsFilter] = useState("all");
 
   // ── AUTH ─────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -305,6 +313,33 @@ export default function App() {
       .catch(() => { setEventsFetched(true); setEventsLoading(false); });
   }, [panel, eventsFetched]);
 
+  // Fetch bits (admin sees pending + approved; public sees approved only)
+  useEffect(() => {
+    if (panel !== "bits" || bitsFetched) return;
+    setBitsLoading(true);
+    const isAdmin = user?.id === ADMIN_UID;
+    const url = isAdmin
+      ? "https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/bits?action=pending"
+      : "https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/bits";
+    // Admin: fetch both pending and approved
+    if (isAdmin) {
+      Promise.all([
+        fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/bits?action=pending").then(r => r.json()),
+        fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/bits").then(r => r.json()),
+      ]).then(([pending, approved]) => {
+        const pendingBits = (pending.data || []).map(b => ({ ...b, _pending: true }));
+        const approvedBits = (approved.data || []).map(b => ({ ...b, _pending: false }));
+        setBits([...pendingBits, ...approvedBits]);
+        setBitsFetched(true); setBitsLoading(false);
+      }).catch(() => { setBitsFetched(true); setBitsLoading(false); });
+    } else {
+      fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/bits")
+        .then(r => r.json())
+        .then(d => { setBits((d.data || []).map(b => ({ ...b, _pending: false }))); setBitsFetched(true); setBitsLoading(false); })
+        .catch(() => { setBitsFetched(true); setBitsLoading(false); });
+    }
+  }, [panel, bitsFetched, user]);
+
   const filt = useMemo(() => {
     if (mapView === "investors") {
       // Show all investors + companies connected via investment edges
@@ -488,7 +523,7 @@ export default function App() {
         <div style={{ flex: 1 }} />
         {/* Nav */}
         <div style={{ display: "flex", gap: 0, borderRadius: 6, overflow: "hidden", border: "1px solid #e8e5dc" }}>
-          {[["graph", "🌌 Map"], ["insights", "📊 Insights"], ["updates", "📡 Updates"], ["people", "👤 People"], ["events", "📅 Events"]].map(([k, l]) => (
+          {[["graph", "🌌 Map"], ["insights", "📊 Insights"], ["updates", "📡 Updates"], ["people", "👤 People"], ["events", "📅 Events"], ...(user?.id === ADMIN_UID ? [["bits", "⚡ Bits"]] : [])].map(([k, l]) => (
             <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "6px 12px", border: "none", height: 36, lineHeight: "24px", background: panel === k ? "#e8e5dc" : "transparent", color: panel === k ? "#1a1a18" : "#8a8a85", fontSize: isMobile ? 11 : 14, fontFamily: "inherit", cursor: "pointer", fontWeight: panel === k ? 600 : 400 }}>{l}</button>
           ))}
         </div>
@@ -759,6 +794,85 @@ export default function App() {
                   {ev.topics.map((t, j) => <span key={j} style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#e8e5dc", color: "#6b6b66" }}>{t}</span>)}
                 </div>}
                 {ev.registration_url && <a href={ev.registration_url} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#C15F3C", color: "#fff", fontSize: 11, textDecoration: "none", fontFamily: "inherit", fontWeight: 600 }}>{isPast ? "View details →" : "Register →"}</a>}
+              </div>
+            );
+          })}
+        </div>}
+      </div>}
+
+      {/* ── BITS PANEL (admin-only) ─────────────────────────────── */}
+      {panel === "bits" && user?.id === ADMIN_UID && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+          <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 26, fontWeight: 700, color: "#1a1a18", margin: "16px 0 6px" }}>⚡ Bits <span style={{ fontSize: 12, color: "#C15F3C", fontWeight: 400 }}>Admin</span></h2>
+          <button onClick={async () => {
+            setBitsLoading(true);
+            try {
+              const res = await fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/bits?action=scrape", { method: "POST" });
+              const d = await res.json();
+              alert(`Scraped: ${d.found || 0} found, ${d.inserted || 0} inserted${d.error ? ". Error: " + d.error : ""}`);
+              setBitsFetched(false); // re-fetch
+            } catch (e) { alert("Scrape failed: " + e.message); }
+            setBitsLoading(false);
+          }} style={{ padding: "6px 14px", borderRadius: 6, border: "1px solid #C15F3C", background: "#C15F3C18", color: "#C15F3C", fontSize: 12, cursor: "pointer", fontFamily: "inherit", fontWeight: 600, height: 36 }}>🔍 Scrape New</button>
+        </div>
+        <p style={{ fontSize: 13, color: "#a0a09b", marginBottom: 10 }}>Curated posts, articles, charts — review and approve before publishing</p>
+        {/* Filter tabs */}
+        <div style={{ display: "flex", gap: 4, marginBottom: 14, flexWrap: "wrap" }}>
+          {[["all", `All (${bits.length})`], ["pending", `Pending (${bits.filter(b=>b._pending).length})`], ["approved", `Approved (${bits.filter(b=>!b._pending).length})`], ["tweet", "𝕏 Posts"], ["article", "Articles"], ["chart", "Charts"], ["podcast", "Podcasts"]].map(([k, l]) => (
+            <button key={k} onClick={() => setBitsFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${bitsFilter === k ? "#C15F3C" : "#e8e5dc"}`, background: bitsFilter === k ? "#C15F3C18" : "transparent", color: bitsFilter === k ? "#C15F3C" : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit", fontWeight: bitsFilter === k ? 600 : 400 }}>{l}</button>
+          ))}
+        </div>
+        {bitsLoading ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>Loading bits...</div> :
+        bits.length === 0 ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>No bits yet — hit Scrape to find some</div> :
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(340px,1fr))", gap: 12 }}>
+          {bits.filter(b => {
+            if (bitsFilter === "pending") return b._pending;
+            if (bitsFilter === "approved") return !b._pending;
+            if (bitsFilter === "all") return true;
+            return b.type === bitsFilter;
+          }).map((bit, i) => {
+            const typeConfig = { tweet: { icon: "𝕏", c: "#1DA1F2" }, article: { icon: "📰", c: "#30D158" }, chart: { icon: "📊", c: "#BF5AF2" }, podcast: { icon: "🎙️", c: "#FF9F0A" }, video: { icon: "🎬", c: "#FF2D55" }, meme: { icon: "😂", c: "#FFD60A" } };
+            const tc = typeConfig[bit.type] || { icon: "⚡", c: "#C15F3C" };
+            return (
+              <div key={bit.id || i} style={{ background: "#ffffff", borderRadius: 10, border: `1px solid ${bit._pending ? "#FF9F0A50" : "#e8e5dc"}`, padding: 16 }}>
+                {/* Status badge */}
+                {bit._pending && <div style={{ marginBottom: 6 }}>
+                  <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "#FF9F0A18", color: "#FF9F0A", fontWeight: 600 }}>PENDING REVIEW</span>
+                  {bit.ai_relevance_score && <span style={{ fontSize: 9, color: "#a0a09b", marginLeft: 6 }}>Score: {(bit.ai_relevance_score * 100).toFixed(0)}%</span>}
+                </div>}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: 6 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ fontSize: 14 }}>{tc.icon}</span>
+                    <span style={{ fontSize: 10, color: tc.c, fontWeight: 600, textTransform: "uppercase" }}>{bit.type}</span>
+                    {bit.date && <span style={{ fontSize: 10, color: "#a0a09b" }}>{new Date(bit.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</span>}
+                  </div>
+                  {bit.engagement && <span style={{ fontSize: 9, color: "#a0a09b" }}>{bit.engagement}</span>}
+                </div>
+                <h3 style={{ margin: "0 0 4px", fontSize: 15, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#1a1a18", lineHeight: 1.3 }}>{bit.title}</h3>
+                {bit.description && <p style={{ fontSize: 13, color: "#4a4a45", lineHeight: 1.5, margin: "0 0 6px" }}>{bit.description.replace(/<[^>]*>/g, "")}</p>}
+                {bit.ai_reason && bit._pending && <p style={{ fontSize: 11, color: "#8a8a85", margin: "0 0 6px", fontStyle: "italic" }}>AI: {bit.ai_reason}</p>}
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                  {bit.author && <span style={{ fontSize: 11, color: "#6b6b66" }}>{bit.author}</span>}
+                  {bit.author_handle && <span style={{ fontSize: 10, color: "#a0a09b" }}>{bit.author_handle}</span>}
+                  {bit.source && <span style={{ fontSize: 9, color: "#c5c3ba" }}>{bit.source}</span>}
+                </div>
+                {bit.tags?.length > 0 && <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 8 }}>
+                  {bit.tags.map((t, j) => <span key={j} style={{ fontSize: 9, padding: "2px 5px", borderRadius: 3, background: t === "londonmaxxing" ? "#C15F3C18" : "#e8e5dc", color: t === "londonmaxxing" ? "#C15F3C" : "#6b6b66", fontWeight: t === "londonmaxxing" ? 600 : 400 }}>{t}</span>)}
+                </div>}
+                <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                  {bit.url && <a href={bit.url} target="_blank" rel="noopener" style={{ fontSize: 11, color: "#C15F3C", textDecoration: "none", fontWeight: 500 }}>View →</a>}
+                  {bit._pending && <>
+                    <div style={{ flex: 1 }} />
+                    <button onClick={async () => {
+                      await fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/bits?action=approve", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: bit.id }) });
+                      setBits(prev => prev.map(b => b.id === bit.id ? { ...b, _pending: false, status: "approved" } : b));
+                    }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid #30D158", background: "#30D15818", color: "#30D158", fontSize: 10, cursor: "pointer", fontFamily: "inherit", fontWeight: 600 }}>✓ Approve</button>
+                    <button onClick={async () => {
+                      await fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/bits?action=reject", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: bit.id }) });
+                      setBits(prev => prev.filter(b => b.id !== bit.id));
+                    }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid #FF453A", background: "#FF453A18", color: "#FF453A", fontSize: 10, cursor: "pointer", fontFamily: "inherit", fontWeight: 600 }}>✕ Reject</button>
+                  </>}
+                </div>
               </div>
             );
           })}
