@@ -526,7 +526,7 @@ export default function App() {
         <div style={{ flex: 1 }} />
         {/* Nav */}
         <div style={{ display: "flex", gap: 0, borderRadius: 6, overflow: "hidden", border: "1px solid #e8e5dc" }}>
-          {[["graph", "🌌 Map"], ["people", "👤 People"], ["events", "📅 Events"], ["updates", "📰 News"], ["insights", "📊 Insights"], ...(user?.id === ADMIN_UID ? [["bits", "⚡ Bits"]] : [])].map(([k, l]) => (
+          {[["graph", "🌌 Map"], ["people", "👤 People"], ["events", "📅 Events"], ["updates", "📰 News"], ["bits", "⚡ Bits"]].map(([k, l]) => (
             <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "6px 12px", border: "none", height: 36, lineHeight: "24px", background: panel === k ? "#e8e5dc" : "transparent", color: panel === k ? "#1a1a18" : "#8a8a85", fontSize: isMobile ? 11 : 14, fontFamily: "inherit", cursor: "pointer", fontWeight: panel === k ? 600 : 400 }}>{l}</button>
           ))}
         </div>
@@ -684,7 +684,75 @@ export default function App() {
 
       {/* ── UPDATES PANEL ────────────────────────────────────────── */}
       {/* ── INSIGHTS PANEL ────────────────────────────────────────── */}
-      {panel === "insights" && <InsightsPanel isMobile={isMobile} />}
+      {panel === "bits" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", background: "#faf9f5" }}>
+        {/* Subtitle */}
+        <p style={{ fontSize: 13, color: "#a0a09b", margin: "8px 20px 0" }}>Data, charts, ecosystem signals, and curated reads from London's AI scene</p>
+        {/* Admin scrape button */}
+        {user?.id === ADMIN_UID && <div style={{ padding: "6px 20px 0", display: "flex", justifyContent: "flex-end" }}>
+          <button onClick={async () => {
+            setBitsLoading(true);
+            try {
+              const res = await fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/bits?action=scrape", { method: "POST" });
+              const d = await res.json();
+              alert(`Scraped: ${d.found || 0} found, ${d.inserted || 0} inserted${d.error ? ". Error: " + d.error : ""}`);
+              setBitsFetched(false);
+            } catch (e) { alert("Scrape failed: " + e.message); }
+            setBitsLoading(false);
+          }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid #C15F3C", background: "#C15F3C18", color: "#C15F3C", fontSize: 10, cursor: "pointer", fontFamily: "inherit", fontWeight: 600 }}>🔍 Scrape</button>
+        </div>}
+        {/* Insights section */}
+        <InsightsPanel isMobile={isMobile} />
+        {/* Curated bits below */}
+        <div style={{ padding: isMobile ? "0 12px 20px" : "0 20px 20px" }}>
+          <div style={{ fontSize: 11, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, margin: "8px 0 10px", paddingTop: 12, borderTop: "1px solid #e8e5dc" }}>Curated Reads</div>
+          {bitsLoading ? <div style={{ textAlign: "center", padding: 20, color: "#a0a09b" }}>Loading...</div> :
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(340px,1fr))", gap: 10 }}>
+            {bits.filter(b => user?.id === ADMIN_UID ? true : !b._pending).map((bit, i) => {
+              const typeConfig = { tweet: { icon: "𝕏", c: "#1DA1F2" }, article: { icon: "📰", c: "#30D158" }, chart: { icon: "📊", c: "#BF5AF2" }, podcast: { icon: "🎙️", c: "#FF9F0A" }, video: { icon: "🎬", c: "#FF2D55" }, data: { icon: "📈", c: "#BF5AF2" } };
+              const tc = typeConfig[bit.type] || { icon: "⚡", c: "#C15F3C" };
+              return (
+                <div key={bit.id || i} style={{ background: "#ffffff", borderRadius: 10, border: `1px solid ${bit._pending ? "#FF9F0A50" : "#e8e5dc"}`, padding: 14 }}>
+                  {bit._pending && <div style={{ marginBottom: 4 }}>
+                    <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "#FF9F0A18", color: "#FF9F0A", fontWeight: 600 }}>PENDING</span>
+                    {bit.ai_relevance_score && <span style={{ fontSize: 9, color: "#a0a09b", marginLeft: 6 }}>{(bit.ai_relevance_score * 100).toFixed(0)}%</span>}
+                  </div>}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                      <span style={{ fontSize: 13 }}>{tc.icon}</span>
+                      <span style={{ fontSize: 10, color: tc.c, fontWeight: 600, textTransform: "uppercase" }}>{bit.type}</span>
+                      {bit.date && <span style={{ fontSize: 10, color: "#a0a09b" }}>{new Date(bit.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</span>}
+                    </div>
+                    {bit.engagement && <span style={{ fontSize: 9, color: "#a0a09b" }}>{bit.engagement}</span>}
+                  </div>
+                  <h3 style={{ margin: "0 0 3px", fontSize: 14, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#1a1a18", lineHeight: 1.3 }}>{bit.title}</h3>
+                  {bit.description && <p style={{ fontSize: 12, color: "#4a4a45", lineHeight: 1.5, margin: "0 0 5px" }}>{bit.description.replace(/<[^>]*>/g, "")}</p>}
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                    {bit.author && <span style={{ fontSize: 10, color: "#6b6b66" }}>{bit.author}</span>}
+                    {bit.source && <span style={{ fontSize: 9, color: "#c5c3ba" }}>{bit.source}</span>}
+                  </div>
+                  {bit.tags?.length > 0 && <div style={{ display: "flex", gap: 3, flexWrap: "wrap", marginBottom: 6 }}>
+                    {bit.tags.map((t, j) => <span key={j} style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: t === "londonmaxxing" ? "#C15F3C18" : "#f0ede8", color: t === "londonmaxxing" ? "#C15F3C" : "#6b6b66", fontWeight: t === "londonmaxxing" ? 600 : 400 }}>{t}</span>)}
+                  </div>}
+                  <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                    {bit.url && <a href={bit.url} target="_blank" rel="noopener" style={{ fontSize: 11, color: "#C15F3C", textDecoration: "none", fontWeight: 500 }}>View →</a>}
+                    {bit._pending && user?.id === ADMIN_UID && <>
+                      <div style={{ flex: 1 }} />
+                      <button onClick={async () => {
+                        await fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/bits?action=approve", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: bit.id }) });
+                        setBits(prev => prev.map(b => b.id === bit.id ? { ...b, _pending: false } : b));
+                      }} style={{ padding: "3px 8px", borderRadius: 4, border: "1px solid #30D158", background: "#30D15818", color: "#30D158", fontSize: 9, cursor: "pointer", fontWeight: 600 }}>✓</button>
+                      <button onClick={async () => {
+                        await fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/bits?action=reject", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: bit.id }) });
+                        setBits(prev => prev.filter(b => b.id !== bit.id));
+                      }} style={{ padding: "3px 8px", borderRadius: 4, border: "1px solid #FF453A", background: "#FF453A18", color: "#FF453A", fontSize: 9, cursor: "pointer", fontWeight: 600 }}>✕</button>
+                    </>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>}
+        </div>
+      </div>}
 
       {/* ── NEWS ──────────────────────────────────────────────────── */}
       {panel === "updates" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, background: "#faf9f5", display: "flex", flexDirection: "column" }}>
@@ -853,12 +921,16 @@ export default function App() {
                       const initials = name.split(" ").map(n => n[0]).join("").slice(0, 2);
                       const coObj = companies.find(c => p.co.includes(c.id));
                       const accentColor = CC[coObj?.cat]?.c || "#C15F3C";
+                      // Try to get avatar from X handle
+                      const xHandle = p.tw ? p.tw.replace(/https?:\/\/(x|twitter)\.com\//,"").replace(/\//g,"") : null;
+                      const avatarUrl = xHandle ? `https://unavatar.io/x/${xHandle}` : null;
                       return (
                         <div key={name} id={`person-${name.replace(/\s+/g, "-")}`} style={{ background: highlightPerson === name ? "#fff3e0" : "#ffffff", borderRadius: 10, padding: "14px", border: `1px solid ${highlightPerson === name ? "#C15F3C" : "#e8e5dc"}`, transition: "all 0.3s ease", borderTop: `3px solid ${accentColor}30` }}>
                           <div style={{ display: "flex", alignItems: "start", gap: 10 }}>
-                            {/* Avatar circle with initials */}
-                            <div style={{ width: 38, height: 38, borderRadius: "50%", background: `${accentColor}18`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: `2px solid ${accentColor}30` }}>
-                              <span style={{ fontSize: 14, fontWeight: 700, color: accentColor }}>{initials}</span>
+                            {/* Avatar — photo or initials fallback */}
+                            <div style={{ width: 40, height: 40, borderRadius: "50%", background: `${accentColor}18`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: `2px solid ${accentColor}30`, overflow: "hidden", position: "relative" }}>
+                              {avatarUrl ? <img src={avatarUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={e => { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }} /> : null}
+                              <span style={{ fontSize: 14, fontWeight: 700, color: accentColor, display: avatarUrl ? "none" : "flex", position: avatarUrl ? "absolute" : "static", inset: 0, alignItems: "center", justifyContent: "center" }}>{initials}</span>
                             </div>
                             <div style={{ flex: 1 }}>
                               <div style={{ fontSize: 16, color: "#1a1a18", fontWeight: 700 }}>{name}</div>
@@ -870,9 +942,25 @@ export default function App() {
                               {p.li && <a href={p.li} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: 5, background: "#0A66C2" }}><LIIcon size={12} /></a>}
                             </div>
                           </div>
-                          {/* Company tags — bigger */}
+                          {/* Company tags with logos */}
                           <div style={{ display: "flex", gap: 4, marginTop: 8, flexWrap: "wrap" }}>
-                            {p.co.map(cid => { const co2 = companies.find(c => c.id === cid); return co2 ? <span key={cid} onClick={() => { setSel(co2); setPanel("graph"); setTab("info"); }} style={{ fontSize: 11, color: CC[co2.cat]?.c, cursor: "pointer", padding: "3px 8px", borderRadius: 5, background: (CC[co2.cat]?.c || "#666") + "15", fontWeight: 600, border: `1px solid ${(CC[co2.cat]?.c || "#666")}25` }}>{CC[co2.cat]?.i} {co2.s || co2.name}</span> : null; })}
+                            {p.co.map(cid => {
+                              const co2 = companies.find(c => c.id === cid);
+                              if (!co2) return null;
+                              // Extract domain from jobs URL for logo
+                              let logoDomain = null;
+                              try { if (co2.jobs) logoDomain = new URL(co2.jobs).hostname.replace("www.","").replace("jobs.ashbyhq.com","").replace("job-boards.eu.greenhouse.io",""); } catch {}
+                              // Manual domain overrides for common cases
+                              const domainMap = { deepmind: "deepmind.google", anthropic: "anthropic.com", openai: "openai.com", mistral: "mistral.ai", cohere: "cohere.com", "meta-ai": "meta.com", "ms-research": "microsoft.com", stability: "stability.ai", elevenlabs: "elevenlabs.io", synthesia: "synthesia.io", wayve: "wayve.ai", isomorphic: "isomorphiclabs.com", helsing: "helsing.ai", darktrace: "darktrace.com", nscale: "nscale.com", graphcore: "graphcore.ai", polyai: "poly.ai", tractable: "tractable.ai", cleo: "meetcleo.com", onfido: "onfido.com", "signal-ai": "signal-ai.com", callosum: "callosum.com", "mozart-ai": "mozartai.com", trace: "trace.so", balderton: "balderton.com", atomico: "atomico.com", sequoia: "sequoiacap.com", accel: "accel.com", "air-street": "airstreet.com", plural: "plural.vc", localglobe: "localglobe.vc", index: "indexventures.com", gv: "gv.com", mmc: "mmc.vc", seedcamp: "seedcamp.com", ef: "joinef.com", "sovereign-ai": "sovereignai.gov.uk" };
+                              const domain = domainMap[co2.id] || logoDomain;
+                              const logoUrl = domain ? `https://logo.clearbit.com/${domain}` : null;
+                              return (
+                                <span key={cid} onClick={() => { setSel(co2); setPanel("graph"); setTab("info"); }} style={{ fontSize: 11, color: CC[co2.cat]?.c, cursor: "pointer", padding: "3px 8px", borderRadius: 5, background: (CC[co2.cat]?.c || "#666") + "15", fontWeight: 600, border: `1px solid ${(CC[co2.cat]?.c || "#666")}25`, display: "inline-flex", alignItems: "center", gap: 4 }}>
+                                  {logoUrl && <img src={logoUrl} alt="" style={{ width: 14, height: 14, borderRadius: 2, objectFit: "contain" }} onError={e => e.target.style.display = "none"} />}
+                                  {co2.s || co2.name}
+                                </span>
+                              );
+                            })}
                           </div>
                           {p.pods && p.pods.length > 0 && <div style={{ marginTop: 10, paddingTop: 8, borderTop: "1px solid #f0ede8" }}>
                             <div style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Interviews & Podcasts</div>
@@ -917,85 +1005,6 @@ export default function App() {
                   {ev.topics.map((t, j) => <span key={j} style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#e8e5dc", color: "#6b6b66" }}>{t}</span>)}
                 </div>}
                 {ev.registration_url && <a href={ev.registration_url} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#C15F3C", color: "#fff", fontSize: 11, textDecoration: "none", fontFamily: "inherit", fontWeight: 600 }}>{isPast ? "View details →" : "Register →"}</a>}
-              </div>
-            );
-          })}
-        </div>}
-      </div>}
-
-      {/* ── BITS PANEL (admin-only) ─────────────────────────────── */}
-      {panel === "bits" && user?.id === ADMIN_UID && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-          <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 26, fontWeight: 700, color: "#1a1a18", margin: "16px 0 6px" }}>⚡ Bits <span style={{ fontSize: 12, color: "#C15F3C", fontWeight: 400 }}>Admin</span></h2>
-          <button onClick={async () => {
-            setBitsLoading(true);
-            try {
-              const res = await fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/bits?action=scrape", { method: "POST" });
-              const d = await res.json();
-              alert(`Scraped: ${d.found || 0} found, ${d.inserted || 0} inserted${d.error ? ". Error: " + d.error : ""}`);
-              setBitsFetched(false); // re-fetch
-            } catch (e) { alert("Scrape failed: " + e.message); }
-            setBitsLoading(false);
-          }} style={{ padding: "6px 14px", borderRadius: 6, border: "1px solid #C15F3C", background: "#C15F3C18", color: "#C15F3C", fontSize: 12, cursor: "pointer", fontFamily: "inherit", fontWeight: 600, height: 36 }}>🔍 Scrape New</button>
-        </div>
-        <p style={{ fontSize: 13, color: "#a0a09b", marginBottom: 10 }}>Curated posts, articles, charts — review and approve before publishing</p>
-        {/* Filter tabs */}
-        <div style={{ display: "flex", gap: 4, marginBottom: 14, flexWrap: "wrap" }}>
-          {[["all", `All (${bits.length})`], ["pending", `Pending (${bits.filter(b=>b._pending).length})`], ["approved", `Approved (${bits.filter(b=>!b._pending).length})`], ["tweet", "𝕏 Posts"], ["article", "Articles"], ["chart", "Charts"], ["podcast", "Podcasts"]].map(([k, l]) => (
-            <button key={k} onClick={() => setBitsFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${bitsFilter === k ? "#C15F3C" : "#e8e5dc"}`, background: bitsFilter === k ? "#C15F3C18" : "transparent", color: bitsFilter === k ? "#C15F3C" : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit", fontWeight: bitsFilter === k ? 600 : 400 }}>{l}</button>
-          ))}
-        </div>
-        {bitsLoading ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>Loading bits...</div> :
-        bits.length === 0 ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>No bits yet — hit Scrape to find some</div> :
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(340px,1fr))", gap: 12 }}>
-          {bits.filter(b => {
-            if (bitsFilter === "pending") return b._pending;
-            if (bitsFilter === "approved") return !b._pending;
-            if (bitsFilter === "all") return true;
-            return b.type === bitsFilter;
-          }).map((bit, i) => {
-            const typeConfig = { tweet: { icon: "𝕏", c: "#1DA1F2" }, article: { icon: "📰", c: "#30D158" }, chart: { icon: "📊", c: "#BF5AF2" }, podcast: { icon: "🎙️", c: "#FF9F0A" }, video: { icon: "🎬", c: "#FF2D55" }, meme: { icon: "😂", c: "#FFD60A" } };
-            const tc = typeConfig[bit.type] || { icon: "⚡", c: "#C15F3C" };
-            return (
-              <div key={bit.id || i} style={{ background: "#ffffff", borderRadius: 10, border: `1px solid ${bit._pending ? "#FF9F0A50" : "#e8e5dc"}`, padding: 16 }}>
-                {/* Status badge */}
-                {bit._pending && <div style={{ marginBottom: 6 }}>
-                  <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "#FF9F0A18", color: "#FF9F0A", fontWeight: 600 }}>PENDING REVIEW</span>
-                  {bit.ai_relevance_score && <span style={{ fontSize: 9, color: "#a0a09b", marginLeft: 6 }}>Score: {(bit.ai_relevance_score * 100).toFixed(0)}%</span>}
-                </div>}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: 6 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <span style={{ fontSize: 14 }}>{tc.icon}</span>
-                    <span style={{ fontSize: 10, color: tc.c, fontWeight: 600, textTransform: "uppercase" }}>{bit.type}</span>
-                    {bit.date && <span style={{ fontSize: 10, color: "#a0a09b" }}>{new Date(bit.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</span>}
-                  </div>
-                  {bit.engagement && <span style={{ fontSize: 9, color: "#a0a09b" }}>{bit.engagement}</span>}
-                </div>
-                <h3 style={{ margin: "0 0 4px", fontSize: 15, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#1a1a18", lineHeight: 1.3 }}>{bit.title}</h3>
-                {bit.description && <p style={{ fontSize: 13, color: "#4a4a45", lineHeight: 1.5, margin: "0 0 6px" }}>{bit.description.replace(/<[^>]*>/g, "")}</p>}
-                {bit.ai_reason && bit._pending && <p style={{ fontSize: 11, color: "#8a8a85", margin: "0 0 6px", fontStyle: "italic" }}>AI: {bit.ai_reason}</p>}
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                  {bit.author && <span style={{ fontSize: 11, color: "#6b6b66" }}>{bit.author}</span>}
-                  {bit.author_handle && <span style={{ fontSize: 10, color: "#a0a09b" }}>{bit.author_handle}</span>}
-                  {bit.source && <span style={{ fontSize: 9, color: "#c5c3ba" }}>{bit.source}</span>}
-                </div>
-                {bit.tags?.length > 0 && <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 8 }}>
-                  {bit.tags.map((t, j) => <span key={j} style={{ fontSize: 9, padding: "2px 5px", borderRadius: 3, background: t === "londonmaxxing" ? "#C15F3C18" : "#e8e5dc", color: t === "londonmaxxing" ? "#C15F3C" : "#6b6b66", fontWeight: t === "londonmaxxing" ? 600 : 400 }}>{t}</span>)}
-                </div>}
-                <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                  {bit.url && <a href={bit.url} target="_blank" rel="noopener" style={{ fontSize: 11, color: "#C15F3C", textDecoration: "none", fontWeight: 500 }}>View →</a>}
-                  {bit._pending && <>
-                    <div style={{ flex: 1 }} />
-                    <button onClick={async () => {
-                      await fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/bits?action=approve", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: bit.id }) });
-                      setBits(prev => prev.map(b => b.id === bit.id ? { ...b, _pending: false, status: "approved" } : b));
-                    }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid #30D158", background: "#30D15818", color: "#30D158", fontSize: 10, cursor: "pointer", fontFamily: "inherit", fontWeight: 600 }}>✓ Approve</button>
-                    <button onClick={async () => {
-                      await fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/bits?action=reject", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: bit.id }) });
-                      setBits(prev => prev.filter(b => b.id !== bit.id));
-                    }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid #FF453A", background: "#FF453A18", color: "#FF453A", fontSize: 10, cursor: "pointer", fontFamily: "inherit", fontWeight: 600 }}>✕ Reject</button>
-                  </>}
-                </div>
               </div>
             );
           })}
