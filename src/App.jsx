@@ -109,6 +109,7 @@ export default function App() {
   // Events (from Supabase API)
   const [events, setEvents] = useState([]);
   const [eventsLoading, setEventsLoading] = useState(false);
+  const [eventsFetched, setEventsFetched] = useState(false);
 
   // ── AUTH ─────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -296,12 +297,13 @@ export default function App() {
 
   // Fetch events from Supabase API
   useEffect(() => {
-    if (panel !== "events" || events.length > 0) return;
+    if (panel !== "events" || eventsFetched) return;
     setEventsLoading(true);
     fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=events")
-      .then(r => r.json()).then(d => { setEvents(d.data || []); setEventsLoading(false); })
-      .catch(() => setEventsLoading(false));
-  }, [panel]);
+      .then(r => r.json())
+      .then(d => { setEvents(d.data || []); setEventsFetched(true); setEventsLoading(false); })
+      .catch(() => { setEventsFetched(true); setEventsLoading(false); });
+  }, [panel, eventsFetched]);
 
   const filt = useMemo(() => {
     if (mapView === "investors") {
@@ -761,11 +763,6 @@ export default function App() {
             );
           })}
         </div>}
-        <div style={{ marginTop: 20, padding: 16, borderRadius: 10, background: "#ffffff", border: "1px solid #e8e5dc" }}>
-          <div style={{ fontSize: 11, color: "#8a8a85", fontWeight: 600, marginBottom: 4 }}>API ACCESS</div>
-          <p style={{ fontSize: 12, color: "#6b6b66", margin: "0 0 6px" }}>Query events programmatically — for agents, dashboards, or integrations.</p>
-          <code style={{ fontSize: 11, color: "#C15F3C", background: "#faf5f2", padding: "4px 8px", borderRadius: 4, display: "block", overflowX: "auto" }}>GET /functions/v1/api?resource=events</code>
-        </div>
       </div>}
 
       {/* ── SCORE PANEL ──────────────────────────────────────────── */}
