@@ -525,7 +525,7 @@ export default function App() {
         <div style={{ flex: 1 }} />
         {/* Nav */}
         <div style={{ display: "flex", gap: 0, borderRadius: 6, overflow: "hidden", border: "1px solid #e8e5dc" }}>
-          {[["graph", "🌌 Map"], ["insights", "📊 Insights"], ["updates", "📰 News"], ["people", "👤 People"], ["events", "📅 Events"], ...(user?.id === ADMIN_UID ? [["bits", "⚡ Bits"]] : [])].map(([k, l]) => (
+          {[["graph", "🌌 Map"], ["people", "👤 People"], ["events", "📅 Events"], ["updates", "📰 News"], ["insights", "📊 Insights"], ...(user?.id === ADMIN_UID ? [["bits", "⚡ Bits"]] : [])].map(([k, l]) => (
             <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "6px 12px", border: "none", height: 36, lineHeight: "24px", background: panel === k ? "#e8e5dc" : "transparent", color: panel === k ? "#1a1a18" : "#8a8a85", fontSize: isMobile ? 11 : 14, fontFamily: "inherit", cursor: "pointer", fontWeight: panel === k ? 600 : 400 }}>{l}</button>
           ))}
         </div>
@@ -688,6 +688,7 @@ export default function App() {
       {/* ── NEWS ──────────────────────────────────────────────────── */}
       {panel === "updates" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", background: "#faf9f5" }}>
         <div style={{ padding: isMobile ? "0 12px" : "0 20px" }}>
+          <p style={{ fontSize: 11, color: "#a0a09b", margin: "12px 0 10px" }}>Funding, acquisitions, people moves, milestones, interviews</p>
           <div style={{ display: "flex", gap: 4, marginBottom: 14, flexWrap: "wrap" }}>
             {Object.entries(UPDATE_TYPES).map(([k, cfg]) => (
               <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${updateFilter === k ? cfg.c : "#e8e5dc"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit", fontWeight: updateFilter === k ? 600 : 400 }}>{cfg.label}</button>
@@ -754,8 +755,7 @@ export default function App() {
       {/* ── PEOPLE PANEL (collapsible categories) ─────────────────── */}
       {panel === "people" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-          </div>
+          <p style={{ fontSize: 13, color: "#a0a09b", margin: "12px 0 0" }}>Founders, CEOs, investors, and leaders</p>
           <button onClick={() => {
             if (allPeopleOpen) { setOpenCats(new Set()); setAllPeopleOpen(false); }
             else { const allCats = new Set(); Object.values(PEOPLE).forEach(p => { const co = companies.find(c => p.co.includes(c.id)); if (co) allCats.add(co.cat); }); setOpenCats(allCats); setAllPeopleOpen(true); }
@@ -828,6 +828,7 @@ export default function App() {
 
       {/* ── EVENTS PANEL ─────────────────────────────────────────── */}
       {panel === "events" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
+        <p style={{ fontSize: 13, color: "#a0a09b", margin: "12px 0 14px" }}>Curated meetups, conferences, and community gatherings</p>
         {eventsLoading ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>Loading events...</div> :
         events.length === 0 ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>No events found</div> :
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(340px,1fr))", gap: 12 }}>

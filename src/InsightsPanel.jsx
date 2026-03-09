@@ -86,6 +86,7 @@ export default function InsightsPanel({ isMobile }) {
 
   return (
     <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#ffffff" }}>
+      <p style={{ fontSize: isMobile ? 13 : 14, color: "#8a8a85", margin: "12px 0 16px" }}>Data-driven view of London's AI ecosystem momentum</p>
 
       {/* Stat cards */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)", gap: 8, marginBottom: 20 }}>
