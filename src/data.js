@@ -174,6 +174,7 @@ export const PEOPLE={
   "Danyal Akarca":{role:"Co-founder & CEO, Callosum (Cambridge neuroscience PhD, Schmidt Fellow)",tw:"https://x.com/DanAkarca",li:null,co:["callosum"],pods:[]},
   "Tim Cherkasov":{role:"Co-founder & CEO, Trace (YC S25, ex-Copper)",tw:"https://x.com/timcherkasov",li:"https://linkedin.com/in/timcherkasov/",co:["trace"],pods:[]},
   "Artur Romanov":{role:"Co-founder & CTO, Trace (YC S25, ex-Deliveroo)",tw:null,li:"https://linkedin.com/in/artur-romanov/",co:["trace"],pods:[]},
+  "Arjun Khanna":{role:"Co-founder & CPO, Mozart AI",tw:"https://x.com/arjunskhanna19",li:null,co:["mozart-ai"],pods:[]},
   // ── INVESTOR PEOPLE ──
   "Nathan Benaich":{role:"Founder & GP, Air Street Capital · State of AI Report",tw:"https://x.com/nathanbenaich",li:"https://linkedin.com/in/nathanbenaich/",co:["air-street"],pods:[
     {label:"20VC — State of AI 2025",url:"https://www.youtube.com/watch?v=IxMp4QBQLYE"},
