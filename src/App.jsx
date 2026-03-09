@@ -106,6 +106,10 @@ export default function App() {
   const [fbSubmitted, setFbSubmitted] = useState(false);
   const [myFeedback, setMyFeedback] = useState([]);
 
+  // Events (from Supabase API)
+  const [events, setEvents] = useState([]);
+  const [eventsLoading, setEventsLoading] = useState(false);
+
   // ── AUTH ─────────────────────────────────────────────────────────────
   useEffect(() => {
     // Load localStorage backup immediately (fast)
@@ -169,7 +173,7 @@ export default function App() {
           }
         });
         if (error) throw error;
-        // Update profile with extra fields
+        // Update profile with extra fields + create member directory entry
         if (data.user) {
           await supabase.from("profiles").update({
             username: authForm.username,
@@ -177,6 +181,15 @@ export default function App() {
             linkedin_url: authForm.linkedin || null,
             company: authForm.company || null,
           }).eq("id", data.user.id);
+          // Create member profile for the community directory
+          await supabase.from("members").upsert({
+            user_id: data.user.id,
+            display_name: authForm.username || authForm.email.split("@")[0],
+            company: authForm.company || null,
+            twitter: authForm.twitter ? `https://x.com/${authForm.twitter.replace("@","")}` : null,
+            linkedin: authForm.linkedin || null,
+            visible: true,
+          }, { onConflict: "user_id" });
         }
         setSignupSuccess(true);
       } else {
@@ -280,6 +293,15 @@ export default function App() {
     const u = () => setDim({ w: window.innerWidth, h: window.innerHeight });
     u(); window.addEventListener("resize", u); return () => window.removeEventListener("resize", u);
   }, []);
+
+  // Fetch events from Supabase API
+  useEffect(() => {
+    if (panel !== "events" || events.length > 0) return;
+    setEventsLoading(true);
+    fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=events")
+      .then(r => r.json()).then(d => { setEvents(d.data || []); setEventsLoading(false); })
+      .catch(() => setEventsLoading(false));
+  }, [panel]);
 
   const filt = useMemo(() => {
     if (mapView === "investors") {
@@ -464,7 +486,7 @@ export default function App() {
         <div style={{ flex: 1 }} />
         {/* Nav */}
         <div style={{ display: "flex", gap: 0, borderRadius: 6, overflow: "hidden", border: "1px solid #e8e5dc" }}>
-          {[["graph", "🌌 Map"], ["insights", "📊 Insights"], ["updates", "📡 Updates"], ["people", "👤 People"]].map(([k, l]) => (
+          {[["graph", "🌌 Map"], ["insights", "📊 Insights"], ["updates", "📡 Updates"], ["people", "👤 People"], ["events", "📅 Events"]].map(([k, l]) => (
             <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "6px 12px", border: "none", height: 36, lineHeight: "24px", background: panel === k ? "#e8e5dc" : "transparent", color: panel === k ? "#1a1a18" : "#8a8a85", fontSize: isMobile ? 11 : 14, fontFamily: "inherit", cursor: "pointer", fontWeight: panel === k ? 600 : 400 }}>{l}</button>
           ))}
         </div>
@@ -703,6 +725,46 @@ export default function App() {
               </>);
             });
           })()}
+        </div>
+      </div>}
+
+      {/* ── EVENTS PANEL ─────────────────────────────────────────── */}
+      {panel === "events" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
+        <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 26, fontWeight: 700, color: "#1a1a18", margin: "16px 0 6px" }}>London AI Events</h2>
+        <p style={{ fontSize: 13, color: "#a0a09b", marginBottom: 14 }}>Curated meetups, conferences, and community gatherings</p>
+        {eventsLoading ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>Loading events...</div> :
+        events.length === 0 ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>No events found</div> :
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(340px,1fr))", gap: 12 }}>
+          {events.map((ev, i) => {
+            const isPast = new Date(ev.date) < new Date();
+            return (
+              <div key={i} style={{ background: "#ffffff", borderRadius: 10, border: "1px solid #e8e5dc", padding: 16, opacity: isPast ? 0.5 : 1 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: 8 }}>
+                  <div>
+                    <div style={{ fontSize: 11, color: "#C15F3C", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                      {new Date(ev.date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+                      {ev.time && <span style={{ color: "#8a8a85", fontWeight: 400 }}> · {ev.time}</span>}
+                    </div>
+                    <h3 style={{ margin: "4px 0 0", fontSize: 17, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#1a1a18" }}>{ev.title}</h3>
+                  </div>
+                  {ev.recurring && <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "#30D15818", color: "#30D158", fontWeight: 600 }}>RECURRING</span>}
+                </div>
+                {ev.venue && <div style={{ fontSize: 12, color: "#6b6b66", marginBottom: 4 }}>📍 {ev.venue}</div>}
+                {ev.organiser && <div style={{ fontSize: 12, color: "#8a8a85", marginBottom: 6 }}>Organised by {ev.organiser}</div>}
+                {ev.description && <p style={{ fontSize: 13, color: "#4a4a45", lineHeight: 1.5, margin: "0 0 8px" }}>{ev.description}</p>}
+                {ev.speakers?.length > 0 && ev.speakers[0] && <div style={{ fontSize: 11, color: "#6b6b66", marginBottom: 6 }}>🎤 {ev.speakers.join(", ")}</div>}
+                {ev.topics?.length > 0 && <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 8 }}>
+                  {ev.topics.map((t, j) => <span key={j} style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#e8e5dc", color: "#6b6b66" }}>{t}</span>)}
+                </div>}
+                {ev.registration_url && <a href={ev.registration_url} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#C15F3C", color: "#fff", fontSize: 11, textDecoration: "none", fontFamily: "inherit", fontWeight: 600 }}>{isPast ? "View details →" : "Register →"}</a>}
+              </div>
+            );
+          })}
+        </div>}
+        <div style={{ marginTop: 20, padding: 16, borderRadius: 10, background: "#ffffff", border: "1px solid #e8e5dc" }}>
+          <div style={{ fontSize: 11, color: "#8a8a85", fontWeight: 600, marginBottom: 4 }}>API ACCESS</div>
+          <p style={{ fontSize: 12, color: "#6b6b66", margin: "0 0 6px" }}>Query events programmatically — for agents, dashboards, or integrations.</p>
+          <code style={{ fontSize: 11, color: "#C15F3C", background: "#faf5f2", padding: "4px 8px", borderRadius: 4, display: "block", overflowX: "auto" }}>GET /functions/v1/api?resource=events</code>
         </div>
       </div>}
 
