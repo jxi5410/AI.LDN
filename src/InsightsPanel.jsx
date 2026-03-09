@@ -87,7 +87,6 @@ export default function InsightsPanel({ isMobile }) {
   return (
     <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#ffffff" }}>
       <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: isMobile ? 24 : 30, fontWeight: 700, color: "#1a1a18", margin: "16px 0 6px" }}>London AI Insights</h2>
-      <p style={{ fontSize: isMobile ? 13 : 14, color: "#8a8a85", marginBottom: 16 }}>Data-driven view of London's AI ecosystem momentum</p>
 
       {/* Stat cards */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)", gap: 8, marginBottom: 20 }}>
