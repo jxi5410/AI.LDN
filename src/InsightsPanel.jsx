@@ -87,14 +87,6 @@ export default function InsightsPanel({ isMobile }) {
   return (
     <div style={{ padding: isMobile ? "0 12px 20px" : "0 20px 20px" }}>
 
-      {/* Stat cards */}
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)", gap: 8, marginBottom: 20 }}>
-        <StatCard label="Companies Mapped" value={stats.totalCos} icon="🏢" />
-        <StatCard label="Total Funding" value={`$${Math.round(stats.totalFunding / 1000)}B+`} icon="💰" />
-        <StatCard label="Unicorns ($1B+)" value={stats.unicorns} icon="🦄" />
-        <StatCard label="UK AI Workers" value="86,000" icon="👥" />
-      </div>
-
       {/* ── CHARTS (compact 2-column) ────────────────────────────── */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 12, marginBottom: 16 }}>
         <div style={{ background: BG, borderRadius: 10, border: `1px solid ${BORDER}`, padding: "12px" }}>
