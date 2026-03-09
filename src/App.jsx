@@ -45,7 +45,7 @@ function nr(c, view) {
     if (f >= 1000) return 14; if (f >= 500) return 12; if (f >= 200) return 10; if (f >= 50) return 8; return 6;
   }
   if (c.cat === "frontier") return 26; if (c.cat === "investor") return 10; if (c.cat === "academic") return 13;
-  if (c.cat === "accelerator") return 9; if (c.cat === "frontier-emerging") return 18;
+  if (c.cat === "frontier-emerging") return 18;
   const f = c.fn || 0;
   if (f >= 1000) return 22; if (f >= 500) return 18; if (f >= 200) return 15; if (f >= 50) return 12; if (f >= 10) return 10; return 8;
 }
@@ -520,7 +520,7 @@ export default function App() {
         <div style={{ flexShrink: 0, cursor: "pointer" }} onClick={() => { setPanel("graph"); setSel(null); }}>
           <h1 style={{ margin: 0, fontSize: isMobile ? 20 : 30, fontFamily: "'Inter',sans-serif", fontWeight: 800, background: "linear-gradient(135deg,#C15F3C,#d97757,#e8a87c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</h1>
           {!isMobile && <p style={{ margin: 0, fontSize: 13, color: "#a0a09b" }}>
-            {companies.filter(c => !["investor", "academic", "accelerator"].includes(c.cat)).length} companies · {edges.length} connections{mn > 0 ? ` · ${mn} tracked` : ""}
+            {companies.filter(c => !["investor", "academic"].includes(c.cat)).length} companies · {edges.length} connections{mn > 0 ? ` · ${mn} tracked` : ""}
           </p>}
         </div>
         <div style={{ flex: 1 }} />
@@ -665,7 +665,7 @@ export default function App() {
           ))}
         </div>
         <div style={{ display: "flex", gap: 2, marginBottom: 5 }}>
-          {[["All", () => setCats(new Set(Object.keys(CC)))], ["None", () => setCats(new Set())], ["Cos", () => setCats(new Set(Object.keys(CC).filter(k => !["investor", "academic", "accelerator"].includes(k))))]].map(([l, fn]) => (
+          {[["All", () => setCats(new Set(Object.keys(CC)))], ["None", () => setCats(new Set())], ["Cos", () => setCats(new Set(Object.keys(CC).filter(k => !["investor", "academic"].includes(k))))]].map(([l, fn]) => (
             <button key={l} onClick={fn} style={{ flex: 1, padding: "2px", borderRadius: 4, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>{l}</button>
           ))}
         </div>

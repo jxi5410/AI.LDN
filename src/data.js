@@ -10,16 +10,13 @@ export const CC={
   generative:{c:"#BF5AF2",l:"Generative AI",i:"🎨"},
   biotech:{c:"#30D158",l:"AI + Biotech",i:"🧬"},
   enterprise:{c:"#FFD60A",l:"Enterprise AI",i:"🏢"},
-  cybersecurity:{c:"#FF453A",l:"Cybersecurity",i:"🛡️"},
   hardware:{c:"#5E5CE6",l:"AI Hardware",i:"🔧"},
   fintech:{c:"#64D2FF",l:"AI Fintech",i:"💰"},
-  defence:{c:"#FF375F",l:"Defence AI",i:"🎯"},
+  defence:{c:"#FF375F",l:"Security / Defence",i:"🛡️"},
   safety:{c:"#FF9F0A",l:"AI Safety",i:"🔒"},
-  governance:{c:"#AC8E68",l:"Governance",i:"📋"},
   devtools:{c:"#32D74B",l:"Dev Tools",i:"⚙️"},
   investor:{c:"#FFD700",l:"Investors",i:"💎"},
   academic:{c:"#5AC8FA",l:"Academic",i:"🎓"},
-  accelerator:{c:"#FF9500",l:"Accelerators",i:"🚀"},
 };
 
 export const ECfg={
@@ -409,7 +406,7 @@ export const companies=[
   {id:"elevenlabs",name:"ElevenLabs",s:"ElevenLabs",cat:"generative",yr:2022,emp:"330",fund:"$781M",fn:781,val:"$11B",founders:"Staniszewski (Imperial), Dąbkowski (ex-DM)",focus:"AI voice · TTS · 70+ langs",ethos:"Break language barriers",hq:"Soho + Warsaw",kp:"Staniszewski (CEO), Dąbkowski (CTO)",ms:"$500M D '26 · $330M ARR · IPO talk",jobs:"https://elevenlabs.io/careers"},
   {id:"stability",name:"Stability AI",s:"Stability",cat:"generative",yr:2019,emp:"~190",fund:"~$300M",fn:300,val:"$1B",founders:"Mostaque (departed '24)",focus:"Open image/video gen",ethos:"Open generative AI",hq:"Notting Hill",kp:"Akkaraju (CEO), Parker (Chair)",ms:"Stable Diffusion '22 · rescue '24",jobs:"https://stability.ai/careers"},
   {id:"helsing",name:"Helsing",s:"Helsing",cat:"defence",yr:2021,emp:"275-500",fund:"€1.37B",fn:1500,val:"€12B",founders:"Reil, Scherf",focus:"Military AI · drones",ethos:"Democratic defence",hq:"Munich (LDN)",kp:"Gould (UK MD)",ms:"€600M D · AI fighter pilot · FCAS",jobs:"https://helsing.ai/careers"},
-  {id:"darktrace",name:"Darktrace",s:"Darktrace",cat:"cybersecurity",yr:2013,emp:"2,400+",fund:"$230M",fn:230,val:"$5.3B",founders:"Gustafsson, Stockdale, Eagan",focus:"Self-learning cyber AI",ethos:"Immune system",hq:"Cambridge+LDN",kp:"Gustafsson (UK Min.)",ms:"IPO '21 · TB $5.3B '24",jobs:"https://darktrace.com/careers"},
+  {id:"darktrace",name:"Darktrace",s:"Darktrace",cat:"defence",yr:2013,emp:"2,400+",fund:"$230M",fn:230,val:"$5.3B",founders:"Gustafsson, Stockdale, Eagan",focus:"Self-learning cyber AI",ethos:"Immune system",hq:"Cambridge+LDN",kp:"Gustafsson (UK Min.)",ms:"IPO '21 · TB $5.3B '24",jobs:"https://darktrace.com/careers"},
   {id:"graphcore",name:"Graphcore",s:"Graphcore",cat:"hardware",yr:2016,emp:"~500",fund:"$710M",fn:710,val:"SB acq.",founders:"Toon, Knowles, Hauser",focus:"IPUs",ethos:"AI silicon",hq:"Bristol+LDN",kp:"Toon (CEO)",ms:"SB acq. '24",jobs:"https://www.graphcore.ai/careers"},
   {id:"faculty",name:"Faculty AI",s:"Faculty",cat:"enterprise",yr:2014,emp:"400",fund:"~£40M",fn:50,val:"~$1B (Accenture)",founders:"Dr Warner, Dr Ma",focus:"Decision intel · govt AI",ethos:"AI for institutions",hq:"London",kp:"Warner (→Accenture CTO)",ms:"Accenture acq. '26",jobs:"https://faculty.ai/careers/"},
   {id:"benevolentai",name:"BenevolentAI",s:"BenevolentAI",cat:"biotech",yr:2013,emp:"~69",fund:"$700M+",fn:700,val:"€1.5B peak",founders:"Mulvany",focus:"AI drug discovery",ethos:"Cure disease",hq:"Fitzrovia",kp:"Mulvany (Chair)",ms:"COVID baricitinib · delisted '25",jobs:"https://www.benevolent.com/careers"},
@@ -433,7 +430,7 @@ export const companies=[
   {id:"vivox-ai",name:"Vivox AI",s:"Vivox AI",cat:"fintech",yr:2024,emp:"Early",fund:"£1.3M",fn:2,val:"Undisclosed",founders:"Tim Khamzin",focus:"Agentic platform for pre-trained AI agents · AML, KYB, financial crime compliance",ethos:"AI agents for compliance",hq:"London",kp:"Tim Khamzin (Founder)",ms:"£1.3M Venture (Mar 2026) · Angels: Axel Weber (ex-Bundesbank), Dan Cobley (ex-Google UK)",jobs:null},
   {id:"physicsx",name:"PhysicsX",s:"PhysicsX",cat:"enterprise",yr:2023,emp:"150+",fund:"~$175M",fn:175,val:"~$1B",founders:"Tuluie, Corbo",focus:"Large Physics Models",ethos:"AI engineering",hq:"London",kp:"Tuluie (CEO)",ms:"$135M B '25 Atomico",jobs:"https://physicsx.com/careers"},
   {id:"conjecture",name:"Conjecture",s:"Conjecture",cat:"safety",yr:2021,emp:"~13",fund:"~$25M",fn:25,val:"Undisclosed",founders:"Leahy (EleutherAI)",focus:"Cognitive Emulation",ethos:"Safe before powerful",hq:"London",kp:"Leahy (CEO)",ms:"Karpathy/Collisons angels",jobs:"https://www.conjecture.dev/careers"},
-  {id:"holistic-ai",name:"Holistic AI",s:"Holistic AI",cat:"governance",yr:2020,emp:"43-79",fund:"$15M+",fn:15,val:"Undisclosed",founders:"Koshiyama, Kazim (UCL)",focus:"AI governance · EU AI Act",ethos:"Responsible AI",hq:"Soho Sq",kp:"Koshiyama (CEO)",ms:"500+ clients",jobs:"https://www.holisticai.com/careers"},
+  {id:"holistic-ai",name:"Holistic AI",s:"Holistic AI",cat:"safety",yr:2020,emp:"43-79",fund:"$15M+",fn:15,val:"Undisclosed",founders:"Koshiyama, Kazim (UCL)",focus:"AI governance · EU AI Act",ethos:"Responsible AI",hq:"Soho Sq",kp:"Koshiyama (CEO)",ms:"500+ clients",jobs:"https://www.holisticai.com/careers"},
   {id:"encord",name:"Encord",s:"Encord",cat:"devtools",yr:2020,emp:"50+",fund:"~€50M+",fn:55,val:"Undisclosed",founders:"Landau, Hansen",focus:"AI data annotation",ethos:"Data-centric",hq:"London",kp:"Landau (CEO)",ms:"€50M C '26",jobs:"https://encord.com/careers/"},
   {id:"convergence",name:"Convergence→Salesforce",s:"Convergence",cat:"enterprise",yr:2024,emp:"Acq.",fund:"$12M",fn:12,val:"Acq.",founders:"Purtorab, Toulis",focus:"AI agents + memory",ethos:"AI that remembers",hq:"LDN→SF",kp:null,ms:"SF acq. 9mo",jobs:null},
   {id:"latent-labs",name:"Latent Labs",s:"Latent Labs",cat:"biotech",yr:2025,emp:"Early",fund:"$50M",fn:50,val:"Undisclosed",founders:"Kohl (AlphaFold2, DM)",focus:"AI protein design",ethos:"Design biology",hq:"London",kp:"Kohl (CEO)",ms:"1st model Jul '25",jobs:null},
@@ -443,7 +440,7 @@ export const companies=[
   {id:"metaview",name:"Metaview",s:"Metaview",cat:"enterprise",yr:2018,emp:"Growing",fund:"$50M",fn:50,val:"Undisclosed",founders:"Magos",focus:"AI hiring",ethos:"Better hiring",hq:"London",kp:"Magos (CEO)",ms:"$35M B GV",jobs:"https://www.metaview.ai/careers"},
   {id:"unitary",name:"Unitary AI",s:"Unitary",cat:"safety",yr:2019,emp:"Small",fund:"Undisclosed",fn:5,val:"Undisclosed",founders:"Bateman",focus:"Content moderation",ethos:"Safer internet",hq:"London",kp:null,ms:"Most disruptive '24",jobs:null},
   {id:"paid-ai",name:"Paid AI",s:"Paid AI",cat:"devtools",yr:2024,emp:"Early",fund:"$21.6M",fn:22,val:"Undisclosed",founders:null,focus:"Billing for AI agents",ethos:"AI payment rails",hq:"London",kp:null,ms:"$21.6M Lightspeed",jobs:null},
-  {id:"maze-ai",name:"Maze Security",s:"Maze",cat:"cybersecurity",yr:2024,emp:"Early",fund:"$31M",fn:31,val:"Undisclosed",founders:null,focus:"AI cloud security",ethos:"Auto cloud defence",hq:"London",kp:null,ms:"$25M A '25",jobs:null},
+  {id:"maze-ai",name:"Maze Security",s:"Maze",cat:"defence",yr:2024,emp:"Early",fund:"$31M",fn:31,val:"Undisclosed",founders:null,focus:"AI cloud security",ethos:"Auto cloud defence",hq:"London",kp:null,ms:"$25M A '25",jobs:null},
   {id:"oxbotica",name:"Oxbotica",s:"Oxbotica",cat:"autonomous",yr:2014,emp:"200+",fund:"~$225M",fn:225,val:"$1B+",founders:"Newman, Posner (Oxford)",focus:"Universal AV software",ethos:"Autonomy everywhere",hq:"Oxford+LDN",kp:"Newman (CEO)",ms:"$140M B (Google)",jobs:"https://www.oxbotica.com/careers/"},
   {id:"mind-foundry",name:"Mind Foundry",s:"Mind Foundry",cat:"enterprise",yr:2016,emp:"50-100",fund:"~$30M",fn:30,val:"Undisclosed",founders:"Roberts, Osborne (Oxford)",focus:"Human-centric AI",ethos:"Trustable AI",hq:"Oxford+LDN",kp:null,ms:"MoD contracts",jobs:"https://www.mindfoundry.ai/careers"},
   {id:"healx",name:"Healx",s:"Healx",cat:"biotech",yr:2014,emp:"50-100",fund:"~$68M",fn:68,val:"Undisclosed",founders:"Guilliams (Cambridge)",focus:"AI rare disease drugs",ethos:"Rare disease patients",hq:"Cambridge+LDN",kp:"Guilliams (CEO)",ms:"$56M B Atomico",jobs:"https://healx.io/careers/"},
@@ -476,8 +473,8 @@ export const companies=[
   {id:"imperial",name:"Imperial",s:"Imperial",cat:"academic",yr:1907,focus:"Robotics · CV · 7% EU GenAI founders",hq:"S. Kensington",fn:0,jobs:null},
   {id:"turing",name:"Turing Institute",s:"Turing",cat:"academic",yr:2015,focus:"National AI institute · 13+ unis",hq:"King's Cross",fn:0,jobs:null},
   // ACCELERATORS
-  {id:"ef",name:"Entrepreneur First",s:"EF",cat:"accelerator",yr:2011,focus:"$10B+ portfolio. Tractable/Cleo/PolyAI",hq:"London",fn:0,jobs:null},
-  {id:"seedcamp",name:"Seedcamp",s:"Seedcamp",cat:"accelerator",yr:2007,focus:"550+ cos · 10+ unicorns",hq:"London",fn:0,jobs:null},
+  {id:"ef",name:"Entrepreneur First",s:"EF",cat:"investor",yr:2011,focus:"$10B+ portfolio. Tractable/Cleo/PolyAI",hq:"London",fn:0,jobs:null},
+  {id:"seedcamp",name:"Seedcamp",s:"Seedcamp",cat:"investor",yr:2007,focus:"550+ cos · 10+ unicorns",hq:"London",fn:0,jobs:null},
 ];
 
 // ── EDGES ───────────────────────────────────────────────────────────────

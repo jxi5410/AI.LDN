@@ -4,7 +4,7 @@ import { CC, ECfg, edges as allEdges } from "./data";
 
 const EDGE_COLORS = {
   alumni: "#C15F3C", spinoff: "#BF5AF2", investment: "#FFD700",
-  academic: "#5AC8FA", partnership: "#6a9bcc", accelerator: "#FF9500",
+  academic: "#5AC8FA", partnership: "#6a9bcc",
 };
 
 function nr(c, view) {
@@ -14,7 +14,7 @@ function nr(c, view) {
     if (f >= 1000) return 14; if (f >= 500) return 12; if (f >= 200) return 10; if (f >= 50) return 8; return 6;
   }
   if (c.cat === "frontier") return 26; if (c.cat === "investor") return 10; if (c.cat === "academic") return 13;
-  if (c.cat === "accelerator") return 9; if (c.cat === "frontier-emerging") return 18;
+  if (c.cat === "frontier-emerging") return 18;
   const f = c.fn || 0;
   if (f >= 1000) return 22; if (f >= 500) return 18; if (f >= 200) return 15; if (f >= 50) return 12; if (f >= 10) return 10; return 8;
 }
