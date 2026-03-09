@@ -38,6 +38,19 @@ Interactive constellation-style network graph mapping **80+ entities** across Lo
 
 React + D3.js. Single-file component, no build step needed beyond a React environment.
 
+
+## Environment Setup
+
+Create a local env file before running the app:
+
+```bash
+cp .env.example .env
+```
+
+Then fill in:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
 ## Usage
 
 Drop `london-ai-map.jsx` into any React project, or render it in Claude.ai artifacts.

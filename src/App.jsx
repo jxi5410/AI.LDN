@@ -581,7 +581,7 @@ export default function App() {
               <div style={{ fontSize: 13, color: "#ede9e0", lineHeight: 1.5 }}>{u.text}</div>
               <div style={{ display: "flex", gap: 8, marginTop: 4, alignItems: "center" }}>
                 {co && <span onClick={() => { setSel(co); setPanel("graph"); setTab("info"); }} style={{ fontSize: 9, color: CC[co.cat]?.c || "#666", cursor: "pointer" }}>{CC[co.cat]?.i} {co.name} →</span>}
-                {u.link && <a href={u.link} target="_blank" rel="noopener" style={{ fontSize: 8.5, color: "#7a756c", textDecoration: "none" }}>📰 Source →</a>}
+                {u.link && <a href={u.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: 8.5, color: "#7a756c", textDecoration: "none" }}>📰 Source →</a>}
               </div>
             </div>
           </div>);
@@ -604,8 +604,8 @@ export default function App() {
                   </div>
                   <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
                     <span onClick={() => toggleStar("person", name)} style={{ cursor: "pointer" }}><StarIcon filled={isStarred} /></span>
-                    {p.tw && <a href={p.tw} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, borderRadius: 4, background: "#2a2a28", border: "1px solid #333" }} title="X"><XIcon size={12} /></a>}
-                    {p.li && <a href={p.li} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, borderRadius: 4, background: "#0A66C2" }} title="LinkedIn"><LIIcon size={12} /></a>}
+                    {p.tw && <a href={p.tw} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, borderRadius: 4, background: "#2a2a28", border: "1px solid #333" }} title="X"><XIcon size={12} /></a>}
+                    {p.li && <a href={p.li} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, borderRadius: 4, background: "#0A66C2" }} title="LinkedIn"><LIIcon size={12} /></a>}
                   </div>
                 </div>
                 {/* Companies */}
@@ -696,7 +696,7 @@ export default function App() {
             {sel.focus && <S t="Focus" v={sel.focus} />}
             {sel.ethos && <S t="Ethos" v={sel.ethos} />}
             {sel.ms && <S t="Milestones" v={sel.ms} />}
-            {sel.jobs && <a href={sel.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#2a2826", color: "#ede9e0", fontSize: 9.5, textDecoration: "none", fontFamily: "inherit", border: "1px solid #3a3835", marginTop: 6 }}>🔗 Careers →</a>}
+            {sel.jobs && <a href={sel.jobs} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#2a2826", color: "#ede9e0", fontSize: 9.5, textDecoration: "none", fontFamily: "inherit", border: "1px solid #3a3835", marginTop: 6 }}>🔗 Careers →</a>}
           </>}
           {tab === "people" && <>
             {sel.founders && <S t="Founders" v={sel.founders} />}
@@ -706,8 +706,8 @@ export default function App() {
               {relatedPeople.map(([name, p]) => (
                 <div key={name} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0" }}>
                   <span style={{ fontSize: 10, color: "#d4cfc4", flex: 1 }}>{name}</span>
-                  {p.tw && <a href={p.tw} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 20, height: 20, borderRadius: 4, background: "#2a2a28", border: "1px solid #333" }}><XIcon size={11} /></a>}
-                  {p.li && <a href={p.li} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 20, height: 20, borderRadius: 4, background: "#0A66C2" }}><LIIcon size={11} /></a>}
+                  {p.tw && <a href={p.tw} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 20, height: 20, borderRadius: 4, background: "#2a2a28", border: "1px solid #333" }}><XIcon size={11} /></a>}
+                  {p.li && <a href={p.li} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 20, height: 20, borderRadius: 4, background: "#0A66C2" }}><LIIcon size={11} /></a>}
                 </div>
               ))}
               {/* Podcasts for this company's people */}
@@ -788,7 +788,7 @@ function PodcastList({ pods, compact }) {
   const visible = showAll ? pods : pods.slice(0, 3);
   return (<div>
     {visible.map((pod, i) => (
-      <a key={i} href={pod.url} target="_blank" rel="noopener" style={{ display: "block", fontSize: compact ? 9 : 9.5, color: "#a09b90", textDecoration: "none", padding: "2px 0", lineHeight: 1.4 }}>
+      <a key={i} href={pod.url} target="_blank" rel="noopener noreferrer" style={{ display: "block", fontSize: compact ? 9 : 9.5, color: "#a09b90", textDecoration: "none", padding: "2px 0", lineHeight: 1.4 }}>
         <span style={{ color: "#7a756c" }}>🎙️</span> <span style={{ color: "#d4cfc4" }}>{pod.label}</span>
       </a>
     ))}
