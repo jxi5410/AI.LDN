@@ -485,7 +485,7 @@ export const companies=[
   {id:"index",name:"Index Ventures",s:"Index",cat:"investor",yr:1996,focus:"$5B+ AUM · Tessl, Figma, Notion, Roblox",hq:"LDN / SF",kp:"Neil Rimer (Co-Founder) · Danny Rimer (Partner) · Mark Goldberg (Partner) · Martin Mignot (Partner, London)",fn:0,jobs:"https://www.indexventures.com/careers/"},
   {id:"lightspeed",name:"Lightspeed",s:"Lightspeed",cat:"investor",yr:2000,focus:"$18B+ AUM · Helsing, Paid AI",hq:"London",kp:"Arslan Ashraf (Partner, Europe) · Anoushka Vaswani (Partner, London) · Gustav Söderström (Partner)",fn:0,jobs:null},
   {id:"plural",name:"Plural",s:"Plural",cat:"investor",yr:2022,focus:"€400M Fund II · Helsing, Unitary, Metaview, Robin AI",hq:"London",kp:"Taavet Hinrikus (Co-Founder, founder Wise) · Ian Hogarth (Co-Founder, Chair AISI) · Cillian Kieran (Partner)",fn:0,jobs:null},
-  {id:"mmc",name:"MMC Ventures",s:"MMC",cat:"investor",yr:2000,focus:"UK's most active AI investor (75+ AI companies)",hq:"London",kp:"David Kelnar (Partner, AI Research) · Simon Menashy (Managing Partner) · Mina Mutafchieva (Partner)",fn:0,jobs:null},
+  {id:"mmc",name:"MMC Ventures",s:"MMC",cat:"investor",yr:2000,focus:"UK's most active AI investor · 144 companies, 4 unicorns (Synthesia, MUBI, Copper, Gousto) · ~$1B AUM · Seed & Series A · research-led",ethos:"Backing transformative tech",hq:"London",kp:"Bruce Macfarlane (Founding Partner), Simon Menashy (Managing Partner), David Kelnar (Partner, Research)",ms:"144 companies · 4 unicorns · £358M invested since 2010 · £501M portfolio value (Mar 2025) · State of AI reports",emp:"31",fn:0,jobs:null},
   // ACADEMIC
   {id:"ucl",name:"UCL",s:"UCL",cat:"academic",yr:1826,focus:"Gatsby Unit · DM birthplace · 46 spinouts £3.4B",hq:"King's Cross",fn:0,jobs:null},
   {id:"cambridge",name:"Cambridge",s:"Cambridge",cat:"academic",yr:1209,focus:"ML Group · #1 GenAI founders EU",hq:"Cambridge",fn:0,jobs:null},
@@ -614,6 +614,11 @@ export const edges=[
   {s:"seedcamp",t:"synthesia",ty:"investment",l:"Seed"},
   {s:"mmc",t:"faculty",ty:"investment",l:"Series A"},
   {s:"mmc",t:"healx",ty:"investment",l:"Seed"},
+  {s:"mmc",t:"signal-ai",ty:"investment",l:"$165M Growth"},
+  {s:"mmc",t:"synthesia",ty:"investment",l:"Early investor"},
+  {s:"mmc",t:"physicsx",ty:"investment",l:"$135M B"},
+  {s:"mmc",t:"encord",ty:"investment",l:"Investor"},
+  {s:"mmc",t:"holistic-ai",ty:"investment",l:"Investor"},
   {s:"air-street",t:"benevolentai",ty:"investment",l:"Early investor"},
   {s:"cambridge",t:"callosum",ty:"academic",l:"Both founders PhD"},
 ];
