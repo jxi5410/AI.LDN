@@ -65,6 +65,39 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
       .attr("stroke-opacity", 0.4)
       .attr("stroke-dasharray", d => d.ty === "partnership" ? "4 3" : "none");
 
+    // Edge label tooltip (positioned absolutely over SVG)
+    const tooltip = d3.select(svgRef.current.parentNode).selectAll(".edge-tooltip").data([0]);
+    const tip = tooltip.enter().append("div").attr("class", "edge-tooltip").merge(tooltip)
+      .style("position", "absolute").style("pointer-events", "none").style("display", "none")
+      .style("background", "rgba(255,255,255,0.96)").style("backdrop-filter", "blur(8px)")
+      .style("border", "1px solid #e8e5dc").style("border-radius", "6px")
+      .style("padding", "5px 10px").style("font-size", "11px").style("font-family", "'Inter',sans-serif")
+      .style("color", "#2d2d2a").style("z-index", "600").style("box-shadow", "0 2px 8px rgba(0,0,0,0.1)")
+      .style("max-width", "220px").style("white-space", "nowrap");
+
+    // Edge hover — show tooltip with edge type and label
+    link.style("cursor", "pointer")
+      .on("mouseenter", function(e, d) {
+        const edgeColor = EDGE_COLORS[d.ty] || "#ccc";
+        const typeName = {alumni:"Alumni Flow",spinoff:"Spin-off",investment:"Investment",academic:"Academic",partnership:"Partnership"}[d.ty] || d.ty;
+        d3.select(this).attr("stroke-opacity", 0.9).attr("stroke-width", 3);
+        const sName = typeof d.source === "object" ? d.source.name : d.source;
+        const tName = typeof d.target === "object" ? d.target.name : d.target;
+        tip.html(`<span style="color:${edgeColor};font-weight:600">${typeName}</span><br/><span style="color:#6b6b66">${sName} → ${tName}</span>${d.l ? `<br/><span style="color:#8a8a85;font-size:10px">${d.l}</span>` : ""}`)
+          .style("display", "block");
+      })
+      .on("mousemove", function(e) {
+        const rect = svgRef.current.parentNode.getBoundingClientRect();
+        tip.style("left", (e.clientX - rect.left + 12) + "px").style("top", (e.clientY - rect.top - 10) + "px");
+      })
+      .on("mouseleave", function() {
+        d3.select(this).attr("stroke-opacity", 0.4).attr("stroke-width", 1.5);
+        tip.style("display", "none");
+      });
+
+    // Draw edge labels on connected edges when hovering a node
+    const edgeLabels = g.append("g").attr("class", "edge-labels").style("pointer-events", "none");
+
     // Draw nodes
     const node = g.append("g").selectAll("g").data(nodes).join("g")
       .attr("class", "node-g")
@@ -155,8 +188,34 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
     // Hover highlight — persists selection on leave
     node.on("mouseenter", (e, d) => {
       applyHighlight(d.id);
+      // Show edge labels for connected edges
+      edgeLabels.selectAll("text").remove();
+      links.forEach(l => {
+        const sid = typeof l.source === "object" ? l.source.id : l.source;
+        const tid = typeof l.target === "object" ? l.target.id : l.target;
+        if (sid === d.id || tid === d.id) {
+          const sx = typeof l.source === "object" ? l.source.x : 0;
+          const sy = typeof l.source === "object" ? l.source.y : 0;
+          const tx = typeof l.target === "object" ? l.target.x : 0;
+          const ty = typeof l.target === "object" ? l.target.y : 0;
+          const mx = (sx + tx) / 2, my = (sy + ty) / 2;
+          if (l.l) {
+            edgeLabels.append("text")
+              .attr("x", mx).attr("y", my - 4)
+              .text(l.l)
+              .attr("text-anchor", "middle")
+              .attr("font-size", "9px")
+              .attr("font-family", "'Inter',sans-serif")
+              .attr("fill", EDGE_COLORS[l.ty] || "#999")
+              .attr("font-weight", 600)
+              .attr("paint-order", "stroke")
+              .attr("stroke", "#faf9f5")
+              .attr("stroke-width", 3);
+          }
+        }
+      });
     }).on("mouseleave", () => {
-      // If something is selected, highlight that instead of clearing
+      edgeLabels.selectAll("text").remove();
       if (selected) {
         applyHighlight(selected.id);
       } else {
