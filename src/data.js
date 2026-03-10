@@ -51,6 +51,7 @@ export const BADGES=[
 // ── PEOPLE WITH PODCASTS ────────────────────────────────────────────────
 export const PEOPLE={
   "Demis Hassabis":{role:"CEO, Google DeepMind & Isomorphic Labs",tw:"https://x.com/demishassabis",li:"https://linkedin.com/in/demishassabis/",co:["deepmind","isomorphic"],pods:[
+    {label:"DeepMind Podcast S3 w/ Hannah Fry — Gemini 3, world models, AGI, curing diseases (2026)",url:"https://youtu.be/PqVbypvxDto"},
     {label:"Lex Fridman #475 — Future of AI (2025)",url:"https://lexfridman.com/demis-hassabis-2/"},
     {label:"CBS 60 Minutes (Apr 2025)",url:"https://www.cbsnews.com/video/demis-hassabis-ai-deepmind-60-minutes-video-2025-04-20/"},
     {label:"Nobel Chemistry 2024 — Official lecture",url:"https://www.nobelprize.org/prizes/chemistry/2024/hassabis/interview/"},
@@ -321,6 +322,7 @@ export const UPDATES=[
   {date:"2024-01-15",type:"people",text:"Poppy Gustafsson (ex-Darktrace CEO, post Thoma Bravo acquisition) appointed UK Minister for Investment",company:"darktrace",link:null},
   // Interviews / podcasts as updates — generated from all PEOPLE data
   // Demis Hassabis
+  {date:"2026-03-01",type:"interview",text:"Demis Hassabis w/ Hannah Fry — DeepMind Podcast S3: Gemini 3, world models, AGI timeline, AI curing most diseases in 10-20 years",company:"deepmind",link:"https://youtu.be/PqVbypvxDto"},
   {date:"2025-11-01",type:"interview",text:"Demis Hassabis on Lex Fridman #475 — Future of AI, post-Nobel",company:"deepmind",link:"https://lexfridman.com/demis-hassabis-2/"},
   {date:"2025-04-20",type:"interview",text:"Demis Hassabis on CBS 60 Minutes with Scott Pelley",company:"deepmind",link:"https://www.cbsnews.com/video/demis-hassabis-ai-deepmind-60-minutes-video-2025-04-20/"},
   {date:"2024-10-10",type:"interview",text:"Demis Hassabis — Nobel Prize in Chemistry official lecture",company:"deepmind",link:"https://www.nobelprize.org/prizes/chemistry/2024/hassabis/interview/"},
