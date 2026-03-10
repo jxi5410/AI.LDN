@@ -203,10 +203,11 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
           .style("display", "flex").style("align-items", "center").style("justify-content", "center")
           .style("overflow", "hidden").style("border-radius", "50%");
         const img = div.append("xhtml:img")
-          .attr("src", `https://img.logo.dev/${brand.domain}?token=pk_DCPOdH5bRSaRTnWsxNuVwA&size=80&format=png`)
-          .style("width", "70%").style("height", "70%")
+          .attr("src", `https://www.google.com/s2/favicons?domain=${brand.domain}&sz=128`)
+          .style("width", "60%").style("height", "60%")
           .style("object-fit", "contain")
-          .style("display", "block");
+          .style("display", "block")
+          .style("image-rendering", "auto");
         img.node().onerror = function() {
           div.selectAll("img").remove();
           div.append("xhtml:span")
