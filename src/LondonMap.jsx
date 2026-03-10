@@ -189,24 +189,33 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
       })
       .attr("opacity", d => isInv && d.cat === "investor" ? 1 : 0.85);
 
-    // Investor logos via foreignObject (avoids SVG CORS issues)
+    // Investor logos via foreignObject
     if (isInv) {
       node.filter(d => d.cat === "investor" && INVESTOR_BRAND[d.id]).each(function(d) {
         const brand = INVESTOR_BRAND[d.id];
-        const size = d.r * 1.3;
-        d3.select(this).append("foreignObject")
-          .attr("x", -size/2).attr("y", -size/2)
-          .attr("width", size).attr("height", size)
-          .attr("pointer-events", "none")
-          .append("xhtml:div")
-          .style("width", "100%").style("height", "100%")
+        const sz = d.r * 1.3;
+        const fo = d3.select(this).append("foreignObject")
+          .attr("x", -sz/2).attr("y", -sz/2)
+          .attr("width", sz).attr("height", sz)
+          .attr("pointer-events", "none");
+        const div = fo.append("xhtml:div")
+          .style("width", sz + "px").style("height", sz + "px")
           .style("display", "flex").style("align-items", "center").style("justify-content", "center")
-          .style("overflow", "hidden").style("border-radius", "50%")
-          .append("xhtml:img")
-          .attr("src", `https://logo.clearbit.com/${brand.domain}`)
-          .style("width", "75%").style("height", "75%")
+          .style("overflow", "hidden").style("border-radius", "50%");
+        const img = div.append("xhtml:img")
+          .attr("src", `https://img.logo.dev/${brand.domain}?token=pk_DCPOdH5bRSaRTnWsxNuVwA&size=80&format=png`)
+          .style("width", "70%").style("height", "70%")
           .style("object-fit", "contain")
-          .on("error", function() { d3.select(this).remove(); });
+          .style("display", "block");
+        img.node().onerror = function() {
+          div.selectAll("img").remove();
+          div.append("xhtml:span")
+            .style("font-size", (sz * 0.4) + "px")
+            .style("font-weight", "800")
+            .style("color", brand.c)
+            .style("font-family", "'Inter',sans-serif")
+            .text(d.name.charAt(0));
+        };
       });
     }
 

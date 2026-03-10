@@ -1100,7 +1100,7 @@ export default function App() {
           </div>}
           <div style={{ display: "flex", gap: 0, marginTop: 8 }}>
             {["info", "funding", "people", "links", "🤝"].map(t => (
-              <button key={t} onClick={() => setTab(t)} style={{ flex: 1, padding: "4px 0", border: "none", borderBottom: tab === t ? `2px solid ${CC[sel.cat]?.c}` : "2px solid transparent", background: "none", color: tab === t ? "#1a1a18" : "#a0a09b", fontSize: 11, fontFamily: "inherit", cursor: "pointer", textTransform: "uppercase", fontWeight: 600 }}>{t === "funding" ? "💰" : t}</button>
+              <button key={t} onClick={() => setTab(t)} style={{ flex: 1, padding: "4px 0", border: "none", borderBottom: tab === t ? `2px solid ${CC[sel.cat]?.c}` : "2px solid transparent", background: "none", color: tab === t ? "#1a1a18" : "#a0a09b", fontSize: 11, fontFamily: "inherit", cursor: "pointer", textTransform: "uppercase", fontWeight: 600 }}>{t}</button>
             ))}
           </div>
         </div>
@@ -1115,36 +1115,71 @@ export default function App() {
             {sel.jobs && <a href={sel.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#e8e5dc", color: "#2d2d2a", fontSize: 9.5, textDecoration: "none", fontFamily: "inherit", border: "1px solid #d5d3ca", marginTop: 6 }}>🔗 Careers →</a>}
           </>}
           {tab === "funding" && <>
-            {fundingRounds.length === 0 ? (
-              <p style={{ fontSize: 11, color: "#a0a09b", textAlign: "center", padding: "16px 0" }}>No funding round data yet.</p>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {fundingRounds.map((r, i) => (
-                  <div key={i} style={{ padding: "8px 10px", borderRadius: 8, background: "#ffffff", border: "1px solid #e8e5dc" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: "#1a1a18" }}>{r.series}</span>
-                      <span style={{ fontSize: 10, color: "#a0a09b" }}>{r.date || ""}</span>
-                    </div>
-                    <div style={{ display: "flex", gap: 12, marginBottom: 4 }}>
-                      {r.amount && <div><span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Raised</span><div style={{ fontSize: 13, fontWeight: 700, color: "#30D158" }}>{r.amount}</div></div>}
-                      {r.valuation && <div><span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Valuation</span><div style={{ fontSize: 13, fontWeight: 700, color: "#C15F3C" }}>{r.valuation}</div></div>}
-                    </div>
-                    {r.lead_investors?.length > 0 && (
-                      <div style={{ marginBottom: 3 }}>
-                        <span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Lead </span>
-                        <span style={{ fontSize: 10, color: "#4a4a45", fontWeight: 600 }}>{r.lead_investors.join(", ")}</span>
-                      </div>
-                    )}
-                    {r.other_investors?.length > 0 && (
-                      <div style={{ marginBottom: 2 }}>
-                        <span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Also </span>
-                        <span style={{ fontSize: 9, color: "#6b6b66" }}>{r.other_investors.join(", ")}</span>
-                      </div>
-                    )}
-                    {r.notes && <div style={{ fontSize: 9, color: "#8a8a85", marginTop: 3, fontStyle: "italic" }}>{r.notes}</div>}
+            {sel.cat === "investor" ? (
+              /* INVESTOR VIEW: show portfolio companies with round info */
+              (() => {
+                const portfolioEdges = edges.filter(e => e.ty === "investment" && e.s === sel.id);
+                if (portfolioEdges.length === 0) return <p style={{ fontSize: 11, color: "#a0a09b", textAlign: "center", padding: "16px 0" }}>No portfolio data.</p>;
+                const totalFunding = portfolioEdges.reduce((s, e) => { const co = companies.find(c => c.id === e.t); return s + (co?.fn || 0); }, 0);
+                return <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+                    <div style={{ fontSize: 9, color: "#8a8a85", textTransform: "uppercase", fontWeight: 600 }}>Portfolio · {portfolioEdges.length} companies</div>
+                    {totalFunding > 0 && <div style={{ fontSize: 9, color: "#30D158", fontWeight: 600 }}>Combined: ${totalFunding >= 1000 ? Math.round(totalFunding/1000) + "B" : totalFunding + "M"}</div>}
                   </div>
-                ))}
-              </div>
+                  {portfolioEdges.sort((a,b) => {
+                    const ca = companies.find(c => c.id === a.t);
+                    const cb = companies.find(c => c.id === b.t);
+                    return (cb?.fn || 0) - (ca?.fn || 0);
+                  }).map((e, i) => {
+                    const co = companies.find(c => c.id === e.t);
+                    if (!co) return null;
+                    return <div key={i} onClick={() => { setSel(co); setTab("funding"); }} style={{ padding: "7px 9px", borderRadius: 6, background: "#ffffff", border: "1px solid #e8e5dc", cursor: "pointer" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: CC[co.cat]?.c || "#999", flexShrink: 0 }} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <span style={{ fontSize: 11, fontWeight: 600, color: "#1a1a18" }}>{co.name}</span>
+                          <span style={{ fontSize: 9, color: "#a0a09b", marginLeft: 4 }}>{CC[co.cat]?.l}</span>
+                        </div>
+                        {co.fund && <span style={{ fontSize: 10, fontWeight: 700, color: "#30D158", flexShrink: 0 }}>{co.fund}</span>}
+                      </div>
+                      {e.l && <div style={{ fontSize: 9, color: "#8a8a85", marginTop: 2, paddingLeft: 12 }}>{e.l}</div>}
+                    </div>;
+                  })}
+                </div>;
+              })()
+            ) : (
+              /* COMPANY VIEW: show funding rounds */
+              fundingRounds.length === 0 ? (
+                <p style={{ fontSize: 11, color: "#a0a09b", textAlign: "center", padding: "16px 0" }}>No funding round data yet.</p>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {fundingRounds.map((r, i) => (
+                    <div key={i} style={{ padding: "8px 10px", borderRadius: 8, background: "#ffffff", border: "1px solid #e8e5dc" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: "#1a1a18" }}>{r.series}</span>
+                        <span style={{ fontSize: 10, color: "#a0a09b" }}>{r.date || ""}</span>
+                      </div>
+                      <div style={{ display: "flex", gap: 12, marginBottom: 4 }}>
+                        {r.amount && <div><span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Raised</span><div style={{ fontSize: 13, fontWeight: 700, color: "#30D158" }}>{r.amount}</div></div>}
+                        {r.valuation && <div><span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Valuation</span><div style={{ fontSize: 13, fontWeight: 700, color: "#C15F3C" }}>{r.valuation}</div></div>}
+                      </div>
+                      {r.lead_investors?.length > 0 && (
+                        <div style={{ marginBottom: 3 }}>
+                          <span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Lead </span>
+                          <span style={{ fontSize: 10, color: "#4a4a45", fontWeight: 600 }}>{r.lead_investors.join(", ")}</span>
+                        </div>
+                      )}
+                      {r.other_investors?.length > 0 && (
+                        <div style={{ marginBottom: 2 }}>
+                          <span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Also </span>
+                          <span style={{ fontSize: 9, color: "#6b6b66" }}>{r.other_investors.join(", ")}</span>
+                        </div>
+                      )}
+                      {r.notes && <div style={{ fontSize: 9, color: "#8a8a85", marginTop: 3, fontStyle: "italic" }}>{r.notes}</div>}
+                    </div>
+                  ))}
+                </div>
+              )
             )}
           </>}
           {tab === "people" && <>
