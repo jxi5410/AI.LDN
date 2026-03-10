@@ -364,6 +364,8 @@ export default function App() {
     return companies.filter(c => {
       if (!cats.has(c.cat)) return false;
       if (showMyNet && !ud[c.id]) return false;
+      // In companies view, hide investors
+      if (mapView === "companies" && c.cat === "investor") return false;
       return true;
     });
   }, [cats, showMyNet, ud, mapView]);
@@ -667,7 +669,7 @@ export default function App() {
       </div>}
 
       {/* ── LEFT SIDEBAR (graph) ──────────────────────────────────── */}
-      {panel === "graph" && !isMobile && <div style={{ position: "absolute", top: 80, left: 6, zIndex: 20000, background: "rgba(255,255,255,0.97)", borderRadius: 10, padding: "7px 7px 10px", backdropFilter: "blur(14px)", border: "1px solid #e8e5dc", maxHeight: "calc(100vh - 85px)", overflowY: "auto", width: 180 }}>
+      {panel === "graph" && !isMobile && <div style={{ position: "absolute", top: 80, left: 6, zIndex: 20000, background: "rgba(255,255,255,0.97)", borderRadius: 10, padding: "7px 7px 10px", backdropFilter: "blur(14px)", border: "1px solid #e8e5dc", maxHeight: "calc(100vh - 85px)", overflowY: "auto", width: 210 }}>
         {/* View toggle */}
         <div style={{ display: "flex", gap: 2, marginBottom: 5 }}>
           {[["companies", "Companies"], ["investors", "Investors"]].map(([k, l]) => (

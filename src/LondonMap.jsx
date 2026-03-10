@@ -84,21 +84,11 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
       source: e.s, target: e.t, ty: e.ty, l: e.l,
     }));
 
-    // In investor view, create clipPath + pattern for each investor logo
+    // In investor view, create clipPaths for investor logos
     if (isInv) {
       nodes.filter(n => n.cat === "investor" && INVESTOR_BRAND[n.id]).forEach(n => {
-        const brand = INVESTOR_BRAND[n.id];
-        const clipId = `clip-${n.id}`;
-        const patId = `pat-${n.id}`;
-        defs.append("clipPath").attr("id", clipId)
-          .append("circle").attr("r", n.r).attr("cx", 0).attr("cy", 0);
-        const pat = defs.append("pattern").attr("id", patId)
-          .attr("width", 1).attr("height", 1).attr("patternContentUnits", "objectBoundingBox");
-        pat.append("rect").attr("width", 1).attr("height", 1).attr("fill", "#ffffff");
-        pat.append("image")
-          .attr("href", `https://logo.clearbit.com/${brand.domain}`)
-          .attr("width", 0.7).attr("height", 0.7).attr("x", 0.15).attr("y", 0.15)
-          .attr("preserveAspectRatio", "xMidYMid meet");
+        defs.append("clipPath").attr("id", `clip-${n.id}`)
+          .append("circle").attr("r", n.r).attr("cx", n.r).attr("cy", n.r);
       });
     }
 
@@ -176,14 +166,12 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
         .attr("stroke-opacity", 0.3);
     }
 
-    // Main circle — investor view uses brand colours + logo fill
+    // Main circle — investor view uses brand colours
     node.append("circle")
       .attr("r", d => d.r)
       .attr("fill", d => {
-        if (isInv && d.cat === "investor" && INVESTOR_BRAND[d.id]) return `url(#pat-${d.id})`;
-        if (isInv && d.cat === "investor") return "#FFD700";
+        if (isInv && d.cat === "investor") return "#ffffff";
         if (isInv && d.cat !== "investor") {
-          // Colour portfolio companies by their primary investor
           return getInvestorColor(d.id, links) + "40";
         }
         return CC[d.cat]?.c || "#999";
@@ -200,6 +188,27 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
         return 1.5;
       })
       .attr("opacity", d => isInv && d.cat === "investor" ? 1 : 0.85);
+
+    // Investor logos via foreignObject (avoids SVG CORS issues)
+    if (isInv) {
+      node.filter(d => d.cat === "investor" && INVESTOR_BRAND[d.id]).each(function(d) {
+        const brand = INVESTOR_BRAND[d.id];
+        const size = d.r * 1.3;
+        d3.select(this).append("foreignObject")
+          .attr("x", -size/2).attr("y", -size/2)
+          .attr("width", size).attr("height", size)
+          .attr("pointer-events", "none")
+          .append("xhtml:div")
+          .style("width", "100%").style("height", "100%")
+          .style("display", "flex").style("align-items", "center").style("justify-content", "center")
+          .style("overflow", "hidden").style("border-radius", "50%")
+          .append("xhtml:img")
+          .attr("src", `https://logo.clearbit.com/${brand.domain}`)
+          .style("width", "75%").style("height", "75%")
+          .style("object-fit", "contain")
+          .on("error", function() { d3.select(this).remove(); });
+      });
+    }
 
     // Emoji icon inside (skip for investors with logos in investor view)
     node.append("text")
