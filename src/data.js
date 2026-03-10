@@ -172,6 +172,18 @@ export const PEOPLE={
   "Tim Cherkasov":{role:"Co-founder & CEO, Trace (YC S25, ex-Copper)",tw:"https://x.com/timcherkasov",li:"https://linkedin.com/in/timcherkasov/",co:["trace"],pods:[]},
   "Artur Romanov":{role:"Co-founder & CTO, Trace (YC S25, ex-Deliveroo)",tw:null,li:"https://linkedin.com/in/artur-romanov/",co:["trace"],pods:[]},
   "Arjun Khanna":{role:"Co-founder & CPO, Mozart AI",tw:"https://x.com/arjunskhanna19",li:null,co:["mozart-ai"],pods:[]},
+  "Hannah Fry":{role:"Professor of Maths (UCL) · Host, Google DeepMind: The Podcast · Broadcaster & Author",tw:"https://x.com/FryRsquared",li:null,co:["deepmind"],pods:[
+    {label:"DeepMind Podcast — Demis Hassabis at AI for Science Forum",url:"https://deepmind.google/the-podcast/"},
+    {label:"DeepMind Podcast — David Silver: The Era of Experience",url:"https://deepmind.google/the-podcast/"},
+    {label:"DeepMind Podcast — Genie 3: Interactive World Models",url:"https://deepmind.google/the-podcast/"},
+    {label:"DeepMind Podcast — Drug Discovery w/ Isomorphic Labs",url:"https://deepmind.google/the-podcast/"},
+    {label:"DeepMind Podcast — AI & Ecology: Forests, Reefs, Animal Communication",url:"https://deepmind.google/the-podcast/"},
+    {label:"DeepMind Podcast — Murray Shanahan on Consciousness & AI",url:"https://deepmind.google/the-podcast/"},
+    {label:"DeepMind Podcast — Cybersecurity: Operation Aurora & AI Defence",url:"https://deepmind.google/the-podcast/"},
+    {label:"DeepMind Podcast — NotebookLM: AI Podcasts from Your Documents",url:"https://deepmind.google/the-podcast/"},
+    {label:"DeepMind Podcast — Vibe Coding & AI Tools",url:"https://deepmind.google/the-podcast/"},
+    {label:"DeepMind Podcast — Levels of AGI: What It Means & When",url:"https://deepmind.google/the-podcast/"},
+  ]},
   // ── INVESTOR PEOPLE ──
   "Nathan Benaich":{role:"Founder & GP, Air Street Capital · State of AI Report",tw:"https://x.com/nathanbenaich",li:"https://linkedin.com/in/nathanbenaich/",co:["air-street"],pods:[
     {label:"20VC — State of AI 2025",url:"https://www.youtube.com/watch?v=IxMp4QBQLYE"},
