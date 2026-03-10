@@ -90,6 +90,7 @@ export default function App() {
   const [dim, setDim] = useState({ w: 1200, h: 800 });
   const isMobile = dim.w < 768;
   const [tab, setTab] = useState("info");
+  const [fundingRounds, setFundingRounds] = useState([]);
   const layout = "force";
   const [panel, setPanel] = useState("graph");
   const [highlightPerson, setHighlightPerson] = useState(null);
@@ -399,6 +400,14 @@ export default function App() {
   const ce = sel ? edges.filter(e => e.s === sel.id || e.t === sel.id) : [];
   const selUD = sel ? ud[sel.id] : null;
   const relatedPeople = sel ? Object.entries(PEOPLE).filter(([n, p]) => p.co.includes(sel.id)) : [];
+
+  // Fetch funding rounds when company selected
+  useEffect(() => {
+    if (!sel) { setFundingRounds([]); return; }
+    fetch(`https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=funding_rounds&company=${sel.id}`)
+      .then(r => r.json()).then(d => setFundingRounds(d.data || []))
+      .catch(() => setFundingRounds([]));
+  }, [sel?.id]);
   const mn = Object.keys(ud).length;
 
   const filteredUpdates = useMemo(() => {
@@ -1090,8 +1099,8 @@ export default function App() {
             {(selUD.contact_name || selUD.contact) && <span style={{ fontSize: 8, color: "#6b6b66" }}>· {selUD.contact_name || selUD.contact}</span>}
           </div>}
           <div style={{ display: "flex", gap: 0, marginTop: 8 }}>
-            {["info", "people", "links", "🤝"].map(t => (
-              <button key={t} onClick={() => setTab(t)} style={{ flex: 1, padding: "4px 0", border: "none", borderBottom: tab === t ? `2px solid ${CC[sel.cat]?.c}` : "2px solid transparent", background: "none", color: tab === t ? "#1a1a18" : "#a0a09b", fontSize: 12, fontFamily: "inherit", cursor: "pointer", textTransform: "uppercase", fontWeight: 600 }}>{t}</button>
+            {["info", "funding", "people", "links", "🤝"].map(t => (
+              <button key={t} onClick={() => setTab(t)} style={{ flex: 1, padding: "4px 0", border: "none", borderBottom: tab === t ? `2px solid ${CC[sel.cat]?.c}` : "2px solid transparent", background: "none", color: tab === t ? "#1a1a18" : "#a0a09b", fontSize: 11, fontFamily: "inherit", cursor: "pointer", textTransform: "uppercase", fontWeight: 600 }}>{t === "funding" ? "💰" : t}</button>
             ))}
           </div>
         </div>
@@ -1104,6 +1113,39 @@ export default function App() {
             {sel.ethos && <S t="Ethos" v={sel.ethos} />}
             {sel.ms && <S t="Milestones" v={sel.ms} />}
             {sel.jobs && <a href={sel.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#e8e5dc", color: "#2d2d2a", fontSize: 9.5, textDecoration: "none", fontFamily: "inherit", border: "1px solid #d5d3ca", marginTop: 6 }}>🔗 Careers →</a>}
+          </>}
+          {tab === "funding" && <>
+            {fundingRounds.length === 0 ? (
+              <p style={{ fontSize: 11, color: "#a0a09b", textAlign: "center", padding: "16px 0" }}>No funding round data yet.</p>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {fundingRounds.map((r, i) => (
+                  <div key={i} style={{ padding: "8px 10px", borderRadius: 8, background: "#ffffff", border: "1px solid #e8e5dc" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: "#1a1a18" }}>{r.series}</span>
+                      <span style={{ fontSize: 10, color: "#a0a09b" }}>{r.date || ""}</span>
+                    </div>
+                    <div style={{ display: "flex", gap: 12, marginBottom: 4 }}>
+                      {r.amount && <div><span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Raised</span><div style={{ fontSize: 13, fontWeight: 700, color: "#30D158" }}>{r.amount}</div></div>}
+                      {r.valuation && <div><span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Valuation</span><div style={{ fontSize: 13, fontWeight: 700, color: "#C15F3C" }}>{r.valuation}</div></div>}
+                    </div>
+                    {r.lead_investors?.length > 0 && (
+                      <div style={{ marginBottom: 3 }}>
+                        <span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Lead </span>
+                        <span style={{ fontSize: 10, color: "#4a4a45", fontWeight: 600 }}>{r.lead_investors.join(", ")}</span>
+                      </div>
+                    )}
+                    {r.other_investors?.length > 0 && (
+                      <div style={{ marginBottom: 2 }}>
+                        <span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Also </span>
+                        <span style={{ fontSize: 9, color: "#6b6b66" }}>{r.other_investors.join(", ")}</span>
+                      </div>
+                    )}
+                    {r.notes && <div style={{ fontSize: 9, color: "#8a8a85", marginTop: 3, fontStyle: "italic" }}>{r.notes}</div>}
+                  </div>
+                ))}
+              </div>
+            )}
           </>}
           {tab === "people" && <>
             {sel.founders && <S t="Founders" v={sel.founders} />}
