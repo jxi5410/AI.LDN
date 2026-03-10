@@ -85,7 +85,7 @@ export default function App() {
   const [sel, setSel] = useState(null);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState(null);
-  const [cats, setCats] = useState(new Set(Object.keys(CC)));
+  const [cats, setCats] = useState(new Set(Object.keys(CC).filter(k => k !== "investor")));
   const [hov, setHov] = useState(null);
   const [dim, setDim] = useState({ w: 1200, h: 800 });
   const isMobile = dim.w < 768;
@@ -391,7 +391,10 @@ export default function App() {
 
   const score = useMemo(() => calcScore(ud), [ud]);
   const earnedBadges = useMemo(() => BADGES.filter(b => b.check(ud, companies)), [ud]);
-  const tc = c => setCats(p => { const n = new Set(p); n.has(c) ? n.delete(c) : n.add(c); return n; });
+  const tc = c => {
+    if (c === "investor" && mapView === "investors") return; // always keep investor checked in Investors view
+    setCats(p => { const n = new Set(p); n.has(c) ? n.delete(c) : n.add(c); return n; });
+  };
 
   const ce = sel ? edges.filter(e => e.s === sel.id || e.t === sel.id) : [];
   const selUD = sel ? ud[sel.id] : null;
@@ -673,11 +676,15 @@ export default function App() {
         {/* View toggle */}
         <div style={{ display: "flex", gap: 2, marginBottom: 5 }}>
           {[["companies", "Companies"], ["investors", "Investors"]].map(([k, l]) => (
-            <button key={k} onClick={() => setMapView(k)} style={{ flex: 1, padding: "3px", borderRadius: 4, border: `1px solid ${mapView === k ? "#C15F3C" : "#e8e5dc"}`, background: mapView === k ? "#C15F3C18" : "transparent", color: mapView === k ? "#C15F3C" : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit", fontWeight: mapView === k ? 600 : 400 }}>{l}</button>
+            <button key={k} onClick={() => {
+              setMapView(k);
+              if (k === "investors") { setCats(prev => new Set([...prev, "investor"])); }
+              else { setCats(prev => { const n = new Set(prev); n.delete("investor"); return n; }); }
+            }} style={{ flex: 1, padding: "3px", borderRadius: 4, border: `1px solid ${mapView === k ? "#C15F3C" : "#e8e5dc"}`, background: mapView === k ? "#C15F3C18" : "transparent", color: mapView === k ? "#C15F3C" : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit", fontWeight: mapView === k ? 600 : 400 }}>{l}</button>
           ))}
         </div>
         <div style={{ display: "flex", gap: 2, marginBottom: 5 }}>
-          {[["All", () => setCats(new Set(Object.keys(CC)))], ["None", () => setCats(new Set())]].map(([l, fn]) => (
+          {[["All", () => setCats(new Set(mapView === "companies" ? Object.keys(CC).filter(k => k !== "investor") : Object.keys(CC)))], ["None", () => setCats(mapView === "investors" ? new Set(["investor"]) : new Set())]].map(([l, fn]) => (
             <button key={l} onClick={fn} style={{ flex: 1, padding: "2px", borderRadius: 4, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>{l}</button>
           ))}
         </div>
