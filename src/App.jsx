@@ -549,7 +549,16 @@ export default function App() {
             {searchResults.people.length > 0 && <div style={{ padding: "6px 10px", borderBottom: "1px solid #f5f3ee" }}>
               <div style={{ fontSize: 8, color: "#a0a09b", fontWeight: 600, marginBottom: 4 }}>PEOPLE</div>
               {searchResults.people.map(([name, p]) => (
-                <div key={name} onClick={() => { setPanel("people"); setSearch(""); setHighlightPerson(name); setTimeout(() => { const el = document.getElementById(`person-${name.replace(/\s+/g, "-")}`); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 100); setTimeout(() => setHighlightPerson(null), 3000); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", cursor: "pointer" }}>
+                <div key={name} onClick={() => {
+                  // Find the person's category
+                  const personCo = companies.find(c => p.co.includes(c.id));
+                  const personCat = personCo?.cat || "other";
+                  // Expand that category
+                  setOpenCats(prev => { const n = new Set(prev); n.add(personCat); return n; });
+                  setPanel("people"); setSearch(""); setHighlightPerson(name);
+                  setTimeout(() => { const el = document.getElementById(`person-${name.replace(/\s+/g, "-")}`); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 300);
+                  setTimeout(() => setHighlightPerson(null), 4000);
+                }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", cursor: "pointer" }}>
                   <span style={{ fontSize: 10.5, color: "#2d2d2a" }}>{name}</span>
                   <span style={{ fontSize: 8, color: "#8a8a85" }}>{p.role}</span>
                 </div>

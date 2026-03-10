@@ -173,7 +173,7 @@ export const PEOPLE={
   "Tim Cherkasov":{role:"Co-founder & CEO, Trace (YC S25, ex-Copper)",tw:"https://x.com/timcherkasov",li:"https://linkedin.com/in/timcherkasov/",co:["trace"],pods:[]},
   "Artur Romanov":{role:"Co-founder & CTO, Trace (YC S25, ex-Deliveroo)",tw:null,li:"https://linkedin.com/in/artur-romanov/",co:["trace"],pods:[]},
   "Arjun Khanna":{role:"Co-founder & CPO, Mozart AI",tw:"https://x.com/arjunskhanna19",li:null,co:["mozart-ai"],pods:[]},
-  "Hannah Fry":{role:"Professor of Maths (UCL) · Host, Google DeepMind: The Podcast · Broadcaster & Author",tw:"https://x.com/FryRsquared",li:null,co:["deepmind"],pods:[
+  "Hannah Fry":{role:"Professor of Maths (UCL) · Host, Google DeepMind: The Podcast · Broadcaster & Author",tw:"https://x.com/FryRsquared",li:null,co:[],pods:[
     {label:"DeepMind Podcast — Demis Hassabis at AI for Science Forum",url:"https://deepmind.google/the-podcast/"},
     {label:"DeepMind Podcast — David Silver: The Era of Experience",url:"https://deepmind.google/the-podcast/"},
     {label:"DeepMind Podcast — Genie 3: Interactive World Models",url:"https://deepmind.google/the-podcast/"},
