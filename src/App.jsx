@@ -675,7 +675,7 @@ export default function App() {
           ))}
         </div>
         <div style={{ display: "flex", gap: 2, marginBottom: 5 }}>
-          {[["All", () => setCats(new Set(Object.keys(CC)))], ["None", () => setCats(new Set())], ["Cos", () => setCats(new Set(Object.keys(CC).filter(k => !["investor", "academic"].includes(k))))]].map(([l, fn]) => (
+          {[["All", () => setCats(new Set(Object.keys(CC)))], ["None", () => setCats(new Set())]].map(([l, fn]) => (
             <button key={l} onClick={fn} style={{ flex: 1, padding: "2px", borderRadius: 4, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>{l}</button>
           ))}
         </div>
@@ -1176,7 +1176,7 @@ export default function App() {
           ))}
         </div>
         {/* Desktop: legend bottom-left */}
-        <div style={{ position: "absolute", bottom: 14, left: 12, background: "rgba(255,255,255,0.95)", borderRadius: 8, padding: "8px 12px", border: "1px solid #e8e5dc", zIndex: 500, backdropFilter: "blur(8px)", maxWidth: 300 }}>
+        <div style={{ position: "absolute", bottom: 14, left: 12, background: "rgba(255,255,255,0.95)", borderRadius: 8, padding: "8px 14px", border: "1px solid #e8e5dc", zIndex: 500, backdropFilter: "blur(8px)", maxWidth: 380, whiteSpace: "nowrap" }}>
           <div style={{ fontSize: 12, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4 }}>Connections</div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
             {[["Alumni", "#C15F3C"], ["Spin-off", "#BF5AF2"], ["Investment", "#FFD700"], ["Academic", "#5AC8FA"], ["Partnership", "#6a9bcc"]].map(([l, c]) => (
