@@ -96,6 +96,7 @@ export default function App() {
   const [highlightPerson, setHighlightPerson] = useState(null);
   const [openCats, setOpenCats] = useState(new Set());
   const [allPeopleOpen, setAllPeopleOpen] = useState(false);
+  const [peoplePeek, setPeoplePeek] = useState(null); // inline company card in People panel
   const [showMyNet, setShowMyNet] = useState(false);
   const [updateFilter, setUpdateFilter] = useState("all");
   const [mapView, setMapView] = useState("companies"); // "companies" | "investors"
@@ -1004,7 +1005,7 @@ export default function App() {
                                     const domMap = { deepmind: "deepmind.google", anthropic: "anthropic.com", openai: "openai.com", mistral: "mistral.ai", cohere: "cohere.com", stability: "stability.ai", elevenlabs: "elevenlabs.io", synthesia: "synthesia.io", wayve: "wayve.ai", isomorphic: "isomorphiclabs.com", helsing: "helsing.ai", darktrace: "darktrace.com", nscale: "nscale.com", graphcore: "graphcore.ai", polyai: "poly.ai", tractable: "tractable.ai", faculty: "faculty.ai", "signal-ai": "signal-ai.com", physicsx: "physicsx.ai", healx: "healx.io", encord: "encord.com", "holistic-ai": "holisticai.com", "robin-ai": "robin.ai", condukt: "condukt.ai", blackwall: "blackwall.ai", nexcade: "nexcade.ai", "peak-ai": "peak.ai" };
                                     const logoUrl = domMap[co2.id] ? `https://logo.clearbit.com/${domMap[co2.id]}` : null;
                                     return (
-                                      <span key={co2.id} onClick={() => { setSel(co2); setPanel("graph"); setTab("info"); }} style={{ fontSize: 10, color: "#5a5a55", cursor: "pointer", padding: "2px 6px", borderRadius: 4, background: "#f5f3ee", border: "1px solid #e8e5dc", display: "inline-flex", alignItems: "center", gap: 3 }}>
+                                      <span key={co2.id} onClick={() => setPeoplePeek(co2)} style={{ fontSize: 10, color: "#5a5a55", cursor: "pointer", padding: "2px 6px", borderRadius: 4, background: "#f5f3ee", border: "1px solid #e8e5dc", display: "inline-flex", alignItems: "center", gap: 3 }}>
                                         {logoUrl && <img src={logoUrl} alt="" style={{ width: 12, height: 12, borderRadius: 2, objectFit: "contain" }} onError={e => e.target.style.display="none"} />}
                                         {co2.s || co2.name}
                                       </span>
@@ -1027,6 +1028,76 @@ export default function App() {
               </div>
             );
           });
+        })()}
+        {/* ── INLINE COMPANY PEEK CARD (stays in People panel) ─── */}
+        {peoplePeek && (() => {
+          const pk = peoplePeek;
+          const pkColor = CC[pk.cat]?.c || "#666";
+          const pkEdges = edges.filter(e => e.s === pk.id || e.t === pk.id);
+          const pkRelPeople = Object.entries(PEOPLE).filter(([, p]) => p.co.includes(pk.id));
+          const domainMap = { deepmind: "deepmind.google", anthropic: "anthropic.com", openai: "openai.com", mistral: "mistral.ai", cohere: "cohere.com", stability: "stability.ai", elevenlabs: "elevenlabs.io", synthesia: "synthesia.io", wayve: "wayve.ai", isomorphic: "isomorphiclabs.com", helsing: "helsing.ai", darktrace: "darktrace.com", nscale: "nscale.com", graphcore: "graphcore.ai", polyai: "poly.ai", tractable: "tractable.ai", faculty: "faculty.ai", "signal-ai": "signal-ai.com", physicsx: "physicsx.ai", healx: "healx.io", encord: "encord.com", "holistic-ai": "holisticai.com", "robin-ai": "robin.ai", condukt: "condukt.ai", blackwall: "blackwall.ai", nexcade: "nexcade.ai", "peak-ai": "peak.ai", balderton: "balderton.com", atomico: "atomico.com", accel: "accel.com", mmc: "mmc.vc", seedcamp: "seedcamp.com", localglobe: "localglobe.vc", plural: "plural.vc", index: "indexventures.com", gv: "gv.com" };
+          const pkLogo = domainMap[pk.id] ? `https://logo.clearbit.com/${domainMap[pk.id]}` : null;
+          return (
+            <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 999, background: "rgba(26,26,24,0.45)", backdropFilter: "blur(4px)", top: isMobile ? 56 : 70, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={e => { if (e.target === e.currentTarget) setPeoplePeek(null); }}>
+              <div style={{ background: "#faf9f5", borderRadius: "16px 16px 0 0", maxWidth: 480, width: "100%", maxHeight: "75vh", overflowY: "auto", boxShadow: "0 -4px 30px rgba(0,0,0,0.15)", border: "1px solid #e8e5dc", borderBottom: "none" }}>
+                {/* Header */}
+                <div style={{ padding: "14px 16px 10px", borderBottom: "1px solid #e8e5dc", position: "sticky", top: 0, background: "#faf9f5", borderRadius: "16px 16px 0 0", zIndex: 1 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+                    <div style={{ display: "flex", gap: 10, alignItems: "center", flex: 1 }}>
+                      {pkLogo && <img src={pkLogo} alt="" style={{ width: 28, height: 28, borderRadius: 6, objectFit: "contain", border: "1px solid #e8e5dc" }} onError={e => e.target.style.display = "none"} />}
+                      <div>
+                        <span style={{ fontSize: 10, color: pkColor, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.8 }}>{CC[pk.cat]?.i} {CC[pk.cat]?.l}</span>
+                        <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: "#1a1a18" }}>{pk.name}</h3>
+                      </div>
+                    </div>
+                    <button onClick={() => setPeoplePeek(null)} style={{ background: "none", border: "none", color: "#a0a09b", fontSize: 20, cursor: "pointer", padding: "0 4px", lineHeight: 1, flexShrink: 0 }}>✕</button>
+                  </div>
+                  {pk.hq && <p style={{ margin: "4px 0 0", fontSize: 11, color: "#8a8a85" }}>📍 {pk.hq}</p>}
+                </div>
+                {/* Body */}
+                <div style={{ padding: "12px 16px 20px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4, marginBottom: 10 }}>
+                    {pk.fund && <M l="Funding" v={pk.fund} />}{pk.val && <M l="Valuation" v={pk.val} />}{pk.emp && <M l="Team" v={pk.emp} />}{pk.yr && <M l="Founded" v={pk.yr} />}
+                  </div>
+                  {pk.focus && <S t="Focus" v={pk.focus} />}
+                  {pk.ethos && <S t="Ethos" v={pk.ethos} />}
+                  {pk.founders && <S t="Founders" v={pk.founders} />}
+                  {pk.ms && <S t="Milestones" v={pk.ms} />}
+                  {pk.jobs && <a href={pk.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#e8e5dc", color: "#2d2d2a", fontSize: 9.5, textDecoration: "none", fontFamily: "inherit", border: "1px solid #d5d3ca", marginTop: 4 }}>🔗 Careers →</a>}
+                  {/* Connected people */}
+                  {pkRelPeople.length > 0 && <div style={{ marginTop: 12, paddingTop: 10, borderTop: "1px solid #e8e5dc" }}>
+                    <div style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>People ({pkRelPeople.length})</div>
+                    {pkRelPeople.map(([pName, pData]) => (
+                      <div key={pName} style={{ display: "flex", alignItems: "center", gap: 6, padding: "3px 0", fontSize: 12 }}>
+                        <span style={{ color: "#1a1a18", fontWeight: 500 }}>{pName}</span>
+                        <span style={{ color: "#a0a09b", fontSize: 10 }}>{pData.role}</span>
+                      </div>
+                    ))}
+                  </div>}
+                  {/* Connections */}
+                  {pkEdges.length > 0 && <div style={{ marginTop: 12, paddingTop: 10, borderTop: "1px solid #e8e5dc" }}>
+                    <div style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Connections ({pkEdges.length})</div>
+                    <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                      {pkEdges.slice(0, 15).map((e, i) => {
+                        const oid = e.s === pk.id ? e.t : e.s;
+                        const o = companies.find(c => c.id === oid);
+                        if (!o) return null;
+                        return (<span key={i} onClick={() => setPeoplePeek(o)} style={{ fontSize: 10, color: "#5a5a55", cursor: "pointer", padding: "2px 6px", borderRadius: 4, background: "#f0ede8", border: "1px solid #e8e5dc", display: "inline-flex", alignItems: "center", gap: 3 }}>
+                          {domainMap[o.id] && <img src={`https://logo.clearbit.com/${domainMap[o.id]}`} alt="" style={{ width: 11, height: 11, borderRadius: 2 }} onError={e2 => e2.target.style.display="none"} />}
+                          {o.s || o.name}
+                          <span style={{ fontSize: 8, color: "#b5b3ae" }}>{e.ty}</span>
+                        </span>);
+                      })}
+                    </div>
+                  </div>}
+                  {/* Go to Map button */}
+                  <div style={{ marginTop: 14, textAlign: "center" }}>
+                    <button onClick={() => { setSel(pk); setPanel("graph"); setTab("info"); setPeoplePeek(null); }} style={{ padding: "7px 16px", borderRadius: 6, border: "1px solid #d5d3ca", background: "#ffffff", color: "#4a4a45", fontSize: 11, cursor: "pointer", fontFamily: "inherit", fontWeight: 500 }}>🌌 View on Map</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
         })()}
       </div>}
 
