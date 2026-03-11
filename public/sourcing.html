@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LDN/ai Sourcing API — Beta</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0c; color: #e8e5dc; font-family: 'Inter', sans-serif; min-height: 100vh; }
+  
+  /* Gate screen */
+  #gate { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+  .gate-card { max-width: 400px; width: 100%; text-align: center; }
+  .gate-card h1 { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+  .gate-card h1 span { color: #C15F3C; }
+  .gate-card .sub { color: #6b6b66; font-size: 13px; margin-bottom: 24px; }
+  .gate-card input { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid #333; background: #1a1a18; color: #e8e5dc; font-family: 'JetBrains Mono', monospace; font-size: 14px; text-align: center; outline: none; }
+  .gate-card input:focus { border-color: #C15F3C; }
+  .gate-card button { margin-top: 12px; width: 100%; padding: 12px; border-radius: 8px; border: none; background: #C15F3C; color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; font-family: inherit; }
+  .gate-card button:hover { background: #a84e30; }
+  .gate-error { color: #FF453A; font-size: 12px; margin-top: 8px; display: none; }
+
+  /* Main docs */
+  #docs { display: none; max-width: 800px; margin: 0 auto; padding: 40px 24px 80px; }
+  
+  .header { margin-bottom: 40px; }
+  .header .brand { font-size: 14px; color: #C15F3C; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .header h1 { font-size: 36px; font-weight: 800; line-height: 1.2; margin-bottom: 8px; }
+  .header h1 em { font-style: normal; color: #C15F3C; }
+  .header .desc { font-size: 15px; color: #8a8a85; line-height: 1.5; }
+  .header .beta-badge { display: inline-block; padding: 3px 10px; border-radius: 4px; background: #C15F3C20; border: 1px solid #C15F3C40; color: #C15F3C; font-size: 11px; font-weight: 700; margin-top: 8px; letter-spacing: 1px; }
+
+  .section { margin-bottom: 36px; }
+  .section h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+  .section h2 .icon { font-size: 22px; }
+  .section .section-desc { font-size: 13px; color: #6b6b66; margin-bottom: 16px; line-height: 1.5; }
+
+  .endpoint { background: #1a1a18; border: 1px solid #2a2a28; border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+  .endpoint-header { padding: 14px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+  .endpoint-header:hover { background: #1f1f1d; }
+  .method { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; background: #30D15820; color: #30D158; }
+  .endpoint-title { font-size: 14px; font-weight: 600; flex: 1; }
+  .endpoint-desc-short { font-size: 12px; color: #6b6b66; }
+  .chevron { color: #6b6b66; transition: transform 0.2s; font-size: 12px; }
+  .endpoint.open .chevron { transform: rotate(90deg); }
+
+  .endpoint-body { display: none; padding: 0 16px 16px; border-top: 1px solid #2a2a28; }
+  .endpoint.open .endpoint-body { display: block; padding-top: 14px; }
+
+  .param-table { width: 100%; font-size: 12px; border-collapse: collapse; margin: 10px 0; }
+  .param-table th { text-align: left; color: #8a8a85; font-weight: 600; padding: 4px 8px; border-bottom: 1px solid #2a2a28; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .param-table td { padding: 6px 8px; border-bottom: 1px solid #1f1f1d; vertical-align: top; }
+  .param-name { font-family: 'JetBrains Mono', monospace; color: #C15F3C; font-weight: 600; white-space: nowrap; }
+  .param-type { color: #6b6b66; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .param-desc { color: #a0a09b; }
+  .param-values { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #8a8a85; background: #0d0d0c; padding: 2px 6px; border-radius: 3px; }
+
+  .try-url { display: flex; align-items: center; gap: 8px; margin-top: 12px; background: #0d0d0c; border: 1px solid #2a2a28; border-radius: 6px; padding: 8px 10px; }
+  .try-url code { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #a0a09b; flex: 1; overflow-x: auto; white-space: nowrap; word-break: break-all; }
+  .try-btn { padding: 4px 12px; border-radius: 4px; border: 1px solid #C15F3C40; background: #C15F3C15; color: #C15F3C; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; text-decoration: none; }
+  .try-btn:hover { background: #C15F3C25; }
+
+  .response-preview { margin-top: 10px; background: #0d0d0c; border: 1px solid #2a2a28; border-radius: 6px; padding: 12px; max-height: 300px; overflow-y: auto; display: none; }
+  .response-preview pre { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #8a8a85; white-space: pre-wrap; word-break: break-word; }
+  .response-preview.loading pre { color: #C15F3C; }
+
+  .info-box { background: #C15F3C10; border: 1px solid #C15F3C25; border-radius: 8px; padding: 12px 14px; margin: 16px 0; }
+  .info-box .label { font-size: 10px; font-weight: 700; color: #C15F3C; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .info-box p { font-size: 13px; color: #a0a09b; line-height: 1.5; }
+
+  .footer { border-top: 1px solid #2a2a28; padding-top: 24px; margin-top: 40px; text-align: center; }
+  .footer p { font-size: 12px; color: #6b6b66; }
+  .footer a { color: #C15F3C; text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .header h1 { font-size: 26px; }
+    .try-url { flex-direction: column; align-items: stretch; }
+    .try-url code { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Gate -->
+<div id="gate">
+  <div class="gate-card">
+    <h1>LDN/<span>ai</span></h1>
+    <p class="sub">Sourcing API — Beta Access</p>
+    <input type="password" id="keyInput" placeholder="Enter beta key" autofocus>
+    <button onclick="unlock()">Access Docs</button>
+    <p class="gate-error" id="gateError">Invalid key</p>
+  </div>
+</div>
+
+<!-- Docs -->
+<div id="docs">
+  <div class="header">
+    <div class="brand">LDN/ai</div>
+    <h1>Sourcing <em>API</em></h1>
+    <p class="desc">Deal sourcing for London's AI ecosystem. Thesis matching, real-time signals, warm intro routing, co-investor analysis — all via structured JSON API. Designed for agents and VC tech stacks.</p>
+    <div class="beta-badge">BETA v1.0</div>
+  </div>
+
+  <div class="info-box">
+    <div class="label">Authentication</div>
+    <p>Pass your beta key via <code style="font-family:'JetBrains Mono',monospace;color:#C15F3C">?key=YOUR_KEY</code> query parameter or <code style="font-family:'JetBrains Mono',monospace;color:#C15F3C">X-Beta-Key</code> header.</p>
+  </div>
+
+  <!-- 1. Thesis Matcher -->
+  <div class="section">
+    <h2><span class="icon">🎯</span> Thesis Matcher</h2>
+    <p class="section-desc">Find companies matching your investment criteria. Filter by category, funding range, founding year, and keywords. Returns match-scored results ranked by relevance.</p>
+
+    <div class="endpoint" onclick="toggle(this)">
+      <div class="endpoint-header">
+        <span class="method">GET</span>
+        <span class="endpoint-title">?action=match</span>
+        <span class="endpoint-desc-short">Find companies matching criteria</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="endpoint-body" onclick="event.stopPropagation()">
+        <table class="param-table">
+          <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+          <tr><td class="param-name">category</td><td class="param-type">string</td><td class="param-desc">Comma-separated: <span class="param-values">frontier, enterprise, fintech, biotech, defence, generative, hardware, devtools, safety, autonomous</span></td></tr>
+          <tr><td class="param-name">min_funding</td><td class="param-type">int</td><td class="param-desc">Minimum funding in $M</td></tr>
+          <tr><td class="param-name">max_funding</td><td class="param-type">int</td><td class="param-desc">Maximum funding in $M</td></tr>
+          <tr><td class="param-name">founded_after</td><td class="param-type">int</td><td class="param-desc">Year (e.g. 2022)</td></tr>
+          <tr><td class="param-name">q</td><td class="param-type">string</td><td class="param-desc">Keyword search across focus, founders, milestones</td></tr>
+        </table>
+        <div class="try-url">
+          <code id="url-match"></code>
+          <a class="try-btn" id="try-match" target="_blank">Try it →</a>
+        </div>
+        <div class="response-preview" id="resp-match"><pre></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Signals Feed -->
+  <div class="section">
+    <h2><span class="icon">📡</span> Signals Feed</h2>
+    <p class="section-desc">Real-time ecosystem signals for deal sourcing. Track fundraising intent, hiring, product launches, team changes, partnerships, and more.</p>
+
+    <div class="endpoint" onclick="toggle(this)">
+      <div class="endpoint-header">
+        <span class="method">GET</span>
+        <span class="endpoint-title">?action=signals</span>
+        <span class="endpoint-desc-short">Ecosystem signals feed</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="endpoint-body" onclick="event.stopPropagation()">
+        <table class="param-table">
+          <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+          <tr><td class="param-name">type</td><td class="param-type">string</td><td class="param-desc">Comma-separated: <span class="param-values">fundraising_intent, hiring, product_launch, team_change, partnership, acquisition, expansion, regulatory</span></td></tr>
+          <tr><td class="param-name">company</td><td class="param-type">string</td><td class="param-desc">Filter by company ID</td></tr>
+          <tr><td class="param-name">strength</td><td class="param-type">string</td><td class="param-desc"><span class="param-values">strong, medium, weak</span></td></tr>
+          <tr><td class="param-name">since</td><td class="param-type">date</td><td class="param-desc">ISO date (e.g. 2026-01-01)</td></tr>
+          <tr><td class="param-name">limit</td><td class="param-type">int</td><td class="param-desc">Max results (default 50)</td></tr>
+        </table>
+        <div class="try-url">
+          <code id="url-signals"></code>
+          <a class="try-btn" id="try-signals" target="_blank">Try it →</a>
+        </div>
+        <div class="response-preview" id="resp-signals"><pre></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Connection Path Finder -->
+  <div class="section">
+    <h2><span class="icon">🔗</span> Connection Path Finder</h2>
+    <p class="section-desc">Find warm intro paths between any two entities in the London AI graph. Returns shortest path with enriched node names and edge types. 1,128 precomputed paths across 246 direct and 882 two-hop connections.</p>
+
+    <div class="endpoint" onclick="toggle(this)">
+      <div class="endpoint-header">
+        <span class="method">GET</span>
+        <span class="endpoint-title">?action=path</span>
+        <span class="endpoint-desc-short">Warm intro routing</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="endpoint-body" onclick="event.stopPropagation()">
+        <table class="param-table">
+          <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+          <tr><td class="param-name">from</td><td class="param-type">string</td><td class="param-desc">Source node ID (e.g. <span class="param-values">gv</span>, <span class="param-values">balderton</span>)</td></tr>
+          <tr><td class="param-name">to</td><td class="param-type">string</td><td class="param-desc">Target node ID (e.g. <span class="param-values">mmc</span>, <span class="param-values">wayve</span>)</td></tr>
+        </table>
+        <div class="try-url">
+          <code id="url-path"></code>
+          <a class="try-btn" id="try-path" target="_blank">Try it →</a>
+        </div>
+        <div class="response-preview" id="resp-path"><pre></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Co-Investor Analysis -->
+  <div class="section">
+    <h2><span class="icon">🤝</span> Co-Investor Analysis</h2>
+    <p class="section-desc">Discover which investors frequently co-invest in London AI. Query for a specific investor's co-investment patterns, or get the global co-investment matrix.</p>
+
+    <div class="endpoint" onclick="toggle(this)">
+      <div class="endpoint-header">
+        <span class="method">GET</span>
+        <span class="endpoint-title">?action=coinvest</span>
+        <span class="endpoint-desc-short">Co-investment patterns</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="endpoint-body" onclick="event.stopPropagation()">
+        <table class="param-table">
+          <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+          <tr><td class="param-name">investor</td><td class="param-type">string</td><td class="param-desc">Investor ID (optional). Omit for global matrix. Examples: <span class="param-values">mmc, balderton, sequoia-eu, nvidia-inv</span></td></tr>
+        </table>
+        <div class="try-url">
+          <code id="url-coinvest"></code>
+          <a class="try-btn" id="try-coinvest" target="_blank">Try it →</a>
+        </div>
+        <div class="response-preview" id="resp-coinvest"><pre></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Portfolio Overlap -->
+  <div class="section">
+    <h2><span class="icon">🏗️</span> Portfolio Overlap</h2>
+    <p class="section-desc">Which London AI companies are backed by multiple investors in our graph? Shows the most "consensus" bets — companies where multiple top-tier investors have conviction.</p>
+
+    <div class="endpoint" onclick="toggle(this)">
+      <div class="endpoint-header">
+        <span class="method">GET</span>
+        <span class="endpoint-title">?action=overlap</span>
+        <span class="endpoint-desc-short">Multi-investor companies</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="endpoint-body" onclick="event.stopPropagation()">
+        <p style="font-size:12px;color:#8a8a85;margin-bottom:10px">No parameters — returns all companies with 2+ investors.</p>
+        <div class="try-url">
+          <code id="url-overlap"></code>
+          <a class="try-btn" id="try-overlap" target="_blank">Try it →</a>
+        </div>
+        <div class="response-preview" id="resp-overlap"><pre></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="info-box">
+    <div class="label">Live Data</div>
+    <p id="stats-line">Loading stats...</p>
+  </div>
+
+  <div class="info-box" style="background:#30D15810;border-color:#30D15825">
+    <div class="label" style="color:#30D158">Integration</div>
+    <p>All endpoints return structured JSON. Use with Affinity, Notion, custom agents, or any tool that speaks HTTP. Agent-ready via the public <a href="https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=openapi" target="_blank" style="color:#30D158">OpenAPI spec</a>.</p>
+  </div>
+
+  <div class="footer">
+    <p>Built by <a href="https://linkedin.com/in/jiexi" target="_blank">Jie Xi</a> · <a href="https://londonai.network" target="_blank">londonai.network</a> · <a href="https://github.com/jxi5410/AI.LDN" target="_blank">GitHub</a></p>
+    <p style="margin-top:6px;font-size:11px">Feedback? <a href="mailto:jxi5410@gmail.com">jxi5410@gmail.com</a></p>
+  </div>
+</div>
+
+<script>
+const BASE = "https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/sourcing";
+const VALID_KEY = "ldnai-beta-2026";
+let KEY = "";
+
+function unlock() {
+  KEY = document.getElementById("keyInput").value.trim();
+  if (KEY === VALID_KEY) {
+    document.getElementById("gate").style.display = "none";
+    document.getElementById("docs").style.display = "block";
+    setupUrls();
+    loadStats();
+  } else {
+    document.getElementById("gateError").style.display = "block";
+  }
+}
+document.getElementById("keyInput").addEventListener("keydown", e => { if (e.key === "Enter") unlock(); });
+
+function setupUrls() {
+  const urls = {
+    "match": `${BASE}?key=${KEY}&action=match&category=enterprise,fintech&max_funding=50&founded_after=2022&q=agent`,
+    "signals": `${BASE}?key=${KEY}&action=signals&type=fundraising_intent&strength=strong&since=2026-01-01`,
+    "path": `${BASE}?key=${KEY}&action=path&from=gv&to=mmc`,
+    "coinvest": `${BASE}?key=${KEY}&action=coinvest&investor=mmc`,
+    "overlap": `${BASE}?key=${KEY}&action=overlap`,
+  };
+  Object.entries(urls).forEach(([k, url]) => {
+    document.getElementById(`url-${k}`).textContent = url;
+    document.getElementById(`try-${k}`).href = url;
+  });
+}
+
+function toggle(el) {
+  el.classList.toggle("open");
+}
+
+async function loadStats() {
+  try {
+    const r = await fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=stats");
+    const d = await r.json();
+    document.getElementById("stats-line").innerHTML = 
+      `<strong style="color:#e8e5dc">${d.companies}</strong> companies · <strong style="color:#e8e5dc">${d.investors}</strong> investors · <strong style="color:#e8e5dc">${d.connections}</strong> connections · <strong style="color:#e8e5dc">${d.funding_rounds}</strong> funding rounds · <strong style="color:#e8e5dc">${d.podcasts}</strong> podcasts · <strong style="color:#e8e5dc">$${Math.round(d.total_funding_m/1000)}B+</strong> total funding tracked`;
+  } catch(e) { document.getElementById("stats-line").textContent = "Could not load stats"; }
+}
+</script>
+</body>
+</html>
