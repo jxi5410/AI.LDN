@@ -192,6 +192,7 @@ export const PEOPLE={
   "Suranga Chandratillake":{role:"GP, Balderton Capital · founder Blinkx",tw:"https://x.com/surangac",li:"https://linkedin.com/in/surangac/",co:["balderton"],pods:[
     {label:"20VC — AI Investing in Europe (2024)",url:"https://www.youtube.com/watch?v=5tlS2Ih3p8k"},
   ]},
+  "Sivesh Sukumar":{role:"Principal, Balderton Capital · ex-JPM Fintech",tw:null,li:"https://linkedin.com/in/sivesh/",co:["balderton"],pods:[]},
   "Niklas Zennström":{role:"Founder & CEO, Atomico · co-founder Skype",tw:"https://x.com/nikilas",li:"https://linkedin.com/in/zennstrom/",co:["atomico"],pods:[]},
   "Siraj Khaliq":{role:"GP, Atomico · AI/climate lead",tw:"https://x.com/siloknern",li:"https://linkedin.com/in/sirajkhaliq/",co:["atomico"],pods:[
     {label:"Sifted — Europe's AI Opportunity (2025)",url:"https://sifted.eu/articles/siraj-khaliq-atomico-ai/"},
