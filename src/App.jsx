@@ -1149,11 +1149,26 @@ export default function App() {
               })()
             ) : (
               /* COMPANY VIEW: show funding rounds */
-              fundingRounds.length === 0 ? (
-                <p style={{ fontSize: 11, color: "#a0a09b", textAlign: "center", padding: "16px 0" }}>No funding round data yet.</p>
-              ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  {fundingRounds.map((r, i) => (
+              (() => {
+                // Parse date and sort by series weight then date
+                const SERIES_ORDER = {"IPO":100,"Acquisition":99,"Series G":15,"Series F":14,"Series E":13,"Series D":12,"Series C":11,"Series B":10,"Series A":9,"Growth Equity":8,"Venture":7,"Seed":5,"Pre-Seed":4};
+                const MONTHS = {"Jan":1,"Feb":2,"Mar":3,"Apr":4,"May":5,"Jun":6,"Jul":7,"Aug":8,"Sep":9,"Oct":10,"Nov":11,"Dec":12};
+                const parseDate = (d) => {
+                  if (!d) return 0;
+                  const parts = d.split(" ");
+                  const yr = parseInt(parts[parts.length-1]) || 0;
+                  const mo = MONTHS[parts[0]] || 0;
+                  return yr * 100 + mo;
+                };
+                const sorted = [...fundingRounds].sort((a,b) => {
+                  const wa = SERIES_ORDER[a.series] || 0;
+                  const wb = SERIES_ORDER[b.series] || 0;
+                  if (wb !== wa) return wb - wa;
+                  return parseDate(b.date) - parseDate(a.date);
+                });
+                if (sorted.length === 0) return <p style={{ fontSize: 11, color: "#a0a09b", textAlign: "center", padding: "16px 0" }}>No funding round data yet.</p>;
+                return <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {sorted.map((r, i) => (
                     <div key={i} style={{ padding: "8px 10px", borderRadius: 8, background: "#ffffff", border: "1px solid #e8e5dc" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
                         <span style={{ fontSize: 12, fontWeight: 700, color: "#1a1a18" }}>{r.series}</span>
@@ -1178,8 +1193,8 @@ export default function App() {
                       {r.notes && <div style={{ fontSize: 9, color: "#8a8a85", marginTop: 3, fontStyle: "italic" }}>{r.notes}</div>}
                     </div>
                   ))}
-                </div>
-              )
+                </div>;
+              })()
             )}
           </>}
           {tab === "people" && <>
