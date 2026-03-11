@@ -208,6 +208,28 @@ export const PEOPLE={
   "Bernard Liautaud":{role:"Managing Partner, Balderton · founder Business Objects",tw:null,li:"https://linkedin.com/in/bernardliautaud/",co:["balderton"],pods:[]},
   "David Kelnar":{role:"Partner, MMC Ventures · AI Research",tw:"https://x.com/davidkelnar",li:"https://linkedin.com/in/davidkelnar/",co:["mmc"],pods:[]},
   "Saul Klein":{role:"Co-Founder, LocalGlobe · ex-Skype/LoveFilm",tw:"https://x.com/saulklein",li:"https://linkedin.com/in/saulklein/",co:["localglobe"],pods:[]},
+  // ── PRINCIPALS & ADDITIONAL VC ──
+  "Ameerul Miah":{role:"Principal, MMC Ventures · AI Investments",tw:null,li:"https://linkedin.com/in/ameerul-miah-49089a21/",co:["mmc"],pods:[]},
+  "Oliver Richards":{role:"Partner, MMC Ventures",tw:null,li:"https://linkedin.com/in/oliverrichards1/",co:["mmc"],pods:[]},
+  "Richard de Vere":{role:"Principal, MMC Ventures",tw:null,li:"https://linkedin.com/in/richard-de-vere-5659a592/",co:["mmc"],pods:[]},
+  "Mina Ferdowsi":{role:"Principal, MMC Ventures",tw:null,li:"https://linkedin.com/in/minaferdowsi/",co:["mmc"],pods:[]},
+  "Sia Houchangnia":{role:"Principal, Seedcamp · AI/Deep Tech",tw:null,li:"https://linkedin.com/in/siahouchangnia/",co:["seedcamp"],pods:[]},
+  "Will Bennett":{role:"Investor, Seedcamp · AI/Crypto",tw:null,li:"https://linkedin.com/in/will-bennett-seedcamp/",co:["seedcamp"],pods:[]},
+  "Reshma Sohoni":{role:"Managing Partner, Seedcamp",tw:"https://x.com/reshmasohoni",li:"https://linkedin.com/in/reshmasohoni/",co:["seedcamp"],pods:[]},
+  "Carlos Espinal":{role:"Managing Partner, Seedcamp",tw:"https://x.com/cee",li:"https://linkedin.com/in/carlosespinal/",co:["seedcamp"],pods:[]},
+  "Robin Klein":{role:"Co-Founder & GP, LocalGlobe",tw:null,li:"https://linkedin.com/in/robinklein/",co:["localglobe"],pods:[]},
+  "George Henry":{role:"GP, LocalGlobe",tw:null,li:"https://linkedin.com/in/george-henry-localglobe/",co:["localglobe"],pods:[]},
+  "Julia Hawkins":{role:"GP, LocalGlobe",tw:null,li:"https://linkedin.com/in/julia-hawkins-localglobe/",co:["localglobe"],pods:[]},
+  "Remus Brett":{role:"GP, LocalGlobe",tw:null,li:"https://linkedin.com/in/remusbrett/",co:["localglobe"],pods:[]},
+  "Suzanne Ashman":{role:"GP, LocalGlobe",tw:null,li:"https://linkedin.com/in/suzanneashman/",co:["localglobe"],pods:[]},
+  "Sophia Bendz":{role:"GP, Atomico · Consumer/AI",tw:"https://x.com/sophiabendz",li:"https://linkedin.com/in/sophiabendz/",co:["atomico"],pods:[]},
+  "Luca Bocchio":{role:"Partner, Accel · AI/Infra",tw:"https://x.com/lucabocchio",li:"https://linkedin.com/in/lucabocchio/",co:["accel"],pods:[]},
+  "Harry Sherrill":{role:"Principal, Accel · London",tw:null,li:"https://linkedin.com/in/harrysherrill/",co:["accel"],pods:[]},
+  "Martin Mignot":{role:"Partner, Index Ventures · AI",tw:"https://x.com/martinmignot",li:"https://linkedin.com/in/martinmignot/",co:["index"],pods:[]},
+  "Tom Sheridan":{role:"Principal, GV London",tw:null,li:"https://linkedin.com/in/tomsheridan/",co:["gv"],pods:[]},
+  "Matt Clifford":{role:"Co-founder, EF · UK AI Advisor to PM",tw:"https://x.com/matthewclifford",li:"https://linkedin.com/in/mattclifford/",co:["ef"],pods:[
+    {label:"20VC — EF, UK AI Policy (2025)",url:"https://www.youtube.com/watch?v=fqAW43G8zHA"},
+  ]},
 };
 
 // ── UPDATES WITH NEWS LINKS ─────────────────────────────────────────────

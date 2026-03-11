@@ -990,6 +990,31 @@ export default function App() {
                               );
                             })}
                           </div>
+                          {/* Portfolio investments for investor-linked people */}
+                          {(() => {
+                            const investorCos = p.co.filter(cid => { const c = companies.find(x => x.id === cid); return c?.cat === "investor"; });
+                            if (investorCos.length === 0) return null;
+                            const portfolioCos = edges.filter(e => e.ty === "investment" && investorCos.includes(e.s)).map(e => companies.find(c => c.id === e.t)).filter(Boolean);
+                            if (portfolioCos.length === 0) return null;
+                            return (
+                              <div style={{ marginTop: 10, paddingTop: 8, borderTop: "1px solid #f0ede8" }}>
+                                <div style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Portfolio ({portfolioCos.length})</div>
+                                <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                                  {portfolioCos.slice(0, 12).map(co2 => {
+                                    const domMap = { deepmind: "deepmind.google", anthropic: "anthropic.com", openai: "openai.com", mistral: "mistral.ai", cohere: "cohere.com", stability: "stability.ai", elevenlabs: "elevenlabs.io", synthesia: "synthesia.io", wayve: "wayve.ai", isomorphic: "isomorphiclabs.com", helsing: "helsing.ai", darktrace: "darktrace.com", nscale: "nscale.com", graphcore: "graphcore.ai", polyai: "poly.ai", tractable: "tractable.ai", faculty: "faculty.ai", "signal-ai": "signal-ai.com", physicsx: "physicsx.ai", healx: "healx.io", encord: "encord.com", "holistic-ai": "holisticai.com", "robin-ai": "robin.ai", condukt: "condukt.ai", blackwall: "blackwall.ai", nexcade: "nexcade.ai", "peak-ai": "peak.ai" };
+                                    const logoUrl = domMap[co2.id] ? `https://logo.clearbit.com/${domMap[co2.id]}` : null;
+                                    return (
+                                      <span key={co2.id} onClick={() => { setSel(co2); setPanel("graph"); setTab("info"); }} style={{ fontSize: 10, color: "#5a5a55", cursor: "pointer", padding: "2px 6px", borderRadius: 4, background: "#f5f3ee", border: "1px solid #e8e5dc", display: "inline-flex", alignItems: "center", gap: 3 }}>
+                                        {logoUrl && <img src={logoUrl} alt="" style={{ width: 12, height: 12, borderRadius: 2, objectFit: "contain" }} onError={e => e.target.style.display="none"} />}
+                                        {co2.s || co2.name}
+                                      </span>
+                                    );
+                                  })}
+                                  {portfolioCos.length > 12 && <span style={{ fontSize: 10, color: "#a0a09b", padding: "2px 4px" }}>+{portfolioCos.length - 12}</span>}
+                                </div>
+                              </div>
+                            );
+                          })()}
                           {p.pods && p.pods.length > 0 && <div style={{ marginTop: 10, paddingTop: 8, borderTop: "1px solid #f0ede8" }}>
                             <div style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Interviews & Podcasts</div>
                             <PodcastList pods={p.pods} personName={name} />
