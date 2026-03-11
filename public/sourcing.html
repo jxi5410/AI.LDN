@@ -245,6 +245,103 @@
     </div>
   </div>
 
+  <!-- 6. Hiring Leaderboard -->
+  <div class="section">
+    <h2><span class="icon">👥</span> Hiring Leaderboard</h2>
+    <p class="section-desc">Who's hiring most aggressively in London AI? Roles classified into engineering, research, go-to-market, product, and leadership. Scraped weekly from company careers pages.</p>
+
+    <div class="endpoint" onclick="toggle(this)">
+      <div class="endpoint-header">
+        <span class="method">GET</span>
+        <span class="endpoint-title">?action=hiring</span>
+        <span class="endpoint-desc-short">Open roles ranked by volume</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="endpoint-body" onclick="event.stopPropagation()">
+        <table class="param-table">
+          <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+          <tr><td class="param-name">category</td><td class="param-type">string</td><td class="param-desc">Sort by: <span class="param-values">engineering, research, gtm, leadership</span> (default: total)</td></tr>
+        </table>
+        <div class="try-url">
+          <code id="url-hiring"></code>
+          <a class="try-btn" id="try-hiring" target="_blank">Try it →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. GitHub Leaderboard -->
+  <div class="section">
+    <h2><span class="icon">⭐</span> GitHub Activity</h2>
+    <p class="section-desc">Open-source activity across London AI companies. Stars, repos, forks, and recent activity — tracked weekly.</p>
+
+    <div class="endpoint" onclick="toggle(this)">
+      <div class="endpoint-header">
+        <span class="method">GET</span>
+        <span class="endpoint-title">?action=github</span>
+        <span class="endpoint-desc-short">Open-source leaderboard</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="endpoint-body" onclick="event.stopPropagation()">
+        <p style="font-size:12px;color:#8a8a85;margin-bottom:10px">No parameters — returns all companies with GitHub orgs tracked.</p>
+        <div class="try-url">
+          <code id="url-github"></code>
+          <a class="try-btn" id="try-github" target="_blank">Try it →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Companies House -->
+  <div class="section">
+    <h2><span class="icon">🏛️</span> Companies House Data</h2>
+    <p class="section-desc">UK registered company data — officers, persons of significant control (PSC), filing dates, SIC codes. Sourced from the free Companies House API.</p>
+
+    <div class="endpoint" onclick="toggle(this)">
+      <div class="endpoint-header">
+        <span class="method">GET</span>
+        <span class="endpoint-title">?action=ch</span>
+        <span class="endpoint-desc-short">Officers, PSC, filings</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="endpoint-body" onclick="event.stopPropagation()">
+        <table class="param-table">
+          <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+          <tr><td class="param-name">company</td><td class="param-type">string</td><td class="param-desc">Company ID (optional — omit for all)</td></tr>
+        </table>
+        <div class="try-url">
+          <code id="url-ch"></code>
+          <a class="try-btn" id="try-ch" target="_blank">Try it →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. New Company Detector -->
+  <div class="section">
+    <h2><span class="icon">🔍</span> New Company Detector</h2>
+    <p class="section-desc">Newly registered AI companies in London — cross-referenced against our people graph to detect ex-DeepMind / Anthropic / etc. founders starting new ventures.</p>
+
+    <div class="endpoint" onclick="toggle(this)">
+      <div class="endpoint-header">
+        <span class="method">GET</span>
+        <span class="endpoint-title">?action=new_companies</span>
+        <span class="endpoint-desc-short">New AI registrations</span>
+        <span class="chevron">▸</span>
+      </div>
+      <div class="endpoint-body" onclick="event.stopPropagation()">
+        <table class="param-table">
+          <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+          <tr><td class="param-name">status</td><td class="param-type">string</td><td class="param-desc"><span class="param-values">new, reviewed, added, irrelevant</span> (default: new)</td></tr>
+        </table>
+        <div class="try-url">
+          <code id="url-new"></code>
+          <a class="try-btn" id="try-new" target="_blank">Try it →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Stats -->
   <div class="info-box">
     <div class="label">Live Data</div>
@@ -287,10 +384,16 @@ function setupUrls() {
     "path": `${BASE}?key=${KEY}&action=path&from=gv&to=mmc`,
     "coinvest": `${BASE}?key=${KEY}&action=coinvest&investor=mmc`,
     "overlap": `${BASE}?key=${KEY}&action=overlap`,
+    "hiring": `${BASE}?key=${KEY}&action=hiring`,
+    "github": `${BASE}?key=${KEY}&action=github`,
+    "ch": `${BASE}?key=${KEY}&action=ch`,
+    "new": `${BASE}?key=${KEY}&action=new_companies`,
   };
   Object.entries(urls).forEach(([k, url]) => {
-    document.getElementById(`url-${k}`).textContent = url;
-    document.getElementById(`try-${k}`).href = url;
+    const el = document.getElementById(`url-${k}`);
+    const btn = document.getElementById(`try-${k}`);
+    if (el) el.textContent = url;
+    if (btn) btn.href = url;
   });
 }
 
