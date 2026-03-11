@@ -525,6 +525,17 @@ export const companies=[
   // ACCELERATORS
   {id:"ef",name:"Entrepreneur First",s:"EF",cat:"investor",yr:2011,focus:"$10B+ portfolio. Tractable/Cleo/PolyAI",hq:"London",fn:0,jobs:null},
   {id:"seedcamp",name:"Seedcamp",s:"Seedcamp",cat:"investor",yr:2007,focus:"550+ cos · 10+ unicorns",hq:"London",fn:0,jobs:null},
+  // NEW: b1rdmania thread additions (Mar 2026)
+  {id:"hologen",name:"Hologen",s:"Hologen",cat:"biotech",yr:2023,emp:null,fund:"$150M+ (raising Series A)",fn:150,val:"~$850M",founders:"Eric Schmidt (co-founder), Pierre-François Filet",focus:"Frontier medical AI · Large Medicine Models · drug development & diagnostics",ethos:"Interventional intelligence for healthcare",hq:"London (UCL/KCL spinout)",kp:"Eric Schmidt (ex-Google CEO)",ms:"UCL/KCL spinout · $200M MeiraGTx Parkinson's JV · $150M Series A raising Jan 2026",jobs:null},
+  {id:"baseimmune",name:"Baseimmune",s:"Baseimmune",cat:"biotech",yr:2019,emp:"~20",fund:"$11.3M Series A",fn:11,val:null,founders:"Joshua Blight, Ariane Gomes, Phillip Kemlo",focus:"AI-designed vaccines · predicts pathogen mutations · cross-protective synthetic antigens",ethos:"Future-proof vaccines",hq:"King's Cross (LBIC)",kp:"Josh Blight (CEO, Oxford Jenner)",ms:"$11.3M Series A (MSD, IQ Capital) · Vaccines for ASF/COVID/malaria in preclinical",jobs:null},
+  {id:"causaly",name:"Causaly",s:"Causaly",cat:"biotech",yr:2018,emp:"~80",fund:"$93M",fn:93,val:null,focus:"Biomedical knowledge graphs · AI reads papers · drug discovery",ethos:"Accelerate biomedical research",hq:"London",ms:"$60M Series B 2023 · 12 of top 20 pharma · 3x revenue since Series A",jobs:null},
+  {id:"fractile",name:"Fractile",s:"Fractile",cat:"hardware",yr:null,fund:null,fn:0,focus:"Novel AI chip architecture for inference",ethos:"Rethink AI compute",hq:"London",jobs:null},
+  {id:"mindgard",name:"Mindgard",s:"Mindgard",cat:"safety",yr:2022,fund:"$11.8M",fn:12,focus:"AI red teaming · DAST for AI · continuous security testing",ethos:"Secure AI systems",hq:"London (Lancaster Uni spinout)",ms:"$8M Series A Dec 2024 · Lancaster spinout",jobs:null},
+  {id:"limbic",name:"Limbic",s:"Limbic",cat:"enterprise",yr:null,fund:null,fn:0,focus:"Mental health triage AI · NHS services · therapy access",ethos:"AI for mental health access",hq:"London",jobs:null},
+  {id:"lindus-health",name:"Lindus Health",s:"Lindus",cat:"enterprise",yr:2021,fund:"$55M+",fn:55,focus:"AI-powered clinical trials · end-to-end trial management",ethos:"Faster clinical trials",hq:"London",jobs:null},
+  {id:"anima-health",name:"Anima Health",s:"Anima",cat:"enterprise",yr:null,fund:null,fn:0,focus:"AI triage for healthcare providers · GP workflow",ethos:"Smarter healthcare triage",hq:"London",jobs:null},
+  {id:"auar",name:"AUAR",s:"AUAR",cat:"autonomous",yr:null,fund:null,fn:0,focus:"Robots that build buildings · AI for automated construction",ethos:"Autonomous construction",hq:"London",jobs:null},
+  {id:"testudo",name:"Testudo",s:"Testudo",cat:"fintech",yr:null,fund:null,fn:0,focus:"Insurance for the AI economy · AI risk underwriting",ethos:"Insure the AI age",hq:"London",jobs:null},
 ];
 
 // ── EDGES ───────────────────────────────────────────────────────────────
