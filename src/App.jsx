@@ -1063,6 +1063,7 @@ export default function App() {
                     {pk.fund && <M l="Funding" v={pk.fund} />}{pk.val && <M l="Valuation" v={pk.val} />}{pk.emp && <M l="Team" v={pk.emp} />}{pk.yr && <M l="Founded" v={pk.yr} />}
                   </div>
                   {pk.focus && <S t="Focus" v={pk.focus} />}
+                  {pk.clients && <S t="Clients & Markets" v={pk.clients} />}
                   {pk.ethos && <S t="Ethos" v={pk.ethos} />}
                   {pk.founders && <S t="Founders" v={pk.founders} />}
                   {pk.ms && <S t="Milestones" v={pk.ms} />}
@@ -1209,6 +1210,7 @@ export default function App() {
               {sel.fund && <M l="Funding" v={sel.fund} />}{sel.val && <M l="Valuation" v={sel.val} />}{sel.emp && <M l="Team" v={sel.emp} />}{sel.yr && <M l="Founded" v={sel.yr} />}
             </div>
             {sel.focus && <S t="Focus" v={sel.focus} />}
+            {sel.clients && <S t="Clients & Markets" v={sel.clients} />}
             {sel.ethos && <S t="Ethos" v={sel.ethos} />}
             {sel.ms && <S t="Milestones" v={sel.ms} />}
             {sel.jobs && <a href={sel.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#e8e5dc", color: "#2d2d2a", fontSize: 9.5, textDecoration: "none", fontFamily: "inherit", border: "1px solid #d5d3ca", marginTop: 6 }}>🔗 Careers →</a>}
