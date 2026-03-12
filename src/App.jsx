@@ -125,6 +125,15 @@ export default function App() {
   const [bitsFetched, setBitsFetched] = useState(false);
   const [bitsFilter, setBitsFilter] = useState("all");
 
+  // Insights (sector vertical analyses)
+  const [insights, setInsights] = useState([]);
+  const [insightsLoading, setInsightsLoading] = useState(false);
+  const [insightsFetched, setInsightsFetched] = useState(false);
+  const [selectedInsight, setSelectedInsight] = useState(null);
+  const [insightAsk, setInsightAsk] = useState("");
+  const [insightAnswer, setInsightAnswer] = useState("");
+  const [insightAsking, setInsightAsking] = useState(false);
+
   // ── AUTH ─────────────────────────────────────────────────────────────
   useEffect(() => {
     // Load localStorage backup immediately (fast)
@@ -346,6 +355,37 @@ export default function App() {
     }
   }, [panel, bitsFetched, user]);
 
+  // Lazy-load insights
+  useEffect(() => {
+    if (panel !== "insights" || insightsFetched) return;
+    setInsightsLoading(true);
+    supabase.from("insights").select("*").order("title").then(({ data, error }) => {
+      if (data) setInsights(data);
+      setInsightsFetched(true); setInsightsLoading(false);
+    }).catch(() => { setInsightsFetched(true); setInsightsLoading(false); });
+  }, [panel, insightsFetched]);
+
+  const askInsight = async (insight, question) => {
+    setInsightAsking(true); setInsightAnswer("");
+    try {
+      const sectorCompanies = companies.filter(c => (insight.company_ids || []).includes(c.id));
+      const companyContext = sectorCompanies.map(c => `${c.n}: ${c.focus || ""} ${c.clients || ""} (${c.fund || "no funding info"})`).join("\n");
+      const sectorContext = `SECTOR: ${insight.title}\nPROBLEM: ${insight.the_problem}\nWHO'S SOLVING IT: ${insight.whos_solving_it}\nWHAT'S WORKING: ${insight.whats_working}\nUNSPOKEN TRUTHS: ${insight.unspoken_truths}\nLAST MILE GAPS: ${insight.last_mile_gaps}\nADJACENT BETS: ${insight.adjacent_bets}\nCOMPANIES:\n${companyContext}`;
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514", max_tokens: 1000,
+          system: "You are an AI sector analyst for the London AI ecosystem. Give specific, opinionated answers grounded in the company data provided. Be direct and avoid hedging. Reference specific companies where relevant. Keep answers concise (3-5 paragraphs max).",
+          messages: [{ role: "user", content: `Context about the ${insight.title} sector in London:\n${sectorContext}\n\nQuestion: ${question}` }]
+        })
+      });
+      const data = await res.json();
+      const text = data.content?.map(b => b.text || "").join("\n") || "No response.";
+      setInsightAnswer(text);
+    } catch (e) { setInsightAnswer("Failed to generate answer. Try again."); }
+    setInsightAsking(false);
+  };
+
   const filt = useMemo(() => {
     if (mapView === "investors") {
       // Show all investors + companies connected via investment edges
@@ -545,7 +585,7 @@ export default function App() {
         <div style={{ flex: 1 }} />
         {/* Nav */}
         <div style={{ display: "flex", gap: 0, borderRadius: 6, overflow: "hidden", border: "1px solid #e8e5dc" }}>
-          {[["graph", "🌌 Map"], ["people", "👤 People"], ["events", "📅 Events"], ["updates", "📰 News"], ["bits", "⚡ Bits"]].map(([k, l]) => (
+          {[["graph", "🌌 Map"], ["people", "👤 People"], ["insights", "🔍 Insights"], ["events", "📅 Events"], ["updates", "📰 News"], ["bits", "⚡ Bits"]].map(([k, l]) => (
             <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "6px 12px", border: "none", height: 36, lineHeight: "24px", background: panel === k ? "#e8e5dc" : "transparent", color: panel === k ? "#1a1a18" : "#8a8a85", fontSize: isMobile ? 11 : 14, fontFamily: "inherit", cursor: "pointer", fontWeight: panel === k ? 600 : 400 }}>{l}</button>
           ))}
         </div>
@@ -1102,6 +1142,95 @@ export default function App() {
               </div>
             </div>
           );
+        })()}
+      </div>}
+
+      {/* ── INSIGHTS PANEL ───────────────────────────────────────── */}
+      {panel === "insights" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
+        {insightsLoading ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>Loading insights...</div> :
+        !selectedInsight ? <>
+          <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 4px" }}>Vertical sector analysis of London's AI ecosystem</p>
+          <p style={{ fontSize: 11, color: "#b5b3ae", margin: "0 0 16px" }}>What problems they solve, what's working, what's not, and where the gaps are</p>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 12 }}>
+            {insights.map(ins => {
+              const sectorCos = companies.filter(c => (ins.company_ids || []).includes(c.id));
+              return (
+                <div key={ins.id} onClick={() => { setSelectedInsight(ins); setInsightAnswer(""); setInsightAsk(""); }} style={{ background: "#ffffff", borderRadius: 10, border: "1px solid #e8e5dc", padding: 18, cursor: "pointer", transition: "border-color 0.15s" }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor = "#C15F3C"}
+                  onMouseLeave={e => e.currentTarget.style.borderColor = "#e8e5dc"}>
+                  <div style={{ fontSize: 28, marginBottom: 8 }}>{ins.icon}</div>
+                  <h3 style={{ margin: "0 0 6px", fontSize: 17, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#1a1a18" }}>{ins.title}</h3>
+                  <p style={{ margin: "0 0 10px", fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{(ins.the_problem || "").slice(0, 150)}...</p>
+                  <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                    {sectorCos.slice(0, 6).map(c => <span key={c.id} style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#e8e5dc", color: "#6b6b66" }}>{c.n}</span>)}
+                    {sectorCos.length > 6 && <span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#e8e5dc", color: "#a0a09b" }}>+{sectorCos.length - 6}</span>}
+                  </div>
+                  <div style={{ fontSize: 10, color: "#a0a09b", marginTop: 8 }}>{sectorCos.length} companies · 6 sections</div>
+                </div>
+              );
+            })}
+          </div>
+        </> :
+        /* ── EXPANDED INSIGHT ── */
+        (() => {
+          const ins = selectedInsight;
+          const sectorCos = companies.filter(c => (ins.company_ids || []).includes(c.id));
+          const sections = [
+            { key: "the_problem", title: "The Problem", icon: "🎯" },
+            { key: "whos_solving_it", title: "Who's Solving It", icon: "🏢" },
+            { key: "whats_working", title: "What's Working", icon: "✅" },
+            { key: "unspoken_truths", title: "Unspoken Truths", icon: "🤫" },
+            { key: "last_mile_gaps", title: "Last Mile Gaps", icon: "🔓" },
+            { key: "adjacent_bets", title: "Adjacent Bets", icon: "🔮" },
+          ];
+          return <div>
+            <button onClick={() => setSelectedInsight(null)} style={{ background: "none", border: "none", color: "#C15F3C", fontSize: 13, cursor: "pointer", fontFamily: "inherit", padding: "10px 0 6px", fontWeight: 500 }}>← All sectors</button>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+              <span style={{ fontSize: 32 }}>{ins.icon}</span>
+              <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: isMobile ? 22 : 28, fontWeight: 700, color: "#1a1a18", margin: 0 }}>{ins.title}</h2>
+            </div>
+            {/* Company pills */}
+            <div style={{ display: "flex", gap: 4, flexWrap: "wrap", margin: "8px 0 16px" }}>
+              {sectorCos.map(c => <span key={c.id} onClick={(e) => { e.stopPropagation(); setPanel("graph"); setSel(c); }} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 4, background: "#e8e5dc", color: "#6b6b66", cursor: "pointer", transition: "background 0.1s" }}
+                onMouseEnter={e => { e.currentTarget.style.background = "#C15F3C22"; e.currentTarget.style.color = "#C15F3C"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "#e8e5dc"; e.currentTarget.style.color = "#6b6b66"; }}
+              >{c.n}</span>)}
+            </div>
+            {/* Sections */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {sections.map(({ key, title, icon }) => ins[key] ? (
+                <div key={key} style={{ background: "#ffffff", borderRadius: 10, border: "1px solid #e8e5dc", padding: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                    <span style={{ fontSize: 16 }}>{icon}</span>
+                    <h3 style={{ margin: 0, fontSize: 14, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#1a1a18", textTransform: "uppercase", letterSpacing: 0.5 }}>{title}</h3>
+                  </div>
+                  <p style={{ margin: 0, fontSize: 13, color: "#4a4a45", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{ins[key]}</p>
+                </div>
+              ) : null)}
+            </div>
+            {/* AI Ask */}
+            <div style={{ marginTop: 20, background: "linear-gradient(135deg,#C15F3C08,#d9775710)", borderRadius: 10, border: "1px solid #C15F3C22", padding: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                <span style={{ fontSize: 14 }}>🧠</span>
+                <h3 style={{ margin: 0, fontSize: 13, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#C15F3C", textTransform: "uppercase", letterSpacing: 0.5 }}>Ask deeper</h3>
+              </div>
+              <p style={{ fontSize: 11, color: "#8a8a85", margin: "0 0 8px" }}>Ask a specific question about this sector — grounded in our company data</p>
+              <div style={{ display: "flex", gap: 6 }}>
+                <input value={insightAsk} onChange={e => setInsightAsk(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && insightAsk.trim() && !insightAsking) askInsight(ins, insightAsk.trim()); }}
+                  placeholder={`e.g. "Which company is best positioned to win NHS contracts?"`}
+                  style={{ flex: 1, padding: "8px 12px", borderRadius: 6, border: "1px solid #e8e5dc", fontSize: 13, fontFamily: "inherit", background: "#fff", outline: "none" }} />
+                <button onClick={() => { if (insightAsk.trim() && !insightAsking) askInsight(ins, insightAsk.trim()); }}
+                  disabled={!insightAsk.trim() || insightAsking}
+                  style={{ padding: "8px 14px", borderRadius: 6, border: "none", background: insightAsking ? "#e8e5dc" : "#C15F3C", color: insightAsking ? "#8a8a85" : "#fff", fontSize: 12, fontWeight: 600, fontFamily: "inherit", cursor: insightAsking ? "wait" : "pointer" }}>
+                  {insightAsking ? "Thinking..." : "Ask"}
+                </button>
+              </div>
+              {insightAnswer && <div style={{ marginTop: 12, padding: 12, background: "#fff", borderRadius: 8, border: "1px solid #e8e5dc" }}>
+                <p style={{ margin: 0, fontSize: 13, color: "#4a4a45", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{insightAnswer}</p>
+              </div>}
+            </div>
+            <div style={{ height: 40 }} />
+          </div>;
         })()}
       </div>}
 
