@@ -538,6 +538,9 @@ export default function App() {
           {!isMobile && <p style={{ margin: 0, fontSize: 13, color: "#a0a09b" }}>
             {companies.filter(c => !["investor", "academic"].includes(c.cat)).length} companies · {edges.length} connections{mn > 0 ? ` · ${mn} tracked` : ""}
           </p>}
+          {!isMobile && <p style={{ margin: 0, fontSize: 10.5, color: "#b5b3ae" }}>
+            APIs ready for sourcing at <a href="https://londonai.network/sourcing" target="_blank" rel="noopener" style={{ color: "#C15F3C", textDecoration: "none", fontWeight: 500 }}>LondonAI.network/sourcing</a>
+          </p>}
         </div>
         <div style={{ flex: 1 }} />
         {/* Nav */}
