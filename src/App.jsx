@@ -1178,12 +1178,15 @@ export default function App() {
           // Bold company names in text
           const boldNames = (text) => {
             if (!text) return null;
-            const names = sectorCos.map(c => c.n).sort((a, b) => b.length - a.length);
+            const names = sectorCos.map(c => c.n).filter(Boolean).sort((a, b) => b.length - a.length);
             if (!names.length) return text;
-            const re = new RegExp(`\\b(${names.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join("|")})\\b`, "g");
-            const parts = text.split(re);
-            const nameSet = new Set(names);
-            return parts.map((p, i) => nameSet.has(p) ? <strong key={i} style={{ color: "#1a1a18" }}>{p}</strong> : p);
+            try {
+              const escaped = names.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+              const re = new RegExp(`(${escaped.join("|")})`, "g");
+              const parts = text.split(re);
+              const nameSet = new Set(names);
+              return parts.map((p, i) => nameSet.has(p) ? <strong key={i} style={{ color: "#1a1a18", fontWeight: 600 }}>{p}</strong> : p);
+            } catch (e) { return text; }
           };
           const sections = [
             { key: "the_problem", title: "The Problem", icon: "🎯" },
