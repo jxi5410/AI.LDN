@@ -539,7 +539,7 @@ export default function App() {
             {companies.filter(c => !["investor", "academic"].includes(c.cat)).length} companies · {edges.length} connections{mn > 0 ? ` · ${mn} tracked` : ""}
           </p>}
           {!isMobile && <p style={{ margin: 0, fontSize: 10.5, color: "#b5b3ae" }}>
-            APIs ready for sourcing at <a href="https://londonai.network/sourcing" target="_blank" rel="noopener" style={{ color: "#C15F3C", textDecoration: "none", fontWeight: 500 }}>LondonAI.network/sourcing</a>
+            Sourcing APIs live at <a href="https://londonai.network/sourcing" target="_blank" rel="noopener" style={{ color: "#C15F3C", textDecoration: "none", fontWeight: 500 }}>LondonAI.network/sourcing</a> · request access at <a href="mailto:jxi5410@gmail.com?subject=LDN/ai%20sourcing%20API%20access" style={{ color: "#C15F3C", textDecoration: "none", fontWeight: 500 }}>jxi5410@gmail.com</a>
           </p>}
         </div>
         <div style={{ flex: 1 }} />
