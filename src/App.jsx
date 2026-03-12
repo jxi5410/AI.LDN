@@ -1150,7 +1150,7 @@ export default function App() {
         {insightsLoading ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>Loading insights...</div> :
         !selectedInsight ? <>
           <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 4px" }}>Vertical sector analysis of London's AI ecosystem</p>
-          <p style={{ fontSize: 11, color: "#b5b3ae", margin: "0 0 16px" }}>What problems they solve, what's working, what's not, and where the gaps are</p>
+          <p style={{ fontSize: 11, color: "#b5b3ae", margin: "0 0 16px" }}>What problems they solve, what's working, what's not, and where the gaps are · <span style={{ fontStyle: "italic" }}>AI-assisted analysis</span></p>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 12 }}>
             {insights.map(ins => {
               const sectorCos = companies.filter(c => (ins.company_ids || []).includes(c.id));
@@ -1175,6 +1175,16 @@ export default function App() {
         (() => {
           const ins = selectedInsight;
           const sectorCos = companies.filter(c => (ins.company_ids || []).includes(c.id));
+          // Bold company names in text
+          const boldNames = (text) => {
+            if (!text) return null;
+            const names = sectorCos.map(c => c.n).sort((a, b) => b.length - a.length);
+            if (!names.length) return text;
+            const re = new RegExp(`\\b(${names.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join("|")})\\b`, "g");
+            const parts = text.split(re);
+            const nameSet = new Set(names);
+            return parts.map((p, i) => nameSet.has(p) ? <strong key={i} style={{ color: "#1a1a18" }}>{p}</strong> : p);
+          };
           const sections = [
             { key: "the_problem", title: "The Problem", icon: "🎯" },
             { key: "whos_solving_it", title: "Who's Solving It", icon: "🏢" },
@@ -1204,7 +1214,7 @@ export default function App() {
                     <span style={{ fontSize: 16 }}>{icon}</span>
                     <h3 style={{ margin: 0, fontSize: 14, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#1a1a18", textTransform: "uppercase", letterSpacing: 0.5 }}>{title}</h3>
                   </div>
-                  <p style={{ margin: 0, fontSize: 13, color: "#4a4a45", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{ins[key]}</p>
+                  <p style={{ margin: 0, fontSize: 13, color: "#4a4a45", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{boldNames(ins[key])}</p>
                 </div>
               ) : null)}
             </div>
@@ -1228,6 +1238,9 @@ export default function App() {
               {insightAnswer && <div style={{ marginTop: 12, padding: 12, background: "#fff", borderRadius: 8, border: "1px solid #e8e5dc" }}>
                 <p style={{ margin: 0, fontSize: 13, color: "#4a4a45", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{insightAnswer}</p>
               </div>}
+            </div>
+            <div style={{ marginTop: 16, padding: "10px 14px", borderRadius: 8, background: "#f5f4f0", border: "1px solid #e8e5dc" }}>
+              <p style={{ margin: 0, fontSize: 10.5, color: "#a0a09b", lineHeight: 1.5 }}>⚠️ These sector analyses were generated with the assistance of AI and may contain inaccuracies. Company data is sourced from public information and updated periodically. This content is for informational purposes only and does not constitute investment advice. Last updated March 2026.</p>
             </div>
             <div style={{ height: 40 }} />
           </div>;
