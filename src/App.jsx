@@ -369,7 +369,7 @@ export default function App() {
     setInsightAsking(true); setInsightAnswer("");
     try {
       const sectorCompanies = companies.filter(c => (insight.company_ids || []).includes(c.id));
-      const companyContext = sectorCompanies.map(c => `${c.n}: ${c.focus || ""} ${c.clients || ""} (${c.fund || "no funding info"})`).join("\n");
+      const companyContext = sectorCompanies.map(c => `${c.name}: ${c.focus || ""} ${c.clients || ""} (${c.fund || "no funding info"})`).join("\n");
       const sectorContext = `SECTOR: ${insight.title}\nPROBLEM: ${insight.the_problem}\nWHO'S SOLVING IT: ${insight.whos_solving_it}\nWHAT'S WORKING: ${insight.whats_working}\nUNSPOKEN TRUTHS: ${insight.unspoken_truths}\nLAST MILE GAPS: ${insight.last_mile_gaps}\nADJACENT BETS: ${insight.adjacent_bets}\nCOMPANIES:\n${companyContext}`;
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -1162,7 +1162,7 @@ export default function App() {
                   <h3 style={{ margin: "0 0 6px", fontSize: 17, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#1a1a18" }}>{ins.title}</h3>
                   <p style={{ margin: "0 0 10px", fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{(ins.the_problem || "").slice(0, 150)}...</p>
                   <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                    {sectorCos.slice(0, 6).map(c => <span key={c.id} style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#e8e5dc", color: "#6b6b66" }}>{c.n}</span>)}
+                    {sectorCos.slice(0, 6).map(c => <span key={c.id} style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#e8e5dc", color: "#6b6b66" }}>{c.name}</span>)}
                     {sectorCos.length > 6 && <span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#e8e5dc", color: "#a0a09b" }}>+{sectorCos.length - 6}</span>}
                   </div>
                   <div style={{ fontSize: 10, color: "#a0a09b", marginTop: 8 }}>{sectorCos.length} companies · 6 sections</div>
@@ -1179,16 +1179,15 @@ export default function App() {
           // Bold company names in text
           const boldNames = (text) => {
             if (!text || typeof text !== "string") return text || "";
-            const names = sectorCos.map(c => c.n).filter(Boolean).sort((a, b) => b.length - a.length);
-            if (!names.length) return text;
+            // Collect both full names and short names, deduplicate, sort longest first
+            const allNames = [...new Set(sectorCos.flatMap(c => [c.name, c.s]).filter(Boolean))].sort((a, b) => b.length - a.length);
+            if (!allNames.length) return text;
             try {
-              const escaped = names.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-              const re = new RegExp(`(${escaped.join("|")})`, "gi");
+              const escaped = allNames.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+              const re = new RegExp(`(${escaped.join("|")})`, "g");
               const parts = text.split(re);
-              return parts.map((p, i) => {
-                const match = names.find(n => n.toLowerCase() === p.toLowerCase());
-                return match ? <strong key={i} style={{ color: "#1a1a18", fontWeight: 600 }}>{p}</strong> : p;
-              });
+              const nameSet = new Set(allNames);
+              return parts.map((p, i) => nameSet.has(p) ? <strong key={i} style={{ color: "#1a1a18", fontWeight: 600 }}>{p}</strong> : p);
             } catch (e) { return text; }
           };
           const sections = [
@@ -1210,7 +1209,7 @@ export default function App() {
               {sectorCos.map(c => <span key={c.id} onClick={(e) => { e.stopPropagation(); setPanel("graph"); setSel(c); }} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 4, background: "#e8e5dc", color: "#6b6b66", cursor: "pointer", transition: "background 0.1s" }}
                 onMouseEnter={e => { e.currentTarget.style.background = "#C15F3C22"; e.currentTarget.style.color = "#C15F3C"; }}
                 onMouseLeave={e => { e.currentTarget.style.background = "#e8e5dc"; e.currentTarget.style.color = "#6b6b66"; }}
-              >{c.n}</span>)}
+              >{c.name}</span>)}
             </div>
             {/* Sections */}
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
