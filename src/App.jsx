@@ -1174,18 +1174,21 @@ export default function App() {
         /* ── EXPANDED INSIGHT ── */
         (() => {
           const ins = selectedInsight;
+          if (!ins) return null;
           const sectorCos = companies.filter(c => (ins.company_ids || []).includes(c.id));
           // Bold company names in text
           const boldNames = (text) => {
-            if (!text) return null;
+            if (!text || typeof text !== "string") return text || "";
             const names = sectorCos.map(c => c.n).filter(Boolean).sort((a, b) => b.length - a.length);
             if (!names.length) return text;
             try {
               const escaped = names.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-              const re = new RegExp(`(${escaped.join("|")})`, "g");
+              const re = new RegExp(`(${escaped.join("|")})`, "gi");
               const parts = text.split(re);
-              const nameSet = new Set(names);
-              return parts.map((p, i) => nameSet.has(p) ? <strong key={i} style={{ color: "#1a1a18", fontWeight: 600 }}>{p}</strong> : p);
+              return parts.map((p, i) => {
+                const match = names.find(n => n.toLowerCase() === p.toLowerCase());
+                return match ? <strong key={i} style={{ color: "#1a1a18", fontWeight: 600 }}>{p}</strong> : p;
+              });
             } catch (e) { return text; }
           };
           const sections = [
