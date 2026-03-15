@@ -31,16 +31,17 @@ const INVESTOR_BRAND = {
   "georgian":   { c: "#00B4D8", domain: "georgian.io" },
 };
 
-function nr(c, view) {
+function nr(c, view, mobile) {
+  const m = mobile ? 1.5 : 1;
   if (view === "investors") {
-    if (c.cat === "investor") return 32;
+    if (c.cat === "investor") return 32 * m;
     const f = c.fn || 0;
-    if (f >= 1000) return 14; if (f >= 500) return 12; if (f >= 200) return 10; if (f >= 50) return 8; return 6;
+    if (f >= 1000) return 14 * m; if (f >= 500) return 12 * m; if (f >= 200) return 10 * m; if (f >= 50) return 8 * m; return 6 * m;
   }
-  if (c.cat === "frontier") return 26; if (c.cat === "investor") return 10; if (c.cat === "academic") return 13;
-  if (c.cat === "frontier-emerging") return 18;
+  if (c.cat === "frontier") return 26 * m; if (c.cat === "investor") return 10 * m; if (c.cat === "academic") return 13 * m;
+  if (c.cat === "frontier-emerging") return 18 * m;
   const f = c.fn || 0;
-  if (f >= 1000) return 22; if (f >= 500) return 18; if (f >= 200) return 15; if (f >= 50) return 12; if (f >= 10) return 10; return 8;
+  if (f >= 1000) return 22 * m; if (f >= 500) return 18 * m; if (f >= 200) return 15 * m; if (f >= 50) return 12 * m; if (f >= 10) return 10 * m; return 8 * m;
 }
 
 // Get the investor colour for a portfolio company (find which investor it's connected to)
@@ -78,7 +79,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
 
     const isInv = mapView === "investors";
 
-    const nodes = companies.map(c => ({ ...c, r: nr(c, mapView) }));
+    const nodes = companies.map(c => ({ ...c, r: nr(c, mapView, isMobile) }));
     const nodeMap = new Map(nodes.map(n => [n.id, n]));
     const links = edges.filter(e => nodeMap.has(e.s) && nodeMap.has(e.t)).map(e => ({
       source: e.s, target: e.t, ty: e.ty, l: e.l,
@@ -98,7 +99,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
         .strength(0.3))
       .force("charge", d3.forceManyBody().strength(d => isInv && d.cat === "investor" ? -d.r * 30 : -120))
       .force("center", d3.forceCenter(w / 2, h / 2))
-      .force("collision", d3.forceCollide().radius(d => d.r + (isInv && d.cat === "investor" ? 16 : 14)))
+      .force("collision", d3.forceCollide().radius(d => d.r + (isInv && d.cat === "investor" ? 16 : isMobile ? 18 : 14)))
       .force("x", d3.forceX(w / 2).strength(0.04))
       .force("y", d3.forceY(h / 2).strength(0.04));
     simRef.current = sim;

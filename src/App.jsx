@@ -37,17 +37,17 @@ function calcScore(ud) {
   return { score: pts, level: lv.name, emoji: lv.emoji, pct: nxt ? Math.round((pts - lv.min) / (nxt.min - lv.min) * 100) : 100, nextLevel: nxt?.name, nextMin: nxt?.min, breakdown: { connections: entries.length, catCount: cats.size, frontierCoverage: fc } };
 }
 
-function nr(c, view) {
+function nr(c, view, mobile) {
+  const m = mobile ? 1.5 : 1;
   if (view === "investors") {
-    if (c.cat === "investor") return 32; // investors are the stars
-    // Non-investors are smaller satellites
+    if (c.cat === "investor") return 32 * m;
     const f = c.fn || 0;
-    if (f >= 1000) return 14; if (f >= 500) return 12; if (f >= 200) return 10; if (f >= 50) return 8; return 6;
+    if (f >= 1000) return 14 * m; if (f >= 500) return 12 * m; if (f >= 200) return 10 * m; if (f >= 50) return 8 * m; return 6 * m;
   }
-  if (c.cat === "frontier") return 26; if (c.cat === "investor") return 10; if (c.cat === "academic") return 13;
-  if (c.cat === "frontier-emerging") return 18;
+  if (c.cat === "frontier") return 26 * m; if (c.cat === "investor") return 10 * m; if (c.cat === "academic") return 13 * m;
+  if (c.cat === "frontier-emerging") return 18 * m;
   const f = c.fn || 0;
-  if (f >= 1000) return 22; if (f >= 500) return 18; if (f >= 200) return 15; if (f >= 50) return 12; if (f >= 10) return 10; return 8;
+  if (f >= 1000) return 22 * m; if (f >= 500) return 18 * m; if (f >= 200) return 15 * m; if (f >= 50) return 12 * m; if (f >= 10) return 10 * m; return 8 * m;
 }
 
 // SVG icons
@@ -101,6 +101,7 @@ export default function App() {
   const [updateFilter, setUpdateFilter] = useState("all");
   const [mapView, setMapView] = useState("companies"); // "companies" | "investors"
   const [legendOpen, setLegendOpen] = useState(true);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // User data (from Supabase or localStorage fallback)
   const [ud, setUd] = useState({}); // connections
@@ -462,7 +463,7 @@ export default function App() {
     if (!svgRef.current || panel !== "graph") return;
     const svg = d3.select(svgRef.current); svg.selectAll("*").remove();
     const { w, h } = dim;
-    const nodes = filt.map(c => ({ ...c, r: nr(c, mapView) }));
+    const nodes = filt.map(c => ({ ...c, r: nr(c, mapView, isMobile) }));
     const nodeMap = new Map(nodes.map(n => [n.id, n]));
     const links = fEdges.filter(e => nodeMap.has(e.s) && nodeMap.has(e.t)).map(e => ({ ...e, source: e.s, target: e.t }));
     const g = svg.append("g");
@@ -750,6 +751,38 @@ export default function App() {
           </div>
         ))}
       </div>}
+
+      {/* ── MOBILE FILTER BUTTON + DRAWER ──────────────────────── */}
+      {panel === "graph" && isMobile && <>
+        <button onClick={() => setMobileFiltersOpen(o => !o)} style={{ position: "absolute", top: 62, left: 8, zIndex: 20001, padding: "6px 10px", borderRadius: 8, border: "1px solid #e8e5dc", background: mobileFiltersOpen ? "#C15F3C" : "rgba(255,255,255,0.95)", color: mobileFiltersOpen ? "#fff" : "#4a4a45", fontSize: 12, fontFamily: "inherit", fontWeight: 600, cursor: "pointer", backdropFilter: "blur(10px)", boxShadow: "0 2px 8px rgba(0,0,0,0.1)", display: "flex", alignItems: "center", gap: 4 }}>
+          <span style={{ fontSize: 14 }}>☰</span> Filters
+        </button>
+        {mobileFiltersOpen && <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 20002, background: "rgba(255,255,255,0.97)", borderTop: "1px solid #e8e5dc", borderRadius: "14px 14px 0 0", padding: "10px 14px 20px", backdropFilter: "blur(14px)", boxShadow: "0 -4px 20px rgba(0,0,0,0.1)", maxHeight: "60vh", overflowY: "auto" }}>
+          <div style={{ width: 36, height: 4, background: "#d1d1cc", borderRadius: 2, margin: "0 auto 10px" }} />
+          <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
+            {[["companies", "Companies"], ["investors", "Investors"]].map(([k, l]) => (
+              <button key={k} onClick={() => {
+                setMapView(k);
+                if (k === "investors") { setCats(prev => new Set([...prev, "investor"])); }
+                else { setCats(prev => { const n = new Set(prev); n.delete("investor"); return n; }); }
+              }} style={{ flex: 1, padding: "6px", borderRadius: 6, border: `1px solid ${mapView === k ? "#C15F3C" : "#e8e5dc"}`, background: mapView === k ? "#C15F3C18" : "transparent", color: mapView === k ? "#C15F3C" : "#8a8a85", fontSize: 13, cursor: "pointer", fontFamily: "inherit", fontWeight: mapView === k ? 600 : 400 }}>{l}</button>
+            ))}
+          </div>
+          <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
+            {[["All", () => setCats(new Set(mapView === "companies" ? Object.keys(CC).filter(k => k !== "investor") : Object.keys(CC)))], ["None", () => setCats(mapView === "investors" ? new Set(["investor"]) : new Set())]].map(([l, fn]) => (
+              <button key={l} onClick={fn} style={{ flex: 1, padding: "5px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 13, cursor: "pointer", fontFamily: "inherit" }}>{l}</button>
+            ))}
+          </div>
+          {Object.entries(CC).map(([k, cfg]) => (
+            <div key={k} onClick={() => tc(k)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 6px", borderRadius: 6, cursor: "pointer", opacity: cats.has(k) ? 1 : 0.3 }}>
+              <span style={{ fontSize: 18, width: 20, textAlign: "center", color: cats.has(k) ? "#30D158" : "#ccc" }}>{cats.has(k) ? "✓" : ""}</span>
+              <div style={{ width: 12, height: 12, borderRadius: "50%", background: cfg.c, flexShrink: 0 }} />
+              <span style={{ fontSize: 15, color: "#4a4a45", flex: 1 }}>{cfg.l}</span>
+              <span style={{ fontSize: 14, color: "#a0a09b" }}>{companies.filter(c => c.cat === k).length}</span>
+            </div>
+          ))}
+        </div>}
+      </>}
 
       {/* ── LONDON MAP ────────────────────────────────────────────── */}
       {panel === "graph" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, zIndex: 5 }}><LondonMap companies={filt} edges={fEdges} onSelect={(c) => { setSel(c); setTab("info"); }} selected={sel} userConnections={ud} isMobile={isMobile} mapView={mapView} /></div>}
