@@ -82,6 +82,8 @@ export default function App() {
 
   // Core UI
   const svgRef = useRef(null);
+  const headerRef = useRef(null);
+  const [headerHeight, setHeaderHeight] = useState(56);
   const [sel, setSel] = useState(null);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState(null);
@@ -152,6 +154,18 @@ export default function App() {
       if (session?.user) loadUserData(session.user);
     });
     return () => subscription.unsubscribe();
+  }, []);
+
+  // Track header height dynamically (it wraps on mobile)
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      const h = el.offsetHeight;
+      if (h > 0) setHeaderHeight(h);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
   const loadUserData = async (userObj) => {
@@ -573,7 +587,7 @@ export default function App() {
       <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#c5c3ba;border-radius:4px}input[type=range]{-webkit-appearance:none;background:transparent}input[type=range]::-webkit-slider-track{height:2px;background:#e8e5dc;border-radius:2px}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:#FF2D55;margin-top:-3px;cursor:pointer}`}</style>
 
       {/* ── HEADER ──────────────────────────────────────────────────── */}
-      <div style={{ position: "fixed", top: 0, left: 0, right: 0, padding: isMobile ? "6px 8px" : "10px 14px", background: "#faf9f5", borderBottom: "1px solid #e8e5dc", zIndex: 1000, display: "flex", alignItems: "center", gap: isMobile ? 6 : 10, flexWrap: "wrap" }}>
+      <div ref={headerRef} style={{ position: "fixed", top: 0, left: 0, right: 0, padding: isMobile ? "6px 8px" : "10px 14px", background: "#faf9f5", borderBottom: "1px solid #e8e5dc", zIndex: 1000, display: "flex", alignItems: "center", gap: isMobile ? 6 : 10, flexWrap: "wrap" }}>
         <div style={{ flexShrink: 0, cursor: "pointer" }} onClick={() => { setPanel("graph"); setSel(null); }}>
           <h1 style={{ margin: 0, fontSize: isMobile ? 20 : 30, fontFamily: "'Inter',sans-serif", fontWeight: 800, background: "linear-gradient(135deg,#C15F3C,#d97757,#e8a87c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</h1>
           {!isMobile && <p style={{ margin: 0, fontSize: 13, color: "#a0a09b" }}>
@@ -754,11 +768,17 @@ export default function App() {
 
       {/* ── MOBILE FILTER BUTTON + DRAWER ──────────────────────── */}
       {panel === "graph" && isMobile && <>
-        <button onClick={() => setMobileFiltersOpen(o => !o)} style={{ position: "absolute", top: 62, left: 8, zIndex: 20001, padding: "6px 10px", borderRadius: 8, border: "1px solid #e8e5dc", background: mobileFiltersOpen ? "#C15F3C" : "rgba(255,255,255,0.95)", color: mobileFiltersOpen ? "#fff" : "#4a4a45", fontSize: 12, fontFamily: "inherit", fontWeight: 600, cursor: "pointer", backdropFilter: "blur(10px)", boxShadow: "0 2px 8px rgba(0,0,0,0.1)", display: "flex", alignItems: "center", gap: 4 }}>
+        <button onClick={() => setMobileFiltersOpen(o => !o)} style={{ position: "fixed", top: headerHeight + 6, left: 8, zIndex: 20001, padding: "6px 10px", borderRadius: 8, border: "1px solid #e8e5dc", background: mobileFiltersOpen ? "#C15F3C" : "rgba(255,255,255,0.95)", color: mobileFiltersOpen ? "#fff" : "#4a4a45", fontSize: 12, fontFamily: "inherit", fontWeight: 600, cursor: "pointer", backdropFilter: "blur(10px)", boxShadow: "0 2px 8px rgba(0,0,0,0.1)", display: "flex", alignItems: "center", gap: 4 }}>
           <span style={{ fontSize: 14 }}>☰</span> Filters
         </button>
-        {mobileFiltersOpen && <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 20002, background: "rgba(255,255,255,0.97)", borderTop: "1px solid #e8e5dc", borderRadius: "14px 14px 0 0", padding: "10px 14px 20px", backdropFilter: "blur(14px)", boxShadow: "0 -4px 20px rgba(0,0,0,0.1)", maxHeight: "60vh", overflowY: "auto" }}>
-          <div style={{ width: 36, height: 4, background: "#d1d1cc", borderRadius: 2, margin: "0 auto 10px" }} />
+        {mobileFiltersOpen && <>
+          {/* Backdrop — tap to dismiss */}
+          <div onClick={() => setMobileFiltersOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 20001, background: "rgba(0,0,0,0.15)" }} />
+          <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 20002, background: "rgba(255,255,255,0.97)", borderTop: "1px solid #e8e5dc", borderRadius: "14px 14px 0 0", padding: "10px 14px 20px", backdropFilter: "blur(14px)", boxShadow: "0 -4px 20px rgba(0,0,0,0.1)", maxHeight: "60vh", overflowY: "auto" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+            <div style={{ width: 36, height: 4, background: "#d1d1cc", borderRadius: 2 }} />
+            <button onClick={() => setMobileFiltersOpen(false)} style={{ width: 28, height: 28, borderRadius: "50%", border: "1px solid #e8e5dc", background: "#f5f4f0", color: "#8a8a85", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, fontFamily: "inherit", lineHeight: 1 }}>✕</button>
+          </div>
           <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
             {[["companies", "Companies"], ["investors", "Investors"]].map(([k, l]) => (
               <button key={k} onClick={() => {
@@ -781,15 +801,16 @@ export default function App() {
               <span style={{ fontSize: 14, color: "#a0a09b" }}>{companies.filter(c => c.cat === k).length}</span>
             </div>
           ))}
-        </div>}
+        </div>
+        </>}
       </>}
 
       {/* ── LONDON MAP ────────────────────────────────────────────── */}
-      {panel === "graph" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, zIndex: 5 }}><LondonMap companies={filt} edges={fEdges} onSelect={(c) => { setSel(c); setTab("info"); }} selected={sel} userConnections={ud} isMobile={isMobile} mapView={mapView} /></div>}
+      {panel === "graph" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, zIndex: 5 }}><LondonMap companies={filt} edges={fEdges} onSelect={(c) => { setSel(c); setTab("info"); }} selected={sel} userConnections={ud} isMobile={isMobile} mapView={mapView} /></div>}
 
       {/* ── UPDATES PANEL ────────────────────────────────────────── */}
       {/* ── INSIGHTS PANEL ────────────────────────────────────────── */}
-      {panel === "bits" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", background: "#faf9f5" }}>
+      {panel === "bits" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", background: "#faf9f5" }}>
         {/* Subtitle */}
         <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 20px 12px" }}>Data, charts, ecosystem signals, and curated reads from London's AI scene</p>
         {/* Admin scrape button */}
@@ -860,7 +881,7 @@ export default function App() {
       </div>}
 
       {/* ── NEWS ──────────────────────────────────────────────────── */}
-      {panel === "updates" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, background: "#faf9f5", display: "flex", flexDirection: "column" }}>
+      {panel === "updates" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, background: "#faf9f5", display: "flex", flexDirection: "column" }}>
         {/* Sticky header with subtitle + filter buttons */}
         <div style={{ padding: isMobile ? "8px 12px" : "8px 20px", background: "#faf9f5", borderBottom: "1px solid #e8e5dc", flexShrink: 0, zIndex: 10 }}>
           <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 12px" }}>Funding, acquisitions, people moves, milestones, interviews</p>
@@ -981,7 +1002,7 @@ export default function App() {
       </div>}
 
       {/* ── PEOPLE PANEL (collapsible categories) ─────────────────── */}
-      {panel === "people" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
+      {panel === "people" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 12px" }}>Founders, CEOs, investors, and leaders</p>
           <div style={{ display: "flex", gap: 4 }}>
@@ -1114,7 +1135,7 @@ export default function App() {
           const domainMap = { deepmind: "deepmind.google", anthropic: "anthropic.com", openai: "openai.com", mistral: "mistral.ai", cohere: "cohere.com", stability: "stability.ai", elevenlabs: "elevenlabs.io", synthesia: "synthesia.io", wayve: "wayve.ai", isomorphic: "isomorphiclabs.com", helsing: "helsing.ai", darktrace: "darktrace.com", nscale: "nscale.com", graphcore: "graphcore.ai", polyai: "poly.ai", tractable: "tractable.ai", faculty: "faculty.ai", "signal-ai": "signal-ai.com", physicsx: "physicsx.ai", healx: "healx.io", encord: "encord.com", "holistic-ai": "holisticai.com", "robin-ai": "robin.ai", condukt: "condukt.ai", blackwall: "blackwall.ai", nexcade: "nexcade.ai", "peak-ai": "peak.ai", balderton: "balderton.com", atomico: "atomico.com", accel: "accel.com", mmc: "mmc.vc", seedcamp: "seedcamp.com", localglobe: "localglobe.vc", plural: "plural.vc", index: "indexventures.com", gv: "gv.com" };
           const pkLogo = domainMap[pk.id] ? `https://logo.clearbit.com/${domainMap[pk.id]}` : null;
           return (
-            <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 999, background: "rgba(26,26,24,0.45)", backdropFilter: "blur(4px)", top: isMobile ? 56 : 70, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={e => { if (e.target === e.currentTarget) setPeoplePeek(null); }}>
+            <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 999, background: "rgba(26,26,24,0.45)", backdropFilter: "blur(4px)", top: headerHeight, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={e => { if (e.target === e.currentTarget) setPeoplePeek(null); }}>
               <div style={{ background: "#faf9f5", borderRadius: "16px 16px 0 0", maxWidth: 480, width: "100%", maxHeight: "75vh", overflowY: "auto", boxShadow: "0 -4px 30px rgba(0,0,0,0.15)", border: "1px solid #e8e5dc", borderBottom: "none" }}>
                 {/* Header */}
                 <div style={{ padding: "14px 16px 10px", borderBottom: "1px solid #e8e5dc", position: "sticky", top: 0, background: "#faf9f5", borderRadius: "16px 16px 0 0", zIndex: 1 }}>
@@ -1179,7 +1200,7 @@ export default function App() {
       </div>}
 
       {/* ── INSIGHTS PANEL ───────────────────────────────────────── */}
-      {panel === "insights" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
+      {panel === "insights" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
         {insightsLoading ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>Loading insights...</div> :
         !selectedInsight ? <>
           <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 4px" }}>Vertical sector analysis of London's AI ecosystem</p>
@@ -1286,7 +1307,7 @@ export default function App() {
       </div>}
 
       {/* ── EVENTS PANEL ─────────────────────────────────────────── */}
-      {panel === "events" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
+      {panel === "events" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
         <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 12px" }}>Curated meetups, conferences, and community gatherings</p>
         {eventsLoading ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>Loading events...</div> :
         events.length === 0 ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>No events found</div> :
@@ -1320,7 +1341,7 @@ export default function App() {
       </div>}
 
       {/* ── SCORE PANEL ──────────────────────────────────────────── */}
-      {panel === "score" && <div style={{ position: "fixed", top: isMobile ? 56 : 70, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
+      {panel === "score" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
         <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 26, fontWeight: 700, color: "#1a1a18", margin: "16px 0 6px" }}>Network Score & Badges</h2>
         {!user && <div style={{ padding: "12px", borderRadius: 8, background: "#FF9F0A18", border: "1px solid #FF9F0A33", marginBottom: 12 }}>
           <span style={{ fontSize: 10, color: "#FF9F0A" }}>⚠️ Sign up to save your score, appear on the leaderboard, and track connections across devices.</span>

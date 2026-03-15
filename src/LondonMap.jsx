@@ -77,6 +77,11 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
     svg.call(zoom);
     svg.on("dblclick.zoom", null);
 
+    // Zoom out on mobile for investor view (nodes are larger and more spread out)
+    if (isMobile && mapView === "investors") {
+      svg.call(zoom.transform, d3.zoomIdentity.translate(w * 0.15, h * 0.15).scale(0.7));
+    }
+
     const isInv = mapView === "investors";
 
     const nodes = companies.map(c => ({ ...c, r: nr(c, mapView, isMobile) }));
