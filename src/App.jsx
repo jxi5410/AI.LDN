@@ -600,25 +600,8 @@ export default function App() {
         <div style={{ flex: 1 }} />
         {/* Nav */}
         <div style={{ display: "flex", gap: 0, borderRadius: 6, overflow: "hidden", border: "1px solid #e8e5dc" }}>
-          {[["graph", "🌌 Map"], ["people", "👤 People"], ["insights", "🔍 Insights"], ["articles", "📄 Articles"], ["events", "📅 Events"], ["updates", "📰 News"], ["bits", "⚡ Bits"]].map(([k, l]) => (
-            <button key={k} onClick={() => { if (k === "articles") return; setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "6px 12px", border: "none", height: 36, lineHeight: "24px", background: panel === k ? "#e8e5dc" : "transparent", color: panel === k ? "#1a1a18" : "#8a8a85", fontSize: isMobile ? 11 : 14, fontFamily: "inherit", cursor: "pointer", fontWeight: panel === k ? 600 : 400, position: k === "articles" ? "relative" : "static" }}
-              {...(k === "articles" ? { onMouseEnter: (e) => { e.currentTarget.querySelector('.article-dropdown')?.style.setProperty('display','block'); }, onMouseLeave: (e) => { e.currentTarget.querySelector('.article-dropdown')?.style.setProperty('display','none'); }, onClick: (e) => { const dd = e.currentTarget.querySelector('.article-dropdown'); if(dd) dd.style.display = dd.style.display === 'block' ? 'none' : 'block'; } } : {})}
-            >{l}
-              {k === "articles" && <div className="article-dropdown" style={{ display: "none", position: "absolute", top: 36, left: 0, background: "#fff", border: "1px solid #e8e5dc", borderRadius: 8, padding: 8, minWidth: 260, zIndex: 2000, boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}>
-                <div style={{ fontSize: 10, color: "#a0a09b", textTransform: "uppercase", fontWeight: 600, letterSpacing: 0.5, padding: "4px 8px", marginBottom: 4 }}>Research & Analysis</div>
-                <a href="/ecosystem/" style={{ display: "block", padding: "6px 8px", borderRadius: 4, color: "#2d2d2a", textDecoration: "none", fontSize: 13 }} onMouseEnter={e => e.currentTarget.style.background="#f5f4f0"} onMouseLeave={e => e.currentTarget.style.background="transparent"}>🗺️ London AI Ecosystem Guide</a>
-                <a href="/insights/londonmaxxing.html" style={{ display: "block", padding: "6px 8px", borderRadius: 4, color: "#2d2d2a", textDecoration: "none", fontSize: 13 }} onMouseEnter={e => e.currentTarget.style.background="#f5f4f0"} onMouseLeave={e => e.currentTarget.style.background="transparent"}>🔥 Londonmaxxing: The Data</a>
-                <a href="/insights/unicorns.html" style={{ display: "block", padding: "6px 8px", borderRadius: 4, color: "#2d2d2a", textDecoration: "none", fontSize: 13 }} onMouseEnter={e => e.currentTarget.style.background="#f5f4f0"} onMouseLeave={e => e.currentTarget.style.background="transparent"}>🦄 London AI Unicorns</a>
-                <a href="/insights/funding.html" style={{ display: "block", padding: "6px 8px", borderRadius: 4, color: "#2d2d2a", textDecoration: "none", fontSize: 13 }} onMouseEnter={e => e.currentTarget.style.background="#f5f4f0"} onMouseLeave={e => e.currentTarget.style.background="transparent"}>💰 $37B Funding Analysis</a>
-                <a href="/insights/compare.html" style={{ display: "block", padding: "6px 8px", borderRadius: 4, color: "#2d2d2a", textDecoration: "none", fontSize: 13 }} onMouseEnter={e => e.currentTarget.style.background="#f5f4f0"} onMouseLeave={e => e.currentTarget.style.background="transparent"}>⚖️ Dealroom vs Beauhurst vs LDN/ai</a>
-                <div style={{ height: 1, background: "#e8e5dc", margin: "6px 0" }} />
-                <div style={{ fontSize: 10, color: "#a0a09b", textTransform: "uppercase", fontWeight: 600, letterSpacing: 0.5, padding: "4px 8px", marginBottom: 4 }}>Company Profiles</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 3, padding: "0 8px 4px" }}>
-                  {[["deepmind","DeepMind"],["wayve","Wayve"],["nscale","nScale"],["elevenlabs","ElevenLabs"],["synthesia","Synthesia"],["helsing","Helsing"],["darktrace","Darktrace"],["isomorphic","Isomorphic"],["cohere","Cohere"],["cleo","Cleo"],["polyai","PolyAI"],["hologen","Hologen"]].map(([id,n]) => <a key={id} href={`/company/${id}.html`} style={{ fontSize: 10, padding: "2px 6px", borderRadius: 3, background: "#f5f4f0", color: "#6b6b66", textDecoration: "none" }} onMouseEnter={e => { e.currentTarget.style.background="#C15F3C22"; e.currentTarget.style.color="#C15F3C"; }} onMouseLeave={e => { e.currentTarget.style.background="#f5f4f0"; e.currentTarget.style.color="#6b6b66"; }}>{n}</a>)}
-                  <a href="/ecosystem/" style={{ fontSize: 10, padding: "2px 6px", borderRadius: 3, background: "#f5f4f0", color: "#C15F3C", textDecoration: "none" }}>+19 more →</a>
-                </div>
-              </div>}
-            </button>
+          {[["graph", "🌌 Map"], ["people", "👤 People"], ["insights", "🔍 Insights"], ["events", "📅 Events"], ["updates", "📰 News"], ["bits", "⚡ Bits"]].map(([k, l]) => (
+            <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "6px 12px", border: "none", height: 36, lineHeight: "24px", background: panel === k ? "#e8e5dc" : "transparent", color: panel === k ? "#1a1a18" : "#8a8a85", fontSize: isMobile ? 11 : 14, fontFamily: "inherit", cursor: "pointer", fontWeight: panel === k ? 600 : 400 }}>{l}</button>
           ))}
         </div>
         {/* Search */}
@@ -757,7 +740,7 @@ export default function App() {
       </div>}
 
       {/* ── LEFT SIDEBAR (graph) ──────────────────────────────────── */}
-      {panel === "graph" && !isMobile && <div style={{ position: "absolute", top: 80, left: 6, zIndex: 20000, background: "rgba(255,255,255,0.97)", borderRadius: 10, padding: "7px 7px 10px", backdropFilter: "blur(14px)", border: "1px solid #e8e5dc", maxHeight: "calc(100vh - 85px)", overflowY: "auto", width: 210 }}>
+      {panel === "graph" && !isMobile && <div style={{ position: "absolute", top: headerHeight + 10, left: 6, zIndex: 20000, background: "rgba(255,255,255,0.97)", borderRadius: 10, padding: "7px 7px 10px", backdropFilter: "blur(14px)", border: "1px solid #e8e5dc", maxHeight: `calc(100vh - ${headerHeight + 16}px)`, overflowY: "auto", width: 210 }}>
         {/* View toggle */}
         <div style={{ display: "flex", gap: 2, marginBottom: 5 }}>
           {[["companies", "Companies"], ["investors", "Investors"]].map(([k, l]) => (
@@ -1220,47 +1203,51 @@ export default function App() {
       {panel === "insights" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
         {insightsLoading ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>Loading insights...</div> :
         !selectedInsight ? <>
-          <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 4px" }}>Vertical sector analysis of London's AI ecosystem</p>
-          <p style={{ fontSize: 11, color: "#b5b3ae", margin: "0 0 16px" }}>What problems they solve, what's working, what's not, and where the gaps are · <span style={{ fontStyle: "italic" }}>AI-assisted analysis</span></p>
-          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 12 }}>
+          {/* ── VERTICAL SECTOR ANALYSIS ── */}
+          <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "14px 0 4px" }}>Vertical Sector Analysis</h2>
+          <p style={{ fontSize: 12, color: "#a0a09b", margin: "0 0 14px" }}>What problems they solve, what's working, what's not, and where the gaps are · <span style={{ fontStyle: "italic" }}>AI-assisted</span></p>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
             {insights.map(ins => {
               const sectorCos = companies.filter(c => (ins.company_ids || []).includes(c.id));
               return (
-                <div key={ins.id} onClick={() => { setSelectedInsight(ins); setInsightAnswer(""); setInsightAsk(""); }} style={{ background: "#ffffff", borderRadius: 10, border: "1px solid #e8e5dc", padding: 18, cursor: "pointer", transition: "border-color 0.15s" }}
+                <div key={ins.id} onClick={() => { setSelectedInsight(ins); setInsightAnswer(""); setInsightAsk(""); }} style={{ background: "#ffffff", borderRadius: 8, border: "1px solid #e8e5dc", padding: 14, cursor: "pointer", transition: "border-color 0.15s" }}
                   onMouseEnter={e => e.currentTarget.style.borderColor = "#C15F3C"}
                   onMouseLeave={e => e.currentTarget.style.borderColor = "#e8e5dc"}>
-                  <div style={{ fontSize: 28, marginBottom: 8 }}>{ins.icon}</div>
-                  <h3 style={{ margin: "0 0 6px", fontSize: 17, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#1a1a18" }}>{ins.title}</h3>
-                  <p style={{ margin: "0 0 10px", fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{(ins.the_problem || "").slice(0, 150)}...</p>
-                  <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                    {sectorCos.slice(0, 6).map(c => <span key={c.id} style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#e8e5dc", color: "#6b6b66" }}>{c.name}</span>)}
-                    {sectorCos.length > 6 && <span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#e8e5dc", color: "#a0a09b" }}>+{sectorCos.length - 6}</span>}
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                    <span style={{ fontSize: 20 }}>{ins.icon}</span>
+                    <span style={{ fontWeight: 600, color: "#1a1a18", fontSize: 14, fontFamily: "'Inter',sans-serif" }}>{ins.title}</span>
                   </div>
-                  <div style={{ fontSize: 10, color: "#a0a09b", marginTop: 8 }}>{sectorCos.length} companies · 6 sections</div>
+                  <p style={{ margin: "0 0 8px", fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{(ins.the_problem || "").slice(0, 120)}...</p>
+                  <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+                    {sectorCos.slice(0, 5).map(c => <span key={c.id} style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: "#f5f4f0", color: "#8a8a85" }}>{c.name}</span>)}
+                    {sectorCos.length > 5 && <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: "#f5f4f0", color: "#a0a09b" }}>+{sectorCos.length - 5}</span>}
+                  </div>
                 </div>
               );
             })}
           </div>
+
           {/* ── RESEARCH & ARTICLES ── */}
-          <div style={{ marginTop: 28, borderTop: "2px solid #e8e5dc", paddingTop: 20 }}>
-            <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "0 0 4px" }}>Research & Articles</h2>
-            <p style={{ fontSize: 12, color: "#a0a09b", margin: "0 0 14px" }}>In-depth analysis of London's AI ecosystem</p>
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 10 }}>
-              {[
-                { href: "/ecosystem/", icon: "🗺️", title: "The London AI Ecosystem in 2026", desc: "Complete guide: 74 companies, 20 investors, $37B+ funding across 7 sectors" },
-                { href: "/insights/londonmaxxing.html", icon: "🔥", title: "Londonmaxxing: The Data", desc: "Why the meme is backed by real numbers — funding surge, unicorns, infrastructure" },
-                { href: "/insights/unicorns.html", icon: "🦄", title: "London AI Unicorns", desc: "Every billion-dollar AI company: nScale, ElevenLabs, Wayve, Helsing, Synthesia" },
-                { href: "/insights/funding.html", icon: "💰", title: "$37B Funding Analysis", desc: "Where London AI funding actually goes — largest rounds, sector breakdown" },
-                { href: "/insights/compare.html", icon: "⚖️", title: "Dealroom vs Beauhurst vs LDN/ai", desc: "How LDN/ai compares to paid platforms for London AI data" },
-              ].map(a => <a key={a.href} href={a.href} style={{ display: "block", background: "#fff", borderRadius: 8, border: "1px solid #e8e5dc", padding: 14, textDecoration: "none", transition: "border-color 0.15s" }}
-                onMouseEnter={e => e.currentTarget.style.borderColor="#C15F3C"}
-                onMouseLeave={e => e.currentTarget.style.borderColor="#e8e5dc"}>
-                <div style={{ fontSize: 12, marginBottom: 4 }}>{a.icon} <span style={{ fontWeight: 600, color: "#1a1a18" }}>{a.title}</span></div>
-                <div style={{ fontSize: 11, color: "#8a8a85", lineHeight: 1.4 }}>{a.desc}</div>
-              </a>)}
-            </div>
-            <p style={{ fontSize: 11, color: "#a0a09b", marginTop: 12 }}>Company profiles: <a href="/company/deepmind.html" style={{ color: "#C15F3C", textDecoration: "none" }}>DeepMind</a> · <a href="/company/wayve.html" style={{ color: "#C15F3C", textDecoration: "none" }}>Wayve</a> · <a href="/company/nscale.html" style={{ color: "#C15F3C", textDecoration: "none" }}>nScale</a> · <a href="/company/elevenlabs.html" style={{ color: "#C15F3C", textDecoration: "none" }}>ElevenLabs</a> · <a href="/company/helsing.html" style={{ color: "#C15F3C", textDecoration: "none" }}>Helsing</a> · <a href="/company/synthesia.html" style={{ color: "#C15F3C", textDecoration: "none" }}>Synthesia</a> · <a href="/ecosystem/" style={{ color: "#C15F3C", textDecoration: "none" }}>+25 more →</a></p>
+          <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "28px 0 4px", borderTop: "2px solid #e8e5dc", paddingTop: 20 }}>Research & Articles</h2>
+          <p style={{ fontSize: 12, color: "#a0a09b", margin: "0 0 14px" }}>In-depth analysis of London's AI ecosystem</p>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
+            {[
+              { href: "/ecosystem/", icon: "🗺️", title: "The London AI Ecosystem in 2026", desc: "Complete guide: 74 companies, 20 investors, $37B+ funding across 7 sectors" },
+              { href: "/insights/londonmaxxing.html", icon: "🔥", title: "Londonmaxxing: The Data", desc: "Why the meme is backed by real numbers — funding, unicorns, infrastructure" },
+              { href: "/insights/unicorns.html", icon: "🦄", title: "London AI Unicorns", desc: "Every billion-dollar AI company: nScale, ElevenLabs, Wayve, Helsing, Synthesia" },
+              { href: "/insights/funding.html", icon: "💰", title: "$37B Funding Analysis", desc: "Where London AI funding actually goes — largest rounds, sector breakdown" },
+              { href: "/insights/compare.html", icon: "⚖️", title: "Dealroom vs Beauhurst vs LDN/ai", desc: "How LDN/ai compares to paid platforms for London AI data" },
+            ].map(a => <a key={a.href} href={a.href} style={{ display: "block", background: "#fff", borderRadius: 8, border: "1px solid #e8e5dc", padding: 14, textDecoration: "none", transition: "border-color 0.15s" }}
+              onMouseEnter={e => e.currentTarget.style.borderColor="#C15F3C"}
+              onMouseLeave={e => e.currentTarget.style.borderColor="#e8e5dc"}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                <span style={{ fontSize: 20 }}>{a.icon}</span>
+                <span style={{ fontWeight: 600, color: "#1a1a18", fontSize: 14, fontFamily: "'Inter',sans-serif" }}>{a.title}</span>
+              </div>
+              <p style={{ margin: 0, fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{a.desc}</p>
+            </a>)}
           </div>
+          <p style={{ fontSize: 11, color: "#a0a09b", marginTop: 12 }}>Company profiles: <a href="/company/deepmind.html" style={{ color: "#C15F3C", textDecoration: "none" }}>DeepMind</a> · <a href="/company/wayve.html" style={{ color: "#C15F3C", textDecoration: "none" }}>Wayve</a> · <a href="/company/nscale.html" style={{ color: "#C15F3C", textDecoration: "none" }}>nScale</a> · <a href="/company/elevenlabs.html" style={{ color: "#C15F3C", textDecoration: "none" }}>ElevenLabs</a> · <a href="/company/helsing.html" style={{ color: "#C15F3C", textDecoration: "none" }}>Helsing</a> · <a href="/company/synthesia.html" style={{ color: "#C15F3C", textDecoration: "none" }}>Synthesia</a> · <a href="/ecosystem/" style={{ color: "#C15F3C", textDecoration: "none" }}>+25 more →</a></p>
         </> :
         /* ── EXPANDED INSIGHT ── */
         (() => {
@@ -1418,7 +1405,7 @@ export default function App() {
       </div>}
 
       {/* ── DETAIL PANEL (graph) ──────────────────────────────────── */}
-      {sel && panel === "graph" && <DraggableCard isMobile={isMobile} onClose={() => setSel(null)}>
+      {sel && panel === "graph" && <DraggableCard isMobile={isMobile} onClose={() => setSel(null)} headerHeight={headerHeight}>
         <div style={{ padding: "12px 14px 8px", borderBottom: "1px solid #e8e5dc" }}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ flex: 1 }}>
@@ -1452,6 +1439,7 @@ export default function App() {
             {sel.ethos && <S t="Ethos" v={sel.ethos} />}
             {sel.ms && <S t="Milestones" v={sel.ms} />}
             {sel.jobs && <a href={sel.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#e8e5dc", color: "#2d2d2a", fontSize: 9.5, textDecoration: "none", fontFamily: "inherit", border: "1px solid #d5d3ca", marginTop: 6 }}>🔗 Careers →</a>}
+            {sel.cat !== "investor" && <a href={`/company/${sel.id}.html`} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#C15F3C18", color: "#C15F3C", fontSize: 9.5, textDecoration: "none", fontFamily: "inherit", border: "1px solid #C15F3C33", marginTop: 6, marginLeft: 4 }}>📄 Profile →</a>}
           </>}
           {tab === "funding" && <>
             {sel.cat === "investor" ? (
@@ -1693,7 +1681,7 @@ function UpdateSummariseBtn({ url, label, person }) {
   </>);
 }
 
-function DraggableCard({ isMobile, onClose, children }) {
+function DraggableCard({ isMobile, onClose, children, headerHeight = 70 }) {
   const [dragY, setDragY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const startY = useRef(0);
@@ -1728,7 +1716,7 @@ function DraggableCard({ isMobile, onClose, children }) {
   if (!isMobile) {
     // Desktop: plain fixed card, no drag
     return (
-      <div style={{ position: "fixed", top: 70, right: 6, width: 320, maxHeight: "calc(100vh - 80px)", overflowY: "auto", background: "rgba(255,255,255,0.98)", borderRadius: 12, backdropFilter: "blur(16px)", border: "1px solid #e8e5dc", zIndex: 600, boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}>
+      <div style={{ position: "fixed", top: headerHeight + 6, right: 6, width: 320, maxHeight: `calc(100vh - ${headerHeight + 12}px)`, overflowY: "auto", background: "rgba(255,255,255,0.98)", borderRadius: 12, backdropFilter: "blur(16px)", border: "1px solid #e8e5dc", zIndex: 600, boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}>
         {children}
       </div>
     );
