@@ -596,9 +596,6 @@ export default function App() {
           {!isMobile && <p style={{ margin: 0, fontSize: 10.5, color: "#b5b3ae" }}>
             Sourcing APIs live at <a href="https://londonai.network/sourcing" target="_blank" rel="noopener" style={{ color: "#C15F3C", textDecoration: "none", fontWeight: 500 }}>LondonAI.network/sourcing</a> · request access at <a href="mailto:jxi5410@gmail.com?subject=LDN/ai%20sourcing%20API%20access" style={{ color: "#C15F3C", textDecoration: "none", fontWeight: 500 }}>jxi5410@gmail.com</a>
           </p>}
-          {!isMobile && <p style={{ margin: 0, fontSize: 9.5, color: "#c5c3ba" }}>
-            Built by <a href="https://github.com/jxi5410" target="_blank" rel="noopener" style={{ color: "#a0a09b", textDecoration: "none" }}>Jie Xi</a> · <a href="https://github.com/jxi5410/AI.LDN" target="_blank" rel="noopener" style={{ color: "#a0a09b", textDecoration: "none" }}>Open source</a> · <a href="/privacy.html" style={{ color: "#a0a09b", textDecoration: "none" }}>Privacy</a> · <a href="/terms.html" style={{ color: "#a0a09b", textDecoration: "none" }}>Terms</a>
-          </p>}
         </div>
         <div style={{ flex: 1 }} />
         {/* Nav */}
@@ -656,13 +653,13 @@ export default function App() {
         </div>
         
         <button onClick={() => setShowFeedback(true)} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#a0a09b", fontSize: 12, cursor: "pointer", fontFamily: "inherit", height: 36 }}>💬</button>
-        {/* Trophy — always visible */}
+        {/* Trophy */}
         <button onClick={() => setPanel("score")} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid #e8e5dc", background: panel === "score" ? "#FFD70018" : "transparent", color: "#FFD700", fontSize: 14, height: 36, cursor: "pointer", fontFamily: "inherit" }}>🏆{score.score > 0 ? ` ${score.score}` : ""}</button>
-        {/* My Network toggle — next to trophy */}
+        {/* My Network toggle */}
         {panel === "graph" && !isMobile &&
           <button onClick={() => setShowMyNet(!showMyNet)} style={{ padding: "6px 10px", borderRadius: 6, border: `1px solid ${showMyNet ? "#30D158" : "#e8e5dc"}`, background: showMyNet ? "#30D15818" : "transparent", color: showMyNet ? "#30D158" : "#a0a09b", fontSize: 12, cursor: "pointer", fontFamily: "inherit", height: 36 }}>🤝</button>
         }
-        {/* Auth */}
+        {/* Auth — below icon buttons */}
         {user ? (
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", fontSize: 12, color: "#6b6b66", fontFamily: "inherit", height: 36, boxSizing: "border-box", display: "flex", alignItems: "center" }}>👤 {profile?.username || user.email}</div>
@@ -1641,14 +1638,23 @@ export default function App() {
       </div>}
     </div>
 
-    {/* ── FOOTER — Trust Signals ─────────────────────────────────── */}
-    <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "#1a1a18", padding: "6px 14px", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", zIndex: 999, fontSize: 10, color: "#6b6b66" }}>
-      <span style={{ color: "#8a8a85" }}>© 2026 LDN/ai · Built by <a href="https://github.com/jxi5410" target="_blank" rel="noopener" style={{ color: "#8a8a85", textDecoration: "none" }}>Jie Xi</a></span>
-      <span>·</span>
-      <a href="/ecosystem/" style={{ color: "#6b6b66", textDecoration: "none" }}>Ecosystem</a>
-      <a href="mailto:jxi5410@gmail.com" style={{ color: "#6b6b66", textDecoration: "none" }}>Contact</a>
-      <span style={{ flex: 1 }} />
-      <span style={{ color: "#4a4a45" }}>Data from public sources · Open source</span>
+    {/* ── FOOTER ─────────────────────────────────────────────────── */}
+    <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "#1a1a18", zIndex: 999 }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "12px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <span style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Inter',sans-serif", background: "linear-gradient(135deg,#C15F3C,#d97757)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</span>
+          <span style={{ fontSize: 11, color: "#6b6b66" }}>© 2026 Jie Xi. All rights reserved.</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 11 }}>
+          <a href="/ecosystem/" style={{ color: "#8a8a85", textDecoration: "none" }}>Ecosystem</a>
+          <a href="/insights/londonmaxxing.html" style={{ color: "#8a8a85", textDecoration: "none" }}>Research</a>
+          <a href="/sourcing" style={{ color: "#8a8a85", textDecoration: "none" }}>API</a>
+          <a href="mailto:jxi5410@gmail.com" style={{ color: "#8a8a85", textDecoration: "none" }}>Contact</a>
+          <a href="/privacy.html" style={{ color: "#8a8a85", textDecoration: "none" }}>Privacy</a>
+          <a href="/terms.html" style={{ color: "#8a8a85", textDecoration: "none" }}>Terms</a>
+          <a href="https://github.com/jxi5410/AI.LDN" target="_blank" rel="noopener" style={{ color: "#8a8a85", textDecoration: "none" }}>GitHub</a>
+        </div>
+      </div>
     </div>
 
   </>
