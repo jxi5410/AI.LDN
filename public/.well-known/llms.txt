@@ -2,60 +2,51 @@
 
 > Interactive intelligence platform mapping 99+ AI companies, 20 investors, 67 key people, 128 connections, and 100 funding rounds across London's AI ecosystem. Built by Jie Xi.
 
-## What This Site Is
-
-LDN/ai is a structured, searchable map of London's artificial intelligence ecosystem. It tracks companies building AI products, the investors funding them, the people leading them, and the connections between all three. Data is sourced from Companies House filings, public funding announcements, career pages, GitHub activity, and curated research.
-
-## Key Data
-
-- **99 AI companies** across 10 categories: frontier labs, biotech, defence, enterprise, fintech, safety, autonomous, hardware, generative, devtools
-- **20 investors** active in London AI (Balderton, Index, Accel, Lightspeed, Atomico, LocalGlobe, Seedcamp, MMC, GV, a16z, and more)
-- **67 verified people** — founders, C-suite, and VC partners/principals
-- **100 funding rounds** totalling $37.2B+ with numeric USD amounts
-- **128 graph edges** mapping investment, partnership, talent flow, and spin-off relationships
-- **59 Companies House records** with officer and PSC ownership data
-- **7 sector analyses** covering Health/Biotech, Defence/Gov, AI Safety, DevTools/Infra, Autonomous/Robotics, Fintech, Generative Media
-
-## API (Public, Free)
-
-Base URL: https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api
-
-- [All companies](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=companies)
-- [People with podcasts](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=people)
-- [Funding rounds](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=funding_rounds)
-- [Sector insights](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=insights)
-- [Graph edges](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=edges)
-- [Events](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=events)
-- [Ecosystem stats](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=stats)
-- [OpenAPI spec](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=openapi)
-
-## Sourcing API (Beta, Key Required)
-
-Deal intelligence endpoints for VCs: company matching, hiring signals, GitHub activity, Companies House filings, co-investment overlap, graph path analysis.
-
-- [Sourcing docs](https://londonai.network/sourcing)
-- Request access: jxi5410@gmail.com
-
 ## Key Pages
 
-- [Ecosystem Map](https://londonai.network) — Interactive D3 graph with company/investor views
-- [Sourcing API Docs](https://londonai.network/sourcing) — Beta API documentation
-- [GitHub](https://github.com/jxi5410/AI.LDN) — Open source repository
+- [Interactive Map](https://londonai.network) — D3 graph with company/investor views, People panel, Insights
+- [Ecosystem Guide](https://londonai.network/ecosystem/) — Complete guide to London's AI ecosystem in 2026
+- [AI Unicorns](https://londonai.network/insights/unicorns.html) — Every billion-dollar AI company in London
+- [Funding Analysis](https://londonai.network/insights/funding.html) — $37.2B in tracked funding, sector breakdown
+- [Data Source Comparison](https://londonai.network/insights/compare.html) — LDN/ai vs Dealroom vs Beauhurst
+- [Sourcing API](https://londonai.network/sourcing) — Beta deal intelligence API for VCs
 
-## Notable Companies Tracked
+## Company Profiles
 
-Frontier: Google DeepMind, Anthropic (London office), OpenAI (London), Mistral, Cohere
-Unicorns: Wayve ($8.6B), ElevenLabs ($11B), Synthesia ($4B), nScale ($14.6B), Helsing (€12B)
-Biotech: Isomorphic Labs, BenevolentAI, Hologen, Causaly, Baseimmune
-Defence: Helsing, Faculty (Accenture), Mind Foundry, Darktrace
-Safety: Conjecture, Holistic AI, Mindgard, Unitary
+- [Google DeepMind](https://londonai.network/company/deepmind.html)
+- [Wayve](https://londonai.network/company/wayve.html)
+- [nScale](https://londonai.network/company/nscale.html)
+- [ElevenLabs](https://londonai.network/company/elevenlabs.html)
+- [Synthesia](https://londonai.network/company/synthesia.html)
+- [Helsing](https://londonai.network/company/helsing.html)
+- [Darktrace](https://londonai.network/company/darktrace.html)
+- [Isomorphic Labs](https://londonai.network/company/isomorphic.html)
+- [Holistic AI](https://londonai.network/company/holistic-ai.html)
+- [Conjecture](https://londonai.network/company/conjecture.html)
+
+## Public API (Free, JSON)
+
+Base: https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api
+
+- [Companies](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=companies)
+- [People](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=people)
+- [Funding Rounds](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=funding_rounds)
+- [Sector Insights](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=insights)
+- [Edges/Connections](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=edges)
+- [Stats](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=stats)
+- [OpenAPI Spec](https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=openapi)
+
+## Data
+
+- 74 AI companies across 10 categories
+- 20 investors (Balderton, Index, Accel, Lightspeed, Atomico, LocalGlobe, Seedcamp, MMC, GV, a16z)
+- 67 verified people (founders, C-suite, VC partners)
+- 100 funding rounds ($37.2B+)
+- 128 graph edges (investment, partnership, talent, spinoff)
+- 59 Companies House records
+- 7 sector analyses (Health, Defence, Safety, DevTools, Autonomous, Fintech, Generative)
+- Weekly automated updates (hiring, GitHub, CH filings, news)
 
 ## About
 
-Built by Jie Xi — Executive Director at JPMorgan Strategic Investments, building AI products at the intersection of institutional finance and frontier AI. LDN/ai demonstrates full-stack AI product development: Vite+React frontend, Supabase backend, 7 Edge Functions, Gemini embeddings, pg_cron automation, Companies House integration, and Claude-powered AI features.
-
-## Contact
-
-- Email: jxi5410@gmail.com
-- GitHub: github.com/jxi5410
-- Site: https://londonai.network
+Built by Jie Xi (Executive Director, JPMorgan Strategic Investments). Open source: github.com/jxi5410/AI.LDN. Contact: jxi5410@gmail.com.
