@@ -596,6 +596,9 @@ export default function App() {
           {!isMobile && <p style={{ margin: 0, fontSize: 10.5, color: "#b5b3ae" }}>
             Sourcing APIs live at <a href="https://londonai.network/sourcing" target="_blank" rel="noopener" style={{ color: "#C15F3C", textDecoration: "none", fontWeight: 500 }}>LondonAI.network/sourcing</a> · request access at <a href="mailto:jxi5410@gmail.com?subject=LDN/ai%20sourcing%20API%20access" style={{ color: "#C15F3C", textDecoration: "none", fontWeight: 500 }}>jxi5410@gmail.com</a>
           </p>}
+          {!isMobile && <p style={{ margin: 0, fontSize: 9.5, color: "#c5c3ba" }}>
+            Built by <a href="https://github.com/jxi5410" target="_blank" rel="noopener" style={{ color: "#a0a09b", textDecoration: "none" }}>Jie Xi</a> · <a href="https://github.com/jxi5410/AI.LDN" target="_blank" rel="noopener" style={{ color: "#a0a09b", textDecoration: "none" }}>Open source</a> · <a href="/privacy.html" style={{ color: "#a0a09b", textDecoration: "none" }}>Privacy</a> · <a href="/terms.html" style={{ color: "#a0a09b", textDecoration: "none" }}>Terms</a>
+          </p>}
         </div>
         <div style={{ flex: 1 }} />
         {/* Nav */}
