@@ -3,15 +3,149 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>LDN/ai — London AI Ecosystem</title>
-    <meta name="description" content="LDN/ai — Interactive map of 115+ AI companies, labs, investors, and key people in London's AI ecosystem" />
+    <title>LDN/ai — London AI Ecosystem Map | 99+ Companies, Investors & People</title>
+    <meta name="description" content="Interactive map of London's AI ecosystem: 99 companies, 20 investors, 67 key people, 128 connections, and $37B+ in tracked funding. Explore sectors from frontier labs to biotech, defence, and fintech." />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://londonai.network/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="LDN/ai — London AI Ecosystem Map" />
+    <meta property="og:description" content="Interactive intelligence platform mapping 99+ AI companies, 20 investors, 67 key people, and $37B+ in funding across London's AI ecosystem." />
+    <meta property="og:url" content="https://londonai.network/" />
+    <meta property="og:site_name" content="LDN/ai" />
+    <meta property="og:locale" content="en_GB" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="LDN/ai — London AI Ecosystem Map" />
+    <meta name="twitter:description" content="99+ AI companies, 20 investors, 67 key people, $37B+ funding tracked. Explore London's AI ecosystem." />
+
+    <!-- RSS Discovery -->
+    <link rel="alternate" type="application/rss+xml" title="LDN/ai Ecosystem Updates" href="/feed.xml" />
+
+    <!-- JSON-LD: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "LDN/ai",
+      "url": "https://londonai.network",
+      "description": "London AI ecosystem intelligence platform tracking companies, investors, people, and funding.",
+      "founder": {
+        "@type": "Person",
+        "name": "Jie Xi",
+        "jobTitle": "Executive Director, JPMorgan Strategic Investments",
+        "url": "https://github.com/jxi5410"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "jxi5410@gmail.com",
+        "contactType": "general"
+      }
+    }
+    </script>
+
+    <!-- JSON-LD: WebSite with SearchAction -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "LDN/ai — London AI Ecosystem",
+      "url": "https://londonai.network",
+      "description": "Interactive map of 99+ AI companies, 20 investors, 67 key people, and $37B+ in funding across London's artificial intelligence ecosystem.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://londonai.network/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- JSON-LD: Dataset -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "London AI Ecosystem Dataset",
+      "description": "Structured dataset of London's AI ecosystem including 99 companies, 20 investors, 67 people, 100 funding rounds ($37.2B+), 128 graph edges, and 59 Companies House records. Updated weekly.",
+      "url": "https://londonai.network",
+      "license": "https://opensource.org/licenses/MIT",
+      "creator": { "@type": "Person", "name": "Jie Xi" },
+      "distribution": {
+        "@type": "DataDownload",
+        "encodingFormat": "application/json",
+        "contentUrl": "https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=companies"
+      },
+      "temporalCoverage": "2010/..",
+      "spatialCoverage": { "@type": "Place", "name": "London, United Kingdom" }
+    }
+    </script>
+
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { background: #141413; overflow: hidden; overflow-x: hidden; max-width: 100vw; }
+      #ssr-content { color: #d5d3ca; font-family: -apple-system, sans-serif; padding: 24px; max-width: 860px; margin: 0 auto; line-height: 1.7; }
+      #ssr-content h1 { color: #C15F3C; font-size: 28px; margin: 0 0 12px; }
+      #ssr-content h2 { color: #e8e5dc; font-size: 20px; margin: 24px 0 8px; }
+      #ssr-content h3 { color: #d97757; font-size: 16px; margin: 18px 0 6px; }
+      #ssr-content a { color: #C15F3C; }
+      #ssr-content p { margin: 0 0 12px; font-size: 15px; }
+      #ssr-content strong { color: #e8e5dc; }
+      #root:not(:empty) ~ #ssr-content { display: none; }
     </style>
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- Pre-rendered content for crawlers (hidden once React hydrates) -->
+    <div id="ssr-content">
+    <article>
+      <h1>LDN/ai — London AI Ecosystem Map</h1>
+      <p>LDN/ai is an interactive intelligence platform mapping London's artificial intelligence ecosystem. It tracks <strong>99 AI companies</strong>, <strong>20 investors</strong>, <strong>67 key people</strong>, <strong>128 connections</strong>, and <strong>100 funding rounds</strong> totalling over <strong>$37.2 billion</strong> in tracked capital.</p>
+
+      <h2>Ecosystem Overview</h2>
+      <p>London is Europe's largest AI hub. The ecosystem spans frontier research labs (Google DeepMind, Anthropic, OpenAI London offices), unicorn startups (Wayve at $8.6B, ElevenLabs at $11B, Synthesia at $4B, nScale at $14.6B, Helsing at €12B), and deep-tech companies across biotech, defence, fintech, and enterprise AI. Over $37 billion in funding flows through London AI companies, backed by investors including Balderton, Index Ventures, Accel, Lightspeed, Atomico, LocalGlobe, Seedcamp, and MMC Ventures.</p>
+
+      <h2>Sector Analyses</h2>
+      <p>LDN/ai provides 7 vertical sector analyses with original research covering what problems companies solve, what's working, unspoken truths, last-mile gaps, and adjacent opportunities.</p>
+
+      <h3>AI + Health &amp; Drug Discovery (12 companies)</h3>
+      <p>Drug discovery takes 10-15 years and $2.6B per approved drug. London companies include Isomorphic Labs (DeepMind spinout), BenevolentAI (first London AI drug discovery company, est. 2013), Hologen (Eric Schmidt co-founded, $150M Series A, $430M MeiraGTx Parkinson's JV), Causaly (biomedical knowledge graphs, 12 of top 20 pharma), Baseimmune (AI vaccines), and Healx (rare disease drug repurposing). AI speeds discovery but cannot skip clinical trials.</p>
+
+      <h3>AI + Defence &amp; Government (7 companies)</h3>
+      <p>Helsing leads at €12B valuation with AI-piloted fighter jet combat deployed in Ukraine. Faculty AI was acquired by Accenture for ~$1B+. Mind Foundry (Oxford spinout) and Darktrace (9,000+ customers) complete the sector. UK's £500M sovereign AI fund creates new dual-use opportunity.</p>
+
+      <h3>AI Safety &amp; Governance (5 companies)</h3>
+      <p>Conjecture (alignment research), Holistic AI (enterprise governance for EU AI Act), Mindgard (AI red teaming), Unitary AI (content moderation). The alignment community and compliance industry remain disconnected.</p>
+
+      <h3>AI DevTools &amp; Infrastructure (8 companies)</h3>
+      <p>nScale ($2B raised at $14.6B valuation) builds sovereign GPU cloud — Europe's largest AI infrastructure play. Fractile designs novel AI chips. OLIX builds optical AI accelerators ($220M Series A). Callosum orchestrates multi-chip workloads. V7 and Encord compete on data annotation.</p>
+
+      <h3>Autonomous Systems &amp; Robotics (5 companies)</h3>
+      <p>Wayve leads with $2.3B+ raised and end-to-end learned driving. $1.2B Series D at $8.6B makes them Europe's most valuable autonomous driving company. Isembard builds AI factories ($50M Series A). AUAR automates construction.</p>
+
+      <h3>AI + Financial Services (7 companies)</h3>
+      <p>Cleo (7M+ users, AI financial assistant), Finster (ex-DeepMind founder, AI for investment banks), Onfido (acquired by Entrust for $650M), Testudo (AI economy insurance). 12-18 month banking procurement cycles are the sector's primary constraint.</p>
+
+      <h3>Generative AI + Creative/Media (8 companies)</h3>
+      <p>Synthesia ($4B, enterprise AI video) and ElevenLabs ($11B, voice synthesis in 70+ languages) lead. Stability AI's struggles show open-source model companies face business model challenges.</p>
+
+      <h2>Data &amp; Methodology</h2>
+      <p>Data sourced from Companies House filings (59 verified records), public funding announcements, career page monitoring, GitHub activity tracking, and curated research. Weekly automated collection via pg_cron updates hiring signals, GitHub activity, CH filings, and news. All sector analyses are AI-assisted and clearly labelled as such.</p>
+
+      <h2>Public API</h2>
+      <p>Free JSON API providing companies, people, funding rounds, sector insights, graph edges, events, and stats. <a href="https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api">API documentation</a>. <a href="https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=openapi">OpenAPI 3.1 spec</a>. Sourcing API (beta) available at <a href="https://londonai.network/sourcing">londonai.network/sourcing</a>.</p>
+
+      <h2>Technology</h2>
+      <p>Vite + React frontend on Vercel. Supabase PostgreSQL with 7 Edge Functions, pgvector embeddings, pg_cron automation. Gemini embeddings (768d) for semantic search. Companies House API. Claude API for AI features. Open source: <a href="https://github.com/jxi5410/AI.LDN">github.com/jxi5410/AI.LDN</a>.</p>
+
+      <h2>Contact</h2>
+      <p>Built by <strong>Jie Xi</strong>. Email: <a href="mailto:jxi5410@gmail.com">jxi5410@gmail.com</a>. GitHub: <a href="https://github.com/jxi5410">jxi5410</a>.</p>
+    </article>
+    </div>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LDN/ai — London AI Ecosystem Updates</title>
+    <link>https://londonai.network</link>
+    <description>Updates from LDN/ai: new companies, funding rounds, sector analyses, and ecosystem intelligence for London's AI landscape.</description>
+    <language>en-gb</language>
+    <lastBuildDate>Sun, 16 Mar 2026 00:00:00 GMT</lastBuildDate>
+    <atom:link href="https://londonai.network/feed.xml" rel="self" type="application/rss+xml" />
+
+    <item>
+      <title>Insights Panel: 7 Vertical Sector Analyses</title>
+      <link>https://londonai.network</link>
+      <description>New Insights tab with AI-assisted sector analyses covering Health/Biotech, Defence/Gov, AI Safety, DevTools/Infrastructure, Autonomous/Robotics, Fintech, and Generative Media. Each sector includes: The Problem, Who's Solving It, What's Working, Unspoken Truths, Last Mile Gaps, and Adjacent Bets. Ask Deeper AI feature for follow-up questions.</description>
+      <pubDate>Wed, 12 Mar 2026 00:00:00 GMT</pubDate>
+      <guid>https://londonai.network/updates/insights-panel-2026-03-12</guid>
+    </item>
+
+    <item>
+      <title>10 New Companies Added: Hologen, Causaly, Mindgard, and More</title>
+      <link>https://londonai.network</link>
+      <description>Added 10 companies from London AI coverage: Hologen ($150M, Eric Schmidt, medical AI), Baseimmune ($11M, AI vaccines), Causaly ($93M, biomedical knowledge graphs), Fractile (AI chips), Mindgard ($12M, AI red teaming), Limbic (NHS mental health), Lindus Health ($55M, clinical trials), Anima Health, AUAR (construction robots), Testudo (AI insurance). Total: 99 companies.</description>
+      <pubDate>Tue, 11 Mar 2026 00:00:00 GMT</pubDate>
+      <guid>https://londonai.network/updates/10-new-companies-2026-03-11</guid>
+    </item>
+
+    <item>
+      <title>Sourcing API Beta Launch</title>
+      <link>https://londonai.network/sourcing</link>
+      <description>Beta launch of deal intelligence API for VCs: company matching, hiring signals, GitHub activity monitoring, Companies House filings, co-investment overlap analysis, and graph path discovery. Key-gated access.</description>
+      <pubDate>Mon, 10 Mar 2026 00:00:00 GMT</pubDate>
+      <guid>https://londonai.network/updates/sourcing-api-beta-2026-03-10</guid>
+    </item>
+
+    <item>
+      <title>People Database: 67 Verified Profiles</title>
+      <link>https://londonai.network</link>
+      <description>Expanded people database to 67 verified profiles including founders, C-suite, and VC partners/principals from MMC, Seedcamp, LocalGlobe, Atomico, Accel, Index, GV, Balderton, and EF. All verified against official team pages, LinkedIn, and Bloomberg.</description>
+      <pubDate>Tue, 11 Mar 2026 00:00:00 GMT</pubDate>
+      <guid>https://londonai.network/updates/people-67-verified-2026-03-11</guid>
+    </item>
+
+    <item>
+      <title>Funding Rounds: 100 Rounds, $37.2B Tracked</title>
+      <link>https://londonai.network</link>
+      <description>Comprehensive funding database: 100 rounds across London AI companies totalling $37.2B+ in tracked capital. Includes numeric USD amounts, lead/other investors, series, dates, and valuations. API endpoint available.</description>
+      <pubDate>Mon, 10 Mar 2026 00:00:00 GMT</pubDate>
+      <guid>https://londonai.network/updates/funding-100-rounds-2026-03-10</guid>
+    </item>
+  </channel>
+</rss>
