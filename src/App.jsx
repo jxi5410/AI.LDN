@@ -600,8 +600,25 @@ export default function App() {
         <div style={{ flex: 1 }} />
         {/* Nav */}
         <div style={{ display: "flex", gap: 0, borderRadius: 6, overflow: "hidden", border: "1px solid #e8e5dc" }}>
-          {[["graph", "🌌 Map"], ["people", "👤 People"], ["insights", "🔍 Insights"], ["events", "📅 Events"], ["updates", "📰 News"], ["bits", "⚡ Bits"]].map(([k, l]) => (
-            <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "6px 12px", border: "none", height: 36, lineHeight: "24px", background: panel === k ? "#e8e5dc" : "transparent", color: panel === k ? "#1a1a18" : "#8a8a85", fontSize: isMobile ? 11 : 14, fontFamily: "inherit", cursor: "pointer", fontWeight: panel === k ? 600 : 400 }}>{l}</button>
+          {[["graph", "🌌 Map"], ["people", "👤 People"], ["insights", "🔍 Insights"], ["articles", "📄 Articles"], ["events", "📅 Events"], ["updates", "📰 News"], ["bits", "⚡ Bits"]].map(([k, l]) => (
+            <button key={k} onClick={() => { if (k === "articles") return; setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "6px 12px", border: "none", height: 36, lineHeight: "24px", background: panel === k ? "#e8e5dc" : "transparent", color: panel === k ? "#1a1a18" : "#8a8a85", fontSize: isMobile ? 11 : 14, fontFamily: "inherit", cursor: "pointer", fontWeight: panel === k ? 600 : 400, position: k === "articles" ? "relative" : "static" }}
+              {...(k === "articles" ? { onMouseEnter: (e) => { e.currentTarget.querySelector('.article-dropdown')?.style.setProperty('display','block'); }, onMouseLeave: (e) => { e.currentTarget.querySelector('.article-dropdown')?.style.setProperty('display','none'); }, onClick: (e) => { const dd = e.currentTarget.querySelector('.article-dropdown'); if(dd) dd.style.display = dd.style.display === 'block' ? 'none' : 'block'; } } : {})}
+            >{l}
+              {k === "articles" && <div className="article-dropdown" style={{ display: "none", position: "absolute", top: 36, left: 0, background: "#fff", border: "1px solid #e8e5dc", borderRadius: 8, padding: 8, minWidth: 260, zIndex: 2000, boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}>
+                <div style={{ fontSize: 10, color: "#a0a09b", textTransform: "uppercase", fontWeight: 600, letterSpacing: 0.5, padding: "4px 8px", marginBottom: 4 }}>Research & Analysis</div>
+                <a href="/ecosystem/" style={{ display: "block", padding: "6px 8px", borderRadius: 4, color: "#2d2d2a", textDecoration: "none", fontSize: 13 }} onMouseEnter={e => e.currentTarget.style.background="#f5f4f0"} onMouseLeave={e => e.currentTarget.style.background="transparent"}>🗺️ London AI Ecosystem Guide</a>
+                <a href="/insights/londonmaxxing.html" style={{ display: "block", padding: "6px 8px", borderRadius: 4, color: "#2d2d2a", textDecoration: "none", fontSize: 13 }} onMouseEnter={e => e.currentTarget.style.background="#f5f4f0"} onMouseLeave={e => e.currentTarget.style.background="transparent"}>🔥 Londonmaxxing: The Data</a>
+                <a href="/insights/unicorns.html" style={{ display: "block", padding: "6px 8px", borderRadius: 4, color: "#2d2d2a", textDecoration: "none", fontSize: 13 }} onMouseEnter={e => e.currentTarget.style.background="#f5f4f0"} onMouseLeave={e => e.currentTarget.style.background="transparent"}>🦄 London AI Unicorns</a>
+                <a href="/insights/funding.html" style={{ display: "block", padding: "6px 8px", borderRadius: 4, color: "#2d2d2a", textDecoration: "none", fontSize: 13 }} onMouseEnter={e => e.currentTarget.style.background="#f5f4f0"} onMouseLeave={e => e.currentTarget.style.background="transparent"}>💰 $37B Funding Analysis</a>
+                <a href="/insights/compare.html" style={{ display: "block", padding: "6px 8px", borderRadius: 4, color: "#2d2d2a", textDecoration: "none", fontSize: 13 }} onMouseEnter={e => e.currentTarget.style.background="#f5f4f0"} onMouseLeave={e => e.currentTarget.style.background="transparent"}>⚖️ Dealroom vs Beauhurst vs LDN/ai</a>
+                <div style={{ height: 1, background: "#e8e5dc", margin: "6px 0" }} />
+                <div style={{ fontSize: 10, color: "#a0a09b", textTransform: "uppercase", fontWeight: 600, letterSpacing: 0.5, padding: "4px 8px", marginBottom: 4 }}>Company Profiles</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 3, padding: "0 8px 4px" }}>
+                  {[["deepmind","DeepMind"],["wayve","Wayve"],["nscale","nScale"],["elevenlabs","ElevenLabs"],["synthesia","Synthesia"],["helsing","Helsing"],["darktrace","Darktrace"],["isomorphic","Isomorphic"],["cohere","Cohere"],["cleo","Cleo"],["polyai","PolyAI"],["hologen","Hologen"]].map(([id,n]) => <a key={id} href={`/company/${id}.html`} style={{ fontSize: 10, padding: "2px 6px", borderRadius: 3, background: "#f5f4f0", color: "#6b6b66", textDecoration: "none" }} onMouseEnter={e => { e.currentTarget.style.background="#C15F3C22"; e.currentTarget.style.color="#C15F3C"; }} onMouseLeave={e => { e.currentTarget.style.background="#f5f4f0"; e.currentTarget.style.color="#6b6b66"; }}>{n}</a>)}
+                  <a href="/ecosystem/" style={{ fontSize: 10, padding: "2px 6px", borderRadius: 3, background: "#f5f4f0", color: "#C15F3C", textDecoration: "none" }}>+19 more →</a>
+                </div>
+              </div>}
+            </button>
           ))}
         </div>
         {/* Search */}
@@ -1223,6 +1240,26 @@ export default function App() {
                 </div>
               );
             })}
+          </div>
+          {/* ── RESEARCH & ARTICLES ── */}
+          <div style={{ marginTop: 28, borderTop: "2px solid #e8e5dc", paddingTop: 20 }}>
+            <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "0 0 4px" }}>Research & Articles</h2>
+            <p style={{ fontSize: 12, color: "#a0a09b", margin: "0 0 14px" }}>In-depth analysis of London's AI ecosystem</p>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 10 }}>
+              {[
+                { href: "/ecosystem/", icon: "🗺️", title: "The London AI Ecosystem in 2026", desc: "Complete guide: 74 companies, 20 investors, $37B+ funding across 7 sectors" },
+                { href: "/insights/londonmaxxing.html", icon: "🔥", title: "Londonmaxxing: The Data", desc: "Why the meme is backed by real numbers — funding surge, unicorns, infrastructure" },
+                { href: "/insights/unicorns.html", icon: "🦄", title: "London AI Unicorns", desc: "Every billion-dollar AI company: nScale, ElevenLabs, Wayve, Helsing, Synthesia" },
+                { href: "/insights/funding.html", icon: "💰", title: "$37B Funding Analysis", desc: "Where London AI funding actually goes — largest rounds, sector breakdown" },
+                { href: "/insights/compare.html", icon: "⚖️", title: "Dealroom vs Beauhurst vs LDN/ai", desc: "How LDN/ai compares to paid platforms for London AI data" },
+              ].map(a => <a key={a.href} href={a.href} style={{ display: "block", background: "#fff", borderRadius: 8, border: "1px solid #e8e5dc", padding: 14, textDecoration: "none", transition: "border-color 0.15s" }}
+                onMouseEnter={e => e.currentTarget.style.borderColor="#C15F3C"}
+                onMouseLeave={e => e.currentTarget.style.borderColor="#e8e5dc"}>
+                <div style={{ fontSize: 12, marginBottom: 4 }}>{a.icon} <span style={{ fontWeight: 600, color: "#1a1a18" }}>{a.title}</span></div>
+                <div style={{ fontSize: 11, color: "#8a8a85", lineHeight: 1.4 }}>{a.desc}</div>
+              </a>)}
+            </div>
+            <p style={{ fontSize: 11, color: "#a0a09b", marginTop: 12 }}>Company profiles: <a href="/company/deepmind.html" style={{ color: "#C15F3C", textDecoration: "none" }}>DeepMind</a> · <a href="/company/wayve.html" style={{ color: "#C15F3C", textDecoration: "none" }}>Wayve</a> · <a href="/company/nscale.html" style={{ color: "#C15F3C", textDecoration: "none" }}>nScale</a> · <a href="/company/elevenlabs.html" style={{ color: "#C15F3C", textDecoration: "none" }}>ElevenLabs</a> · <a href="/company/helsing.html" style={{ color: "#C15F3C", textDecoration: "none" }}>Helsing</a> · <a href="/company/synthesia.html" style={{ color: "#C15F3C", textDecoration: "none" }}>Synthesia</a> · <a href="/ecosystem/" style={{ color: "#C15F3C", textDecoration: "none" }}>+25 more →</a></p>
           </div>
         </> :
         /* ── EXPANDED INSIGHT ── */
