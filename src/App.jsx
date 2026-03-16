@@ -581,7 +581,7 @@ export default function App() {
   }, [hov, hovConn, sel, selConn, panel]);
 
   // ── RENDER ──────────────────────────────────────────────────────────
-  return (
+  return (<>
     <div style={{ width: "100%", height: "100vh", background: "#faf9f5", overflow: "hidden", fontFamily: "'Libre Baskerville',Georgia,serif", position: "relative", color: "#2d2d2a" }}>
       <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#c5c3ba;border-radius:4px}input[type=range]{-webkit-appearance:none;background:transparent}input[type=range]::-webkit-slider-track{height:2px;background:#e8e5dc;border-radius:2px}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:#FF2D55;margin-top:-3px;cursor:pointer}`}</style>
@@ -1612,6 +1612,18 @@ export default function App() {
         </div>}
       </div>}
     </div>
+
+    {/* ── FOOTER — Trust Signals ─────────────────────────────────── */}
+    <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "#1a1a18", padding: "6px 14px", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", zIndex: 999, fontSize: 10, color: "#6b6b66" }}>
+      <span style={{ color: "#8a8a85" }}>© 2026 LDN/ai · Built by <a href="https://github.com/jxi5410" target="_blank" rel="noopener" style={{ color: "#8a8a85", textDecoration: "none" }}>Jie Xi</a></span>
+      <span>·</span>
+      <a href="/ecosystem/" style={{ color: "#6b6b66", textDecoration: "none" }}>Ecosystem</a>
+      <a href="mailto:jxi5410@gmail.com" style={{ color: "#6b6b66", textDecoration: "none" }}>Contact</a>
+      <span style={{ flex: 1 }} />
+      <span style={{ color: "#4a4a45" }}>Data from public sources · Open source</span>
+    </div>
+
+  </>
   );
 }
 
