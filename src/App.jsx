@@ -345,7 +345,7 @@ export default function App() {
 
   // Fetch bits (admin sees pending + approved; public sees approved only)
   useEffect(() => {
-    if (panel !== "bits" || bitsFetched) return;
+    if ((panel !== "bits" && panel !== "insights") || bitsFetched) return;
     setBitsLoading(true);
     const isAdmin = user?.id === ADMIN_UID;
     const url = isAdmin
@@ -509,7 +509,7 @@ export default function App() {
     if (layout === "cluster") Object.entries(catCenters).forEach(([cat, pos]) => {
       g.append("text").text(CC[cat]?.l || cat).attr("x", pos.x).attr("y", pos.y - 50)
         .attr("text-anchor", "middle").attr("fill", CC[cat]?.c || "#666").attr("font-size", "10px")
-        .attr("font-family", "'Inter',-apple-system,sans-serif").attr("font-weight", "600").attr("opacity", 0.4);
+        .attr("font-family", "'Libre Baskerville',Georgia,serif").attr("font-weight", "600").attr("opacity", 0.4);
     });
 
     const link = g.append("g").selectAll("line").data(links).enter().append("line")
@@ -541,7 +541,7 @@ export default function App() {
       .attr("fill", d => isInvView && d.cat === "investor" ? "#1a1a18" : "#6b6b66")
       .attr("font-size", d => isInvView && d.cat === "investor" ? "14px" : (d.r > 14 ? "12px" : "10px"))
       .attr("font-weight", d => isInvView && d.cat === "investor" ? "700" : "400")
-      .attr("font-family", "'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif").attr("pointer-events", "none");
+      .attr("font-family", "'Libre Baskerville',Georgia,serif").attr("pointer-events", "none");
 
     svg.on("click", () => setSel(null));
     sim.on("tick", () => {
@@ -597,7 +597,7 @@ export default function App() {
         <div style={{ flex: 1 }} />
         {/* Nav */}
         <div style={{ display: "flex", gap: 0, borderRadius: 6, overflow: "hidden", border: "1px solid #e8e5dc" }}>
-          {[["graph", "🌌 Map"], ["people", "👤 People"], ["insights", "🔍 Insights"], ["events", "📅 Events"], ["updates", "📰 News"], ["bits", "⚡ Bits"]].map(([k, l]) => (
+          {[["graph", "🌌 Map"], ["people", "👤 People"], ["insights", "🔍 Insights"], ["events", "📅 Events"], ["updates", "📰 News"]].map(([k, l]) => (
             <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "6px 12px", border: "none", height: 36, lineHeight: "24px", background: panel === k ? "#e8e5dc" : "transparent", color: panel === k ? "#1a1a18" : "#8a8a85", fontSize: isMobile ? 11 : 14, fontFamily: "inherit", cursor: "pointer", fontWeight: panel === k ? 600 : 400 }}>{l}</button>
           ))}
         </div>
@@ -653,8 +653,8 @@ export default function App() {
         {/* Trophy */}
         <button onClick={() => setPanel("score")} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid #e8e5dc", background: panel === "score" ? "#FFD70018" : "transparent", color: "#FFD700", fontSize: 14, height: 36, cursor: "pointer", fontFamily: "inherit" }}>🏆{score.score > 0 ? ` ${score.score}` : ""}</button>
         {/* My Network toggle */}
-        {panel === "graph" && !isMobile &&
-          <button onClick={() => setShowMyNet(!showMyNet)} style={{ padding: "6px 10px", borderRadius: 6, border: `1px solid ${showMyNet ? "#30D158" : "#e8e5dc"}`, background: showMyNet ? "#30D15818" : "transparent", color: showMyNet ? "#30D158" : "#a0a09b", fontSize: 12, cursor: "pointer", fontFamily: "inherit", height: 36 }}>🤝</button>
+        {!isMobile &&
+          <button onClick={() => { setShowMyNet(!showMyNet); if (panel !== "graph") setPanel("graph"); }} style={{ padding: "6px 10px", borderRadius: 6, border: `1px solid ${showMyNet ? "#30D158" : "#e8e5dc"}`, background: showMyNet ? "#30D15818" : "transparent", color: showMyNet ? "#30D158" : "#a0a09b", fontSize: 12, cursor: "pointer", fontFamily: "inherit", height: 36 }}>🤝</button>
         }
         {/* Auth — below icon buttons */}
         {user ? (
@@ -676,13 +676,13 @@ export default function App() {
           {signupSuccess ? <>
             <div style={{ textAlign: "center", padding: "10px 0" }}>
               <div style={{ fontSize: 36, marginBottom: 8 }}>📧</div>
-              <h2 style={{ margin: "0 0 8px", fontSize: 16, fontFamily: "'Inter',sans-serif", color: "#1a1a18" }}>Check your email</h2>
+              <h2 style={{ margin: "0 0 8px", fontSize: 16, fontFamily: "inherit", color: "#1a1a18" }}>Check your email</h2>
               <p style={{ fontSize: 10.5, color: "#6b6b66", lineHeight: 1.5, marginBottom: 12 }}>We've sent a confirmation link to <strong style={{ color: "#2d2d2a" }}>{authForm.email}</strong>. Click the link in the email to activate your account.</p>
               <p style={{ fontSize: 12, color: "#a0a09b" }}>Didn't receive it? Check your spam folder, or try again in a few minutes.</p>
               <button onClick={() => { setAuthMode(null); setSignupSuccess(false); }} style={{ marginTop: 12, padding: "8px 20px", borderRadius: 7, border: "1px solid #e8e5dc", background: "transparent", color: "#6b6b66", fontSize: 10, cursor: "pointer", fontFamily: "inherit" }}>Close</button>
             </div>
           </> : <>
-          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "'Inter',sans-serif", color: "#1a1a18" }}>{authMode === "signup" ? "Create Account" : "Welcome Back"}</h2>
+          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "inherit", color: "#1a1a18" }}>{authMode === "signup" ? "Create Account" : "Welcome Back"}</h2>
           <p style={{ margin: "0 0 16px", fontSize: 14, color: "#8a8a85" }}>{authMode === "signup" ? "Join the LDN/ai network" : "Sign in to track your connections"}</p>
           {authError && <div style={{ padding: "6px 10px", borderRadius: 6, background: "#FF453A18", border: "1px solid #FF453A33", color: "#FF453A", fontSize: 9.5, marginBottom: 10 }}>{authError}</div>}
           {authMode === "signup" && <input type="text" placeholder="Username *" value={authForm.username} onChange={e => setAuthForm(p => ({ ...p, username: e.target.value }))} style={inputStyle} />}
@@ -707,7 +707,7 @@ export default function App() {
       {/* ── FEEDBACK MODAL ────────────────────────────────────────── */}
       {showFeedback && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setShowFeedback(false)}>
         <div onClick={e => e.stopPropagation()} style={{ background: "#ffffff", borderRadius: 14, padding: 24, border: "1px solid #e8e5dc", width: 400, maxWidth: "90vw", maxHeight: "80vh", overflowY: "auto" }}>
-          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "'Inter',sans-serif", color: "#1a1a18" }}>💬 Feedback</h2>
+          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "inherit", color: "#1a1a18" }}>💬 Feedback</h2>
           <p style={{ margin: "0 0 14px", fontSize: 9.5, color: "#8a8a85" }}>Help us improve LDN/ai</p>
           {fbSubmitted ? <div style={{ padding: 20, textAlign: "center" }}><span style={{ fontSize: 28 }}>✅</span><p style={{ color: "#30D158", marginTop: 8 }}>Thank you! Feedback submitted.</p></div> : <>
             <div style={{ display: "flex", gap: 4, marginBottom: 10 }}>
@@ -847,7 +847,7 @@ export default function App() {
                     </div>
                     {bit.engagement && <span style={{ fontSize: 9, color: "#a0a09b" }}>{bit.engagement}</span>}
                   </div>
-                  <h3 style={{ margin: "0 0 3px", fontSize: 14, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#1a1a18", lineHeight: 1.3 }}>{bit.title}</h3>
+                  <h3 style={{ margin: "0 0 3px", fontSize: 14, fontFamily: "inherit", fontWeight: 700, color: "#1a1a18", lineHeight: 1.3 }}>{bit.title}</h3>
                   {bit.description && <p style={{ fontSize: 12, color: "#4a4a45", lineHeight: 1.5, margin: "0 0 5px" }}>{bit.description.replace(/<[^>]*>/g, "")}</p>}
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
                     {bit.author && <span style={{ fontSize: 10, color: "#6b6b66" }}>{bit.author}</span>}
@@ -884,7 +884,7 @@ export default function App() {
           <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 12px" }}>Funding, acquisitions, people moves, milestones, interviews</p>
           <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
             {Object.entries(UPDATE_TYPES).map(([k, cfg]) => (
-              <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${updateFilter === k ? cfg.c : "#e8e5dc"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: k === "regulation" ? "'Inter',sans-serif" : "inherit", fontWeight: updateFilter === k ? 600 : (k === "regulation" ? 700 : 400), letterSpacing: k === "regulation" ? 0.3 : 0 }}>{cfg.label}</button>
+              <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${updateFilter === k ? cfg.c : "#e8e5dc"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit", fontWeight: updateFilter === k ? 600 : (k === "regulation" ? 700 : 400), letterSpacing: k === "regulation" ? 0.3 : 0 }}>{cfg.label}</button>
             ))}
           </div>
         </div>
@@ -894,7 +894,7 @@ export default function App() {
           /* ── AI REGULATION SECTION ── */
           <div style={{ padding: isMobile ? "12px" : "16px 20px" }}>
             <div style={{ background: "#ffffff", borderRadius: 10, border: "1px solid #e8e5dc", padding: isMobile ? "12px 10px" : "16px 18px", marginBottom: 16 }}>
-              <h3 style={{ fontFamily: "'Inter',sans-serif", fontSize: 20, fontWeight: 700, margin: "0 0 4px", color: "#4a4a45" }}>🏛️ UK AI Regulation</h3>
+              <h3 style={{ fontFamily: "inherit", fontSize: 20, fontWeight: 700, margin: "0 0 4px", color: "#4a4a45" }}>🏛️ UK AI Regulation</h3>
               <p style={{ fontSize: 13, color: "#8a8a85", margin: "0 0 14px" }}>The UK is charting a distinct path — pro-innovation, sector-specific, and deliberately avoiding the EU's prescriptive model</p>
               <div style={{ fontSize: 14, color: "#4a4a45", lineHeight: 1.7, marginBottom: 14 }}>
                 <p style={{ margin: "0 0 10px" }}>The UK government has opted against comprehensive AI legislation, instead relying on <strong style={{ color: "#1a1a18" }}>existing regulators</strong> (FCA, ICO, CMA, Ofcom) to apply five cross-sector principles: safety, transparency, fairness, accountability, and contestability. A dedicated <strong style={{ color: "#1a1a18" }}>UK AI Bill</strong> is expected no earlier than H2 2026.</p>
@@ -1201,7 +1201,7 @@ export default function App() {
         {insightsLoading ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>Loading insights...</div> :
         !selectedInsight ? <>
           {/* ── VERTICAL SECTOR ANALYSIS ── */}
-          <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "14px 0 4px" }}>Vertical Sector Analysis</h2>
+          <h2 style={{ fontFamily: "inherit", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "14px 0 4px" }}>Vertical Sector Analysis</h2>
           <p style={{ fontSize: 12, color: "#a0a09b", margin: "0 0 14px" }}>What problems they solve, what's working, what's not, and where the gaps are · <span style={{ fontStyle: "italic" }}>AI-assisted</span></p>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
             {insights.map(ins => {
@@ -1212,7 +1212,7 @@ export default function App() {
                   onMouseLeave={e => e.currentTarget.style.borderColor = "#e8e5dc"}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                     <span style={{ fontSize: 20 }}>{ins.icon}</span>
-                    <span style={{ fontWeight: 600, color: "#1a1a18", fontSize: 14, fontFamily: "'Inter',sans-serif" }}>{ins.title}</span>
+                    <span style={{ fontWeight: 600, color: "#1a1a18", fontSize: 14, fontFamily: "inherit" }}>{ins.title}</span>
                   </div>
                   <p style={{ margin: "0 0 8px", fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{(ins.the_problem || "").slice(0, 120)}...</p>
                   <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
@@ -1225,7 +1225,7 @@ export default function App() {
           </div>
 
           {/* ── RESEARCH & ARTICLES ── */}
-          <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "28px 0 4px", borderTop: "2px solid #e8e5dc", paddingTop: 20 }}>Research & Articles</h2>
+          <h2 style={{ fontFamily: "inherit", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "28px 0 4px", borderTop: "2px solid #e8e5dc", paddingTop: 20 }}>Research & Articles</h2>
           <p style={{ fontSize: 12, color: "#a0a09b", margin: "0 0 14px" }}>In-depth analysis of London's AI ecosystem</p>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
             {[
@@ -1239,12 +1239,51 @@ export default function App() {
               onMouseLeave={e => e.currentTarget.style.borderColor="#e8e5dc"}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                 <span style={{ fontSize: 20 }}>{a.icon}</span>
-                <span style={{ fontWeight: 600, color: "#1a1a18", fontSize: 14, fontFamily: "'Inter',sans-serif" }}>{a.title}</span>
+                <span style={{ fontWeight: 600, color: "#1a1a18", fontSize: 14, fontFamily: "inherit" }}>{a.title}</span>
               </div>
               <p style={{ margin: 0, fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{a.desc}</p>
             </a>)}
           </div>
-          <p style={{ fontSize: 11, color: "#a0a09b", marginTop: 12 }}>Company profiles: <a href="/company/deepmind.html" style={{ color: "#C15F3C", textDecoration: "none" }}>DeepMind</a> · <a href="/company/wayve.html" style={{ color: "#C15F3C", textDecoration: "none" }}>Wayve</a> · <a href="/company/nscale.html" style={{ color: "#C15F3C", textDecoration: "none" }}>nScale</a> · <a href="/company/elevenlabs.html" style={{ color: "#C15F3C", textDecoration: "none" }}>ElevenLabs</a> · <a href="/company/helsing.html" style={{ color: "#C15F3C", textDecoration: "none" }}>Helsing</a> · <a href="/company/synthesia.html" style={{ color: "#C15F3C", textDecoration: "none" }}>Synthesia</a> · <a href="/ecosystem/" style={{ color: "#C15F3C", textDecoration: "none" }}>+25 more →</a></p>
+
+          {/* ── CURATED ARTICLES (from Bits) ── */}
+          {bits.filter(b => !b._pending).length > 0 && <>
+            <h2 style={{ fontFamily: "inherit", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "28px 0 4px", borderTop: "2px solid #e8e5dc", paddingTop: 20 }}>Curated Articles</h2>
+            <p style={{ fontSize: 12, color: "#a0a09b", margin: "0 0 14px" }}>Hand-picked reads from across the London AI ecosystem</p>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
+              {bits.filter(b => !b._pending && b.type !== "chart").slice(0, 8).map(bit => (
+                <a key={bit.id} href={bit.url} target="_blank" rel="noopener" style={{ display: "block", background: "#fff", borderRadius: 8, border: "1px solid #e8e5dc", padding: 14, textDecoration: "none", transition: "border-color 0.15s" }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor="#C15F3C"}
+                  onMouseLeave={e => e.currentTarget.style.borderColor="#e8e5dc"}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                    <span style={{ fontSize: 20 }}>📎</span>
+                    <span style={{ fontWeight: 600, color: "#1a1a18", fontSize: 14, fontFamily: "inherit" }}>{bit.title}</span>
+                  </div>
+                  {bit.summary && <p style={{ margin: 0, fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{bit.summary.slice(0, 120)}...</p>}
+                  <div style={{ marginTop: 6, fontSize: 10, color: "#a0a09b" }}>{bit.source || new URL(bit.url).hostname} {bit.date && `· ${new Date(bit.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`}</div>
+                </a>
+              ))}
+            </div>
+          </>}
+
+          {/* ── CHARTS (from Bits) ── */}
+          {bits.filter(b => !b._pending && b.type === "chart").length > 0 && <>
+            <h2 style={{ fontFamily: "inherit", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "28px 0 4px", borderTop: "2px solid #e8e5dc", paddingTop: 20 }}>Charts</h2>
+            <p style={{ fontSize: 12, color: "#a0a09b", margin: "0 0 14px" }}>Data visualisations from the ecosystem</p>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
+              {bits.filter(b => !b._pending && b.type === "chart").map(bit => (
+                <a key={bit.id} href={bit.url} target="_blank" rel="noopener" style={{ display: "block", background: "#fff", borderRadius: 8, border: "1px solid #e8e5dc", padding: 14, textDecoration: "none", transition: "border-color 0.15s" }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor="#C15F3C"}
+                  onMouseLeave={e => e.currentTarget.style.borderColor="#e8e5dc"}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                    <span style={{ fontSize: 20 }}>📊</span>
+                    <span style={{ fontWeight: 600, color: "#1a1a18", fontSize: 14, fontFamily: "inherit" }}>{bit.title}</span>
+                  </div>
+                  {bit.summary && <p style={{ margin: 0, fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{bit.summary.slice(0, 120)}...</p>}
+                </a>
+              ))}
+            </div>
+          </>}
+
         </> :
         /* ── EXPANDED INSIGHT ── */
         (() => {
@@ -1277,7 +1316,7 @@ export default function App() {
             <button onClick={() => setSelectedInsight(null)} style={{ background: "none", border: "none", color: "#C15F3C", fontSize: 13, cursor: "pointer", fontFamily: "inherit", padding: "10px 0 6px", fontWeight: 500 }}>← All sectors</button>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
               <span style={{ fontSize: 32 }}>{ins.icon}</span>
-              <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: isMobile ? 22 : 28, fontWeight: 700, color: "#1a1a18", margin: 0 }}>{ins.title}</h2>
+              <h2 style={{ fontFamily: "inherit", fontSize: isMobile ? 22 : 28, fontWeight: 700, color: "#1a1a18", margin: 0 }}>{ins.title}</h2>
             </div>
             {/* Company pills */}
             <div style={{ display: "flex", gap: 4, flexWrap: "wrap", margin: "8px 0 16px" }}>
@@ -1292,7 +1331,7 @@ export default function App() {
                 <div key={key} style={{ background: "#ffffff", borderRadius: 10, border: "1px solid #e8e5dc", padding: 16 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
                     <span style={{ fontSize: 16 }}>{icon}</span>
-                    <h3 style={{ margin: 0, fontSize: 14, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#1a1a18", textTransform: "uppercase", letterSpacing: 0.5 }}>{title}</h3>
+                    <h3 style={{ margin: 0, fontSize: 14, fontFamily: "inherit", fontWeight: 700, color: "#1a1a18", textTransform: "uppercase", letterSpacing: 0.5 }}>{title}</h3>
                   </div>
                   <p style={{ margin: 0, fontSize: 13, color: "#4a4a45", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{boldNames(ins[key])}</p>
                 </div>
@@ -1302,7 +1341,7 @@ export default function App() {
             <div style={{ marginTop: 20, background: "linear-gradient(135deg,#C15F3C08,#d9775710)", borderRadius: 10, border: "1px solid #C15F3C22", padding: 16 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
                 <span style={{ fontSize: 14 }}>🧠</span>
-                <h3 style={{ margin: 0, fontSize: 13, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#C15F3C", textTransform: "uppercase", letterSpacing: 0.5 }}>Ask deeper</h3>
+                <h3 style={{ margin: 0, fontSize: 13, fontFamily: "inherit", fontWeight: 700, color: "#C15F3C", textTransform: "uppercase", letterSpacing: 0.5 }}>Ask deeper</h3>
               </div>
               <p style={{ fontSize: 11, color: "#8a8a85", margin: "0 0 8px" }}>Ask a specific question about this sector — grounded in our company data</p>
               <div style={{ display: "flex", gap: 6 }}>
@@ -1343,7 +1382,7 @@ export default function App() {
                       {new Date(ev.date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
                       {ev.time && <span style={{ color: "#8a8a85", fontWeight: 400 }}> · {ev.time}</span>}
                     </div>
-                    <h3 style={{ margin: "4px 0 0", fontSize: 17, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#1a1a18" }}>{ev.title}</h3>
+                    <h3 style={{ margin: "4px 0 0", fontSize: 17, fontFamily: "inherit", fontWeight: 700, color: "#1a1a18" }}>{ev.title}</h3>
                   </div>
                   {ev.recurring && <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "#30D15818", color: "#30D158", fontWeight: 600 }}>RECURRING</span>}
                 </div>
@@ -1363,7 +1402,7 @@ export default function App() {
 
       {/* ── SCORE PANEL ──────────────────────────────────────────── */}
       {panel === "score" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", background: "#faf9f5" }}>
-        <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 26, fontWeight: 700, color: "#1a1a18", margin: "16px 0 6px" }}>Network Score & Badges</h2>
+        <h2 style={{ fontFamily: "inherit", fontSize: 26, fontWeight: 700, color: "#1a1a18", margin: "16px 0 6px" }}>Network Score & Badges</h2>
         {!user && <div style={{ padding: "12px", borderRadius: 8, background: "#FF9F0A18", border: "1px solid #FF9F0A33", marginBottom: 12 }}>
           <span style={{ fontSize: 10, color: "#FF9F0A" }}>⚠️ Sign up to save your score, appear on the leaderboard, and track connections across devices.</span>
           <button onClick={() => setAuthMode("signup")} style={{ marginLeft: 8, padding: "3px 8px", borderRadius: 4, border: "1px solid #30D158", background: "#30D15818", color: "#30D158", fontSize: 9, cursor: "pointer" }}>Sign up</button>
@@ -1371,7 +1410,7 @@ export default function App() {
         {/* Score card */}
         <div style={{ background: "linear-gradient(135deg,#e8e5dc,#ffffff)", borderRadius: 12, padding: "20px", border: "1px solid #d5d3ca", marginBottom: 12, textAlign: "center" }}>
           <div style={{ fontSize: 40 }}>{score.emoji || "🔭"}</div>
-          <div style={{ fontSize: 34, fontWeight: 800, fontFamily: "'Inter',sans-serif", color: "#FFD700", marginTop: 4 }}>{score.score}</div>
+          <div style={{ fontSize: 34, fontWeight: 800, fontFamily: "inherit", color: "#FFD700", marginTop: 4 }}>{score.score}</div>
           <div style={{ fontSize: 16, color: "#2d2d2a", fontWeight: 600 }}>{score.level || "Explorer"}</div>
           {score.nextLevel && <>
             <div style={{ width: "100%", height: 4, background: "#e8e5dc", borderRadius: 2, marginTop: 10 }}>
@@ -1407,7 +1446,7 @@ export default function App() {
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ flex: 1 }}>
               <span style={{ fontSize: 11, color: CC[sel.cat]?.c, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>{CC[sel.cat]?.i} {CC[sel.cat]?.l}</span>
-              <h2 style={{ margin: "2px 0 0", fontSize: 18, fontFamily: "'Inter',sans-serif", fontWeight: 700, color: "#1a1a18" }}>{sel.name}</h2>
+              <h2 style={{ margin: "2px 0 0", fontSize: 18, fontFamily: "inherit", fontWeight: 700, color: "#1a1a18" }}>{sel.name}</h2>
               {sel.hq && <p style={{ margin: "1px 0 0", fontSize: 12, color: "#8a8a85" }}>📍 {sel.hq}</p>}
             </div>
             <div style={{ display: "flex", gap: 12, alignItems: "start", marginLeft: 8 }}>
@@ -1588,7 +1627,7 @@ export default function App() {
       {/* ── MAP STATS + LEGENDS ─────────────────────────────────────── */}
       {panel === "graph" && !sel && !isMobile && <>
         {/* Desktop: contextual map guide — top center */}
-        <div style={{ position: "absolute", top: headerHeight + 8, left: "50%", transform: "translateX(-50%)", zIndex: 500, background: "rgba(255,255,255,0.96)", backdropFilter: "blur(10px)", borderRadius: 10, border: "1px solid #e8e5dc", padding: "12px 20px", maxWidth: 680, width: "fit-content", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", fontFamily: "'Inter',-apple-system,sans-serif" }}>
+        <div style={{ position: "absolute", top: headerHeight + 8, left: "50%", transform: "translateX(-50%)", zIndex: 500, background: "rgba(255,255,255,0.96)", backdropFilter: "blur(10px)", borderRadius: 10, border: "1px solid #e8e5dc", padding: "12px 20px", maxWidth: 680, width: "fit-content", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", fontFamily: "'Libre Baskerville',Georgia,serif" }}>
           {mapView === "companies" ? (
             <div>
               <p style={{ fontSize: 12, color: "#1a1a18", lineHeight: 1.6, margin: "0 0 6px" }}>
@@ -1660,7 +1699,7 @@ export default function App() {
 }
 
 // ── SUBCOMPONENTS ───────────────────────────────────────────────────────
-const inputStyle = { width: "100%", padding: "6px 8px", borderRadius: 5, border: "1px solid #e8e5dc", background: "#f5f3ee", color: "#2d2d2a", fontSize: 12, fontFamily: "'Inter',sans-serif", outline: "none", marginBottom: 8, boxSizing: "border-box" };
+const inputStyle = { width: "100%", padding: "6px 8px", borderRadius: 5, border: "1px solid #e8e5dc", background: "#f5f3ee", color: "#2d2d2a", fontSize: 12, fontFamily: "inherit", outline: "none", marginBottom: 8, boxSizing: "border-box" };
 
 function M({ l, v }) { return (<div style={{ background: "#ffffff", borderRadius: 5, padding: "5px 7px" }}><div style={{ fontSize: 10, color: "#a0a09b", textTransform: "uppercase", letterSpacing: 0.3 }}>{l}</div><div style={{ fontSize: 15, color: "#2d2d2a", fontWeight: 500 }}>{String(v)}</div></div>); }
 function S({ t, v }) { return (<div style={{ marginBottom: 8 }}><div style={{ fontSize: 11, color: "#8a8a85", textTransform: "uppercase", letterSpacing: 0.3, marginBottom: 1.5, fontWeight: 600 }}>{t}</div><div style={{ fontSize: 14, color: "#4a4a45", lineHeight: 1.5 }}>{v}</div></div>); }
@@ -1766,7 +1805,7 @@ function DraggableCard({ isMobile, onClose, children, headerHeight = 70 }) {
   );
 }
 
-function SB({ l, v, c }) { return (<div style={{ background: "rgba(255,255,255,0.96)", borderRadius: 6, padding: "3px 8px", border: "1px solid #e8e5dc", textAlign: "center" }}><div style={{ fontSize: 14, fontWeight: 700, color: c, fontFamily: "'Inter',sans-serif" }}>{v}</div><div style={{ fontSize: 10, color: "#a0a09b", textTransform: "uppercase" }}>{l}</div></div>); }
+function SB({ l, v, c }) { return (<div style={{ background: "rgba(255,255,255,0.96)", borderRadius: 6, padding: "3px 8px", border: "1px solid #e8e5dc", textAlign: "center" }}><div style={{ fontSize: 14, fontWeight: 700, color: c, fontFamily: "inherit" }}>{v}</div><div style={{ fontSize: 10, color: "#a0a09b", textTransform: "uppercase" }}>{l}</div></div>); }
 
 function PodcastList({ pods, compact, personName }) {
   const [showAll, setShowAll] = useState(false);
