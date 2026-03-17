@@ -1682,20 +1682,37 @@ export default function App() {
 
     {/* ── FOOTER ─────────────────────────────────────────────────── */}
     <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "#1a1a18", zIndex: 999 }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "10px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 6 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <span style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Inter',sans-serif", background: "linear-gradient(135deg,#C15F3C,#d97757)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</span>
-          <span style={{ fontSize: 11, color: "#6b6b66" }}>© 2026 Jie Xi</span>
-          <span style={{ fontSize: 11, color: "#4a4a45" }}>·</span>
-          <span style={{ fontSize: 11, color: "#6b6b66" }}>Sourcing APIs at <a href="/sourcing" style={{ color: "#C15F3C", textDecoration: "none" }}>LondonAI.network/sourcing</a></span>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "20px 20px 12px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 20, marginBottom: 12 }}>
+          <div>
+            <span style={{ fontSize: 18, fontWeight: 700, fontFamily: "'Inter',sans-serif", background: "linear-gradient(135deg,#C15F3C,#d97757)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</span>
+            <p style={{ margin: "4px 0 0", fontSize: 12, color: "#6b6b66", maxWidth: 300 }}>Interactive intelligence platform mapping London's AI ecosystem. 74 companies, 20 investors, 67 people, $37B+ funding.</p>
+          </div>
+          <div style={{ display: "flex", gap: 32 }}>
+            <div>
+              <p style={{ margin: "0 0 8px", fontSize: 10, color: "#8a8a85", textTransform: "uppercase", fontWeight: 600, letterSpacing: 0.5 }}>Platform</p>
+              <a href="/" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Interactive Map</a>
+              <a href="/ecosystem/" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Ecosystem Guide</a>
+              <a href="/sourcing" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Sourcing API</a>
+            </div>
+            <div>
+              <p style={{ margin: "0 0 8px", fontSize: 10, color: "#8a8a85", textTransform: "uppercase", fontWeight: 600, letterSpacing: 0.5 }}>Research</p>
+              <a href="/insights/londonmaxxing.html" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Londonmaxxing</a>
+              <a href="/insights/unicorns.html" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>AI Unicorns</a>
+              <a href="/insights/funding.html" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Funding Analysis</a>
+            </div>
+            <div>
+              <p style={{ margin: "0 0 8px", fontSize: 10, color: "#8a8a85", textTransform: "uppercase", fontWeight: 600, letterSpacing: 0.5 }}>About</p>
+              <a href="mailto:jxi5410@gmail.com" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Contact</a>
+              <a href="https://github.com/jxi5410/AI.LDN" target="_blank" rel="noopener" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>GitHub</a>
+              <a href="/privacy.html" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Privacy Policy</a>
+              <a href="/terms.html" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Terms of Use</a>
+            </div>
+          </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 11 }}>
-          <a href="/ecosystem/" style={{ color: "#8a8a85", textDecoration: "none" }}>Ecosystem</a>
-          <a href="/insights/londonmaxxing.html" style={{ color: "#8a8a85", textDecoration: "none" }}>Research</a>
-          <a href="mailto:jxi5410@gmail.com" style={{ color: "#8a8a85", textDecoration: "none" }}>Contact</a>
-          <a href="/privacy.html" style={{ color: "#8a8a85", textDecoration: "none" }}>Privacy</a>
-          <a href="/terms.html" style={{ color: "#8a8a85", textDecoration: "none" }}>Terms</a>
-          <a href="https://github.com/jxi5410/AI.LDN" target="_blank" rel="noopener" style={{ color: "#8a8a85", textDecoration: "none" }}>GitHub</a>
+        <div style={{ borderTop: "1px solid #2d2d2a", paddingTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+          <span style={{ fontSize: 11, color: "#4a4a45" }}>© 2026 Jie Xi. All rights reserved. Data sourced from public records.</span>
+          <span style={{ fontSize: 11, color: "#4a4a45" }}>Made in London 🇬🇧</span>
         </div>
       </div>
     </div>
