@@ -1594,25 +1594,16 @@ export default function App() {
         <div style={{ position: "absolute", top: headerHeight + 8, left: "50%", transform: "translateX(-50%)", zIndex: 500, background: "rgba(255,255,255,0.96)", backdropFilter: "blur(10px)", borderRadius: 10, border: "1px solid #e8e5dc", padding: "10px 18px", maxWidth: 720, width: "fit-content", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
           {mapView === "companies" ? (
             <div>
-              <div style={{ fontSize: 13, color: "#1a1a18", fontWeight: 600, fontFamily: "'Inter',sans-serif", marginBottom: 4 }}>
-                London AI Ecosystem — {companies.filter(c => !["investor", "academic"].includes(c.cat)).length} companies, ${Math.round(companies.reduce((s, c) => s + (c.fn || 0), 0) / 1000)}B+ raised
+              <div style={{ fontSize: 12, color: "#1a1a18", lineHeight: 1.6, marginBottom: 6 }}>
+                Each bubble is a company. Click any bubble for details.
               </div>
-              <div style={{ fontSize: 11, color: "#6b6b66", lineHeight: 1.5, marginBottom: 6 }}>
-                Each bubble is a company. <strong>Size = total funding raised</strong>. Colour = sector category. Lines between companies show <strong>founder-level relationships</strong>: where founders previously worked together, spun out from, invested in, co-published research with, or formed strategic partnerships. Click any bubble for details.
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 6 }}>
-                <span style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.3 }}>Lines:</span>
-                {[["Alumni — founders who worked at both companies", "#C15F3C"], ["Spin-off — company created from another", "#BF5AF2"], ["Investment — one invested in the other", "#FFD700"], ["Academic — shared research or university origin", "#5AC8FA"], ["Partnership — strategic or commercial tie", "#6a9bcc"]].map(([l, c]) => (
-                  <span key={l} style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                    <span style={{ width: 12, height: 2.5, background: c, display: "inline-block", borderRadius: 1 }} />
-                    <span style={{ fontSize: 10, color: "#6b6b66" }}>{l}</span>
-                  </span>
-                ))}
+              <div style={{ fontSize: 11, color: "#6b6b66", lineHeight: 1.6, marginBottom: 8 }}>
+                Lines between companies show founder-level relationships: where founders previously worked together, spun out from, invested in, co-published research with, or formed strategic partnerships.
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-                <span style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.3 }}>Size:</span>
+                <span style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.3 }}>Bubble size:</span>
                 <svg width="60" height="16" style={{ verticalAlign: "middle" }}><circle cx="6" cy="8" r="4" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="0.8"/><circle cx="22" cy="8" r="7" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="0.8"/><circle cx="42" cy="8" r="10" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="0.8"/></svg>
-                <span style={{ fontSize: 10, color: "#8a8a85" }}>Seed → $1B+</span>
+                <span style={{ fontSize: 10, color: "#8a8a85" }}>= total funding raised (Seed → $1B+)</span>
               </div>
               <div style={{ fontSize: 9.5, color: "#b5b3ae", marginTop: 6, fontStyle: "italic" }}>
                 Note: Relationships are tracked at the founder and C-suite level only. Employee-level connections are not mapped.
