@@ -509,7 +509,7 @@ export default function App() {
     if (layout === "cluster") Object.entries(catCenters).forEach(([cat, pos]) => {
       g.append("text").text(CC[cat]?.l || cat).attr("x", pos.x).attr("y", pos.y - 50)
         .attr("text-anchor", "middle").attr("fill", CC[cat]?.c || "#666").attr("font-size", "10px")
-        .attr("font-family", "'Outfit',sans-serif").attr("font-weight", "600").attr("opacity", 0.4);
+        .attr("font-family", "'Inter',-apple-system,sans-serif").attr("font-weight", "600").attr("opacity", 0.4);
     });
 
     const link = g.append("g").selectAll("line").data(links).enter().append("line")
@@ -541,7 +541,7 @@ export default function App() {
       .attr("fill", d => isInvView && d.cat === "investor" ? "#1a1a18" : "#6b6b66")
       .attr("font-size", d => isInvView && d.cat === "investor" ? "14px" : (d.r > 14 ? "12px" : "10px"))
       .attr("font-weight", d => isInvView && d.cat === "investor" ? "700" : "400")
-      .attr("font-family", "'JetBrains Mono',monospace").attr("pointer-events", "none");
+      .attr("font-family", "'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif").attr("pointer-events", "none");
 
     svg.on("click", () => setSel(null));
     sim.on("tick", () => {
@@ -592,9 +592,6 @@ export default function App() {
           <h1 style={{ margin: 0, fontSize: isMobile ? 20 : 30, fontFamily: "'Inter',sans-serif", fontWeight: 800, background: "linear-gradient(135deg,#C15F3C,#d97757,#e8a87c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</h1>
           {!isMobile && <p style={{ margin: 0, fontSize: 13, color: "#a0a09b" }}>
             {companies.filter(c => !["investor", "academic"].includes(c.cat)).length} companies · {edges.length} connections{mn > 0 ? ` · ${mn} tracked` : ""}
-          </p>}
-          {!isMobile && <p style={{ margin: 0, fontSize: 10.5, color: "#b5b3ae" }}>
-            Sourcing APIs live at <a href="https://londonai.network/sourcing" target="_blank" rel="noopener" style={{ color: "#C15F3C", textDecoration: "none", fontWeight: 500 }}>LondonAI.network/sourcing</a> · request access at <a href="mailto:jxi5410@gmail.com?subject=LDN/ai%20sourcing%20API%20access" style={{ color: "#C15F3C", textDecoration: "none", fontWeight: 500 }}>jxi5410@gmail.com</a>
           </p>}
         </div>
         <div style={{ flex: 1 }} />
@@ -1591,41 +1588,32 @@ export default function App() {
       {/* ── MAP STATS + LEGENDS ─────────────────────────────────────── */}
       {panel === "graph" && !sel && !isMobile && <>
         {/* Desktop: contextual map guide — top center */}
-        <div style={{ position: "absolute", top: headerHeight + 8, left: "50%", transform: "translateX(-50%)", zIndex: 500, background: "rgba(255,255,255,0.96)", backdropFilter: "blur(10px)", borderRadius: 10, border: "1px solid #e8e5dc", padding: "10px 18px", maxWidth: 720, width: "fit-content", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
+        <div style={{ position: "absolute", top: headerHeight + 8, left: "50%", transform: "translateX(-50%)", zIndex: 500, background: "rgba(255,255,255,0.96)", backdropFilter: "blur(10px)", borderRadius: 10, border: "1px solid #e8e5dc", padding: "12px 20px", maxWidth: 680, width: "fit-content", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", fontFamily: "'Inter',-apple-system,sans-serif" }}>
           {mapView === "companies" ? (
             <div>
-              <div style={{ fontSize: 12, color: "#1a1a18", lineHeight: 1.6, marginBottom: 6 }}>
+              <p style={{ fontSize: 12, color: "#1a1a18", lineHeight: 1.6, margin: "0 0 6px" }}>
                 Each bubble is a company. Click any bubble for details.
-              </div>
-              <div style={{ fontSize: 11, color: "#6b6b66", lineHeight: 1.6, marginBottom: 8 }}>
+              </p>
+              <p style={{ fontSize: 12, color: "#6b6b66", lineHeight: 1.6, margin: "0 0 8px" }}>
                 Lines between companies show founder-level relationships: where founders previously worked together, spun out from, invested in, co-published research with, or formed strategic partnerships.
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-                <span style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.3 }}>Bubble size:</span>
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 12, color: "#a0a09b", fontWeight: 600 }}>Bubble size:</span>
                 <svg width="60" height="16" style={{ verticalAlign: "middle" }}><circle cx="6" cy="8" r="4" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="0.8"/><circle cx="22" cy="8" r="7" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="0.8"/><circle cx="42" cy="8" r="10" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="0.8"/></svg>
-                <span style={{ fontSize: 10, color: "#8a8a85" }}>= total funding raised (Seed → $1B+)</span>
+                <span style={{ fontSize: 12, color: "#8a8a85" }}>= total funding raised (Seed → $1B+)</span>
               </div>
-              <div style={{ fontSize: 9.5, color: "#b5b3ae", marginTop: 6, fontStyle: "italic" }}>
-                Note: Relationships are tracked at the founder and C-suite level only. Employee-level connections are not mapped.
-              </div>
+              <p style={{ fontSize: 12, color: "#b5b3ae", marginTop: 8, fontStyle: "italic", margin: "8px 0 0" }}>
+                Note: Relationships are tracked at the founder and C-suite level only.
+              </p>
             </div>
           ) : (
             <div>
-              <div style={{ fontSize: 13, color: "#1a1a18", fontWeight: 600, fontFamily: "'Inter',sans-serif", marginBottom: 4 }}>
-                London AI Investor Map — {companies.filter(c => c.cat === "investor").length} investors, {edges.filter(e => e.ty === "investment").length} investments
-              </div>
-              <div style={{ fontSize: 11, color: "#6b6b66", lineHeight: 1.5, marginBottom: 6 }}>
-                Each bubble is an investor or portfolio company. <strong>Lines show capital flow</strong>: which investors have funded which companies. Larger investor bubbles have more portfolio connections. Click any investor to see their full portfolio and co-investment overlap.
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-                <span style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.3 }}>Lines:</span>
-                {[["Investment — investor funded this company", "#FFD700"], ["Partnership — strategic or commercial tie", "#6a9bcc"]].map(([l, c]) => (
-                  <span key={l} style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                    <span style={{ width: 12, height: 2.5, background: c, display: "inline-block", borderRadius: 1 }} />
-                    <span style={{ fontSize: 10, color: "#6b6b66" }}>{l}</span>
-                  </span>
-                ))}
-              </div>
+              <p style={{ fontSize: 12, color: "#1a1a18", lineHeight: 1.6, margin: "0 0 6px" }}>
+                Each bubble is an investor or portfolio company. Click any bubble to see their portfolio.
+              </p>
+              <p style={{ fontSize: 12, color: "#6b6b66", lineHeight: 1.6, margin: "0 0 8px" }}>
+                Lines show capital flow: which investors have funded which companies. Larger investor bubbles have more portfolio connections.
+              </p>
             </div>
           )}
         </div>
@@ -1649,15 +1637,16 @@ export default function App() {
 
     {/* ── FOOTER ─────────────────────────────────────────────────── */}
     <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "#1a1a18", zIndex: 999 }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "12px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "10px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 6 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <span style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Inter',sans-serif", background: "linear-gradient(135deg,#C15F3C,#d97757)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</span>
-          <span style={{ fontSize: 11, color: "#6b6b66" }}>© 2026 Jie Xi. All rights reserved.</span>
+          <span style={{ fontSize: 11, color: "#6b6b66" }}>© 2026 Jie Xi</span>
+          <span style={{ fontSize: 11, color: "#4a4a45" }}>·</span>
+          <span style={{ fontSize: 11, color: "#6b6b66" }}>Sourcing APIs at <a href="/sourcing" style={{ color: "#C15F3C", textDecoration: "none" }}>LondonAI.network/sourcing</a></span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 11 }}>
           <a href="/ecosystem/" style={{ color: "#8a8a85", textDecoration: "none" }}>Ecosystem</a>
           <a href="/insights/londonmaxxing.html" style={{ color: "#8a8a85", textDecoration: "none" }}>Research</a>
-          <a href="/sourcing" style={{ color: "#8a8a85", textDecoration: "none" }}>API</a>
           <a href="mailto:jxi5410@gmail.com" style={{ color: "#8a8a85", textDecoration: "none" }}>Contact</a>
           <a href="/privacy.html" style={{ color: "#8a8a85", textDecoration: "none" }}>Privacy</a>
           <a href="/terms.html" style={{ color: "#8a8a85", textDecoration: "none" }}>Terms</a>
