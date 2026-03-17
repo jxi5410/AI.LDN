@@ -536,6 +536,7 @@ export const companies=[
   {id:"anima-health",name:"Anima Health",s:"Anima",cat:"enterprise",yr:null,fund:null,fn:0,focus:"AI triage for healthcare providers · GP workflow",ethos:"Smarter healthcare triage",hq:"London",jobs:null},
   {id:"auar",name:"AUAR",s:"AUAR",cat:"autonomous",yr:null,fund:null,fn:0,focus:"Robots that build buildings · AI for automated construction",ethos:"Autonomous construction",hq:"London",jobs:null},
   {id:"testudo",name:"Testudo",s:"Testudo",cat:"fintech",yr:null,fund:null,fn:0,focus:"Insurance for the AI economy · AI risk underwriting",ethos:"Insure the AI age",hq:"London",jobs:null},
+  {id:"legora",name:"Legora",s:"Legora",cat:"enterprise",yr:2023,fund:"$980M",fn:980,val:"$5.55B",focus:"AI platform for legal professionals · research, review, drafting · built on Claude",clients:"Linklaters, White & Case, Deloitte, Dentons, Bird & Bird, Cleary Gottlieb · 800+ law firms",ethos:"Boundless collaboration between lawyer ingenuity and machine intelligence",hq:"Stockholm / London / New York",kp:"Max Junestrand (CEO), August Erseus, Sigge Labor",jobs:"https://legora.com/careers"},
 ];
 
 // ── EDGES ───────────────────────────────────────────────────────────────

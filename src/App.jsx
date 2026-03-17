@@ -93,6 +93,7 @@ export default function App() {
   const isMobile = dim.w < 768;
   const [tab, setTab] = useState("info");
   const [fundingRounds, setFundingRounds] = useState([]);
+  const [signals, setSignals] = useState([]);
   const layout = "force";
   const [panel, setPanel] = useState("graph");
   const [highlightPerson, setHighlightPerson] = useState(null);
@@ -457,12 +458,15 @@ export default function App() {
   const selUD = sel ? ud[sel.id] : null;
   const relatedPeople = sel ? Object.entries(PEOPLE).filter(([n, p]) => p.co.includes(sel.id)) : [];
 
-  // Fetch funding rounds when company selected
+  // Fetch funding rounds + signals when company selected
   useEffect(() => {
-    if (!sel) { setFundingRounds([]); return; }
+    if (!sel) { setFundingRounds([]); setSignals([]); return; }
     fetch(`https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=funding_rounds&company=${sel.id}`)
       .then(r => r.json()).then(d => setFundingRounds(d.data || []))
       .catch(() => setFundingRounds([]));
+    fetch(`https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=signals&company=${sel.id}`)
+      .then(r => r.json()).then(d => setSignals(d.data || []))
+      .catch(() => setSignals([]));
   }, [sel?.id]);
   const mn = Object.keys(ud).length;
 
@@ -1466,7 +1470,7 @@ export default function App() {
             {(selUD.contact_name || selUD.contact) && <span style={{ fontSize: 8, color: "#6b6b66" }}>· {selUD.contact_name || selUD.contact}</span>}
           </div>}
           <div style={{ display: "flex", gap: 0, marginTop: 8 }}>
-            {["info", "funding", "people", "links", "🤝"].map(t => (
+            {["info", "funding", "people", ...(signals.length > 0 ? ["🎙️"] : []), "links", "🤝"].map(t => (
               <button key={t} onClick={() => setTab(t)} style={{ flex: 1, padding: "4px 0", border: "none", borderBottom: tab === t ? `2px solid ${CC[sel.cat]?.c}` : "2px solid transparent", background: "none", color: tab === t ? "#1a1a18" : "#a0a09b", fontSize: 11, fontFamily: "inherit", cursor: "pointer", textTransform: "uppercase", fontWeight: 600 }}>{t}</button>
             ))}
           </div>
@@ -1589,6 +1593,42 @@ export default function App() {
                 ) : null)}
               </div>}
             </div>}
+          </>}
+          {tab === "🎙️" && <>
+            <div style={{ fontSize: 11, color: "#a0a09b", marginBottom: 8 }}>What founders and leaders are saying — sourced from podcasts, interviews, and conferences.</div>
+            {signals.map((sig, i) => (
+              <div key={i} style={{ marginBottom: 12, padding: "10px", borderRadius: 8, background: "#ffffff", border: "1px solid #e8e5dc" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                  <span style={{ fontSize: 14 }}>{sig.source_type === "podcast" ? "🎙️" : sig.source_type === "conference" ? "🎤" : sig.source_type === "video" ? "🎬" : "📰"}</span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 11, color: "#1a1a18", fontWeight: 600 }}>{sig.speaker}</div>
+                    <div style={{ fontSize: 9, color: "#a0a09b" }}>{sig.speaker_role}</div>
+                  </div>
+                  {sig.date && <span style={{ fontSize: 9, color: "#b5b3ae" }}>{sig.date}</span>}
+                </div>
+                {sig.source_url ? (
+                  <a href={sig.source_url} target="_blank" rel="noopener" style={{ fontSize: 10, color: "#C15F3C", textDecoration: "none", display: "block", marginBottom: 6 }}>{sig.source_title} →</a>
+                ) : (
+                  <div style={{ fontSize: 10, color: "#6b6b66", marginBottom: 6 }}>{sig.source_title}</div>
+                )}
+                <div style={{ fontSize: 11, color: "#4a4a45", lineHeight: 1.6, marginBottom: 6 }}>{sig.summary}</div>
+                {sig.key_quotes && sig.key_quotes.length > 0 && (
+                  <div style={{ borderLeft: "2px solid #C15F3C33", paddingLeft: 8, marginBottom: 6 }}>
+                    {sig.key_quotes.map((q, qi) => (
+                      <div key={qi} style={{ fontSize: 10, color: "#6b6b66", fontStyle: "italic", marginBottom: 3, lineHeight: 1.5 }}>"{q}"</div>
+                    ))}
+                  </div>
+                )}
+                {sig.themes && sig.themes.length > 0 && (
+                  <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                    {sig.themes.map((t, ti) => (
+                      <span key={ti} style={{ fontSize: 8, padding: "2px 6px", borderRadius: 4, background: "#C15F3C12", color: "#C15F3C", fontWeight: 500 }}>{t}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+            <div style={{ fontSize: 9, color: "#b5b3ae", fontStyle: "italic", marginTop: 8 }}>Signals are curated from public sources. Summaries may not reflect the speaker's full views.</div>
           </>}
           {tab === "links" && <>
             {ce.length === 0 ? <p style={{ fontSize: 12, color: "#a0a09b" }}>No connections.</p> :
