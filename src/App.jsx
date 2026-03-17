@@ -1590,35 +1590,51 @@ export default function App() {
 
       {/* ── MAP STATS + LEGENDS ─────────────────────────────────────── */}
       {panel === "graph" && !sel && !isMobile && <>
-        {/* Desktop: stat cards top-right */}
-        <div style={{ position: "absolute", top: 80, right: 14, display: "flex", gap: 6, zIndex: 500 }}>
-          {[
-            { l: "Companies", v: companies.filter(c => !["investor", "academic"].includes(c.cat)).length, i: "🏢" },
-            { l: "Funding", v: `$${Math.round(companies.reduce((s, c) => s + (c.fn || 0), 0) / 1000)}B+`, i: "💰" },
-            { l: "Unicorns", v: companies.filter(c => c.fn >= 500).length, i: "🦄" },
-          ].map((s, i) => (
-            <div key={i} style={{ background: "rgba(255,255,255,0.92)", backdropFilter: "blur(8px)", borderRadius: 8, padding: "6px 12px", border: "1px solid #e8e5dc", minWidth: 80, textAlign: "center" }}>
-              <div style={{ fontSize: 10, color: "#a0a09b", textTransform: "uppercase", letterSpacing: 0.3 }}>{s.i} {s.l}</div>
-              <div style={{ fontSize: 18, color: "#1a1a18", fontWeight: 700, fontFamily: "'Inter',sans-serif" }}>{s.v}</div>
+        {/* Desktop: contextual map guide — top center */}
+        <div style={{ position: "absolute", top: headerHeight + 8, left: "50%", transform: "translateX(-50%)", zIndex: 500, background: "rgba(255,255,255,0.96)", backdropFilter: "blur(10px)", borderRadius: 10, border: "1px solid #e8e5dc", padding: "10px 18px", maxWidth: 720, width: "fit-content", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
+          {mapView === "companies" ? (
+            <div>
+              <div style={{ fontSize: 13, color: "#1a1a18", fontWeight: 600, fontFamily: "'Inter',sans-serif", marginBottom: 4 }}>
+                London AI Ecosystem — {companies.filter(c => !["investor", "academic"].includes(c.cat)).length} companies, ${Math.round(companies.reduce((s, c) => s + (c.fn || 0), 0) / 1000)}B+ raised
+              </div>
+              <div style={{ fontSize: 11, color: "#6b6b66", lineHeight: 1.5, marginBottom: 6 }}>
+                Each bubble is a company. <strong>Size = total funding raised</strong>. Colour = sector. Lines show relationships between companies — click any bubble for details.
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.3 }}>Lines:</span>
+                {[["Alumni", "#C15F3C"], ["Spin-off", "#BF5AF2"], ["Investment", "#FFD700"], ["Academic", "#5AC8FA"], ["Partnership", "#6a9bcc"]].map(([l, c]) => (
+                  <span key={l} style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                    <span style={{ width: 12, height: 2.5, background: c, display: "inline-block", borderRadius: 1 }} />
+                    <span style={{ fontSize: 10, color: "#6b6b66" }}>{l}</span>
+                  </span>
+                ))}
+                <span style={{ fontSize: 10, color: "#a0a09b", marginLeft: 4 }}>|</span>
+                <span style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.3 }}>Size:</span>
+                <svg width="60" height="16" style={{ verticalAlign: "middle" }}><circle cx="6" cy="8" r="4" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="0.8"/><circle cx="22" cy="8" r="7" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="0.8"/><circle cx="42" cy="8" r="10" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="0.8"/></svg>
+                <span style={{ fontSize: 10, color: "#8a8a85" }}>Seed → $1B+</span>
+              </div>
             </div>
-          ))}
-        </div>
-        {/* Desktop: legend bottom-left */}
-        <div style={{ position: "absolute", bottom: 14, left: 12, background: "rgba(255,255,255,0.95)", borderRadius: 8, padding: "8px 14px", border: "1px solid #e8e5dc", zIndex: 500, backdropFilter: "blur(8px)", maxWidth: 380, whiteSpace: "nowrap" }}>
-          <div style={{ fontSize: 12, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4 }}>Connections</div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
-            {[["Alumni", "#C15F3C"], ["Spin-off", "#BF5AF2"], ["Investment", "#FFD700"], ["Academic", "#5AC8FA"], ["Partnership", "#6a9bcc"]].map(([l, c]) => (
-              <span key={l} style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                <span style={{ width: 14, height: 3, background: c, display: "inline-block", borderRadius: 1 }} />
-                <span style={{ fontSize: 12, color: "#6b6b66" }}>{l}</span>
-              </span>
-            ))}
-          </div>
-          <div style={{ fontSize: 12, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 3 }}>Bubble Size = Funding</div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <svg width="80" height="24"><circle cx="8" cy="12" r="5" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="1"/><circle cx="30" cy="12" r="9" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="1"/><circle cx="58" cy="12" r="13" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="1"/></svg>
-            <span style={{ fontSize: 11, color: "#8a8a85" }}>Seed → Series A → $1B+</span>
-          </div>
+          ) : (
+            <div>
+              <div style={{ fontSize: 13, color: "#1a1a18", fontWeight: 600, fontFamily: "'Inter',sans-serif", marginBottom: 4 }}>
+                London AI Investor Map — {companies.filter(c => c.cat === "investor").length} investors, {edges.filter(e => e.ty === "investment").length} investments
+              </div>
+              <div style={{ fontSize: 11, color: "#6b6b66", lineHeight: 1.5, marginBottom: 6 }}>
+                Each bubble is an investor or portfolio company. <strong>Lines = investment relationships</strong>. Larger bubbles have more portfolio connections. Click any investor to see their portfolio.
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.3 }}>Lines:</span>
+                <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                  <span style={{ width: 12, height: 2.5, background: "#FFD700", display: "inline-block", borderRadius: 1 }} />
+                  <span style={{ fontSize: 10, color: "#6b6b66" }}>Investment</span>
+                </span>
+                <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                  <span style={{ width: 12, height: 2.5, background: "#6a9bcc", display: "inline-block", borderRadius: 1 }} />
+                  <span style={{ fontSize: 10, color: "#6b6b66" }}>Partnership</span>
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </>}
       {/* Mobile: pullable legend */}
