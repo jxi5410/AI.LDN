@@ -40,9 +40,9 @@ function calcScore(ud) {
 function nr(c, view, mobile) {
   const m = mobile ? 1.5 : 1;
   if (view === "investors") {
-    if (c.cat === "investor") return 32 * m;
+    if (c.cat === "investor") return 20 * m;
     const f = c.fn || 0;
-    if (f >= 1000) return 14 * m; if (f >= 500) return 12 * m; if (f >= 200) return 10 * m; if (f >= 50) return 8 * m; return 6 * m;
+    if (f >= 1000) return 12 * m; if (f >= 500) return 10 * m; if (f >= 200) return 8 * m; if (f >= 50) return 7 * m; return 5 * m;
   }
   if (c.cat === "frontier") return 26 * m; if (c.cat === "investor") return 10 * m; if (c.cat === "academic") return 13 * m;
   if (c.cat === "frontier-emerging") return 18 * m;
@@ -500,9 +500,9 @@ export default function App() {
     const isInvView = mapView === "investors";
     const sim = d3.forceSimulation(nodes)
       .force("link", d3.forceLink(links).id(d => d.id).distance(d => isInvView && d.ty === "investment" ? 160 : (d.ty === "alumni" ? 85 : d.ty === "investment" ? 130 : 105)).strength(0.2))
-      .force("charge", d3.forceManyBody().strength(d => isInvView && d.cat === "investor" ? -d.r * 30 : -d.r * 18))
+      .force("charge", d3.forceManyBody().strength(d => isInvView && d.cat === "investor" ? -d.r * 20 : -d.r * 18))
       .force("center", d3.forceCenter(w / 2, h / 2).strength(0.04))
-      .force("collision", d3.forceCollide().radius(d => d.r + (isInvView && d.cat === "investor" ? 12 : 4)))
+      .force("collision", d3.forceCollide().radius(d => d.r + (isInvView && d.cat === "investor" ? 16 : 4)))
       .force("x", d3.forceX(w / 2).strength(0.015))
       .force("y", d3.forceY(h / 2).strength(0.015));
 
@@ -512,9 +512,10 @@ export default function App() {
         .attr("font-family", "'Libre Baskerville',Georgia,serif").attr("font-weight", "600").attr("opacity", 0.4);
     });
 
-    const link = g.append("g").selectAll("line").data(links).enter().append("line")
+    const link = g.append("g").selectAll("path").data(links).enter().append("path")
+      .attr("fill", "none")
       .attr("stroke", d => ECfg[d.ty]?.c || "#333").attr("stroke-width", d => d.ty === "alumni" ? 1.3 : 0.7)
-      .attr("stroke-opacity", 0.16).attr("stroke-dasharray", d => ECfg[d.ty]?.d || null);
+      .attr("stroke-opacity", 0.14).attr("stroke-dasharray", d => ECfg[d.ty]?.d || null);
 
     const node = g.append("g").selectAll("g").data(nodes).enter().append("g").attr("class", "node-g").attr("cursor", "pointer")
       .call(d3.drag()
@@ -525,11 +526,11 @@ export default function App() {
       .on("mouseenter", (e, d) => setHov(d.id)).on("mouseleave", () => setHov(null));
 
     node.append("circle").attr("r", d => d.r + 2).attr("fill", "none")
-      .attr("stroke", d => CC[d.cat]?.c || "#666").attr("stroke-width", d => isInvView && d.cat === "investor" ? 2 : 0.7).attr("stroke-opacity", d => isInvView && d.cat === "investor" ? 0.4 : 0.1).attr("filter", "url(#gl)");
+      .attr("stroke", d => CC[d.cat]?.c || "#666").attr("stroke-width", d => isInvView && d.cat === "investor" ? 1.5 : 0.7).attr("stroke-opacity", d => isInvView && d.cat === "investor" ? 0.25 : 0.1).attr("filter", "url(#gl)");
     node.append("circle").attr("r", d => d.r)
-      .attr("fill", d => isInvView && d.cat === "investor" ? (CC[d.cat]?.c || "#666") + "60" : (CC[d.cat]?.c || "#666") + "18")
+      .attr("fill", d => isInvView && d.cat === "investor" ? (CC[d.cat]?.c || "#666") + "30" : (CC[d.cat]?.c || "#666") + "18")
       .attr("stroke", d => CC[d.cat]?.c || "#666")
-      .attr("stroke-width", d => isInvView && d.cat === "investor" ? 2.5 : 1.2);
+      .attr("stroke-width", d => isInvView && d.cat === "investor" ? 1.8 : 1.2);
     node.filter(d => ud[d.id]).append("circle").attr("r", d => d.r + 4).attr("fill", "none")
       .attr("stroke", d => US[ud[d.id]?.status]?.c || "#30D158").attr("stroke-width", 1.8).attr("stroke-dasharray", "3,2").attr("stroke-opacity", 0.75);
     // Star indicator
@@ -538,14 +539,19 @@ export default function App() {
       .attr("font-size", d => Math.max(d.r * 0.7, 9) + "px").attr("pointer-events", "none");
     node.append("text").text(d => { const n = d.s || d.name; return n.length > 16 ? n.slice(0, 14) + "…" : n; })
       .attr("text-anchor", "middle").attr("dy", d => d.r + 13)
-      .attr("fill", d => isInvView && d.cat === "investor" ? "#1a1a18" : "#6b6b66")
-      .attr("font-size", d => isInvView && d.cat === "investor" ? "14px" : (d.r > 14 ? "12px" : "10px"))
-      .attr("font-weight", d => isInvView && d.cat === "investor" ? "700" : "400")
-      .attr("font-family", "'Libre Baskerville',Georgia,serif").attr("pointer-events", "none");
+      .attr("fill", "#6b6b66")
+      .attr("font-size", d => d.r > 14 ? "11px" : "10px")
+      .attr("font-weight", "400")
+      .attr("font-family", "'Inter',-apple-system,BlinkMacSystemFont,sans-serif").attr("pointer-events", "none");
 
     svg.on("click", () => setSel(null));
     sim.on("tick", () => {
-      link.attr("x1", d => d.source.x).attr("y1", d => d.source.y).attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+      link.attr("d", d => {
+        const dx = d.target.x - d.source.x;
+        const dy = d.target.y - d.source.y;
+        const dr = Math.sqrt(dx * dx + dy * dy) * 1.5;
+        return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
+      });
       node.attr("transform", d => `translate(${d.x},${d.y})`);
     });
     return () => sim.stop();
@@ -604,7 +610,7 @@ export default function App() {
         {/* Search */}
         <div style={{ position: "relative" }}>
           <input type="text" placeholder="Search companies, people, contacts…" value={search} onChange={e => setSearch(e.target.value)}
-            style={{ padding: "6px 10px", borderRadius: 6, height: 36, boxSizing: "border-box", border: "1px solid #e8e5dc", background: "#ffffff", color: "#2d2d2a", fontSize: isMobile ? 13 : 16, width: isMobile ? 150 : 260, outline: "none", fontFamily: "inherit" }} />
+            style={{ padding: "6px 10px", borderRadius: 6, height: 36, boxSizing: "border-box", border: "1px solid #e8e5dc", background: "#ffffff", color: "#2d2d2a", fontSize: 14, width: isMobile ? 150 : 260, outline: "none", fontFamily: "inherit" }} />
           {searchResults && search && <div style={{ position: isMobile ? "fixed" : "absolute", top: isMobile ? 56 : "100%", left: isMobile ? 8 : "auto", right: isMobile ? 8 : 0, width: isMobile ? "auto" : 320, maxHeight: isMobile ? "60vh" : 400, overflowY: "auto", background: "#ffffff", borderRadius: 8, border: "1px solid #e8e5dc", marginTop: isMobile ? 0 : 4, zIndex: 1100, boxShadow: "0 4px 20px rgba(0,0,0,0.12)" }}>
             {searchResults.companies.length > 0 && <div style={{ padding: "6px 10px", borderBottom: "1px solid #f5f3ee" }}>
               <div style={{ fontSize: 8, color: "#a0a09b", fontWeight: 600, marginBottom: 4 }}>COMPANIES</div>
@@ -755,10 +761,10 @@ export default function App() {
         </div>
         {Object.entries(CC).map(([k, cfg]) => (
           <div key={k} onClick={() => tc(k)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "3px 4px", borderRadius: 4, cursor: "pointer", opacity: cats.has(k) ? 1 : 0.3 }}>
-            <span style={{ fontSize: 15, width: 16, textAlign: "center", color: cats.has(k) ? "#30D158" : "#ccc" }}>{cats.has(k) ? "✓" : ""}</span>
+            <span style={{ fontSize: 13, width: 16, textAlign: "center", color: cats.has(k) ? "#30D158" : "#ccc" }}>{cats.has(k) ? "✓" : ""}</span>
             <div style={{ width: 10, height: 10, borderRadius: "50%", background: cfg.c, flexShrink: 0 }} />
-            <span style={{ fontSize: 15, color: "#4a4a45", flex: 1 }}>{cfg.l}</span>
-            <span style={{ fontSize: 15, color: "#a0a09b" }}>{companies.filter(c => c.cat === k).length}</span>
+            <span style={{ fontSize: 13, color: "#4a4a45", flex: 1 }}>{cfg.l}</span>
+            <span style={{ fontSize: 13, color: "#a0a09b" }}>{companies.filter(c => c.cat === k).length}</span>
           </div>
         ))}
       </div>}
@@ -1650,8 +1656,8 @@ export default function App() {
               <p style={{ fontSize: 12, color: "#1a1a18", lineHeight: 1.6, margin: "0 0 6px" }}>
                 Each bubble is an investor or portfolio company. Click any bubble to see their portfolio.
               </p>
-              <p style={{ fontSize: 12, color: "#6b6b66", lineHeight: 1.6, margin: "0 0 8px" }}>
-                Lines show capital flow: which investors have funded which companies. Larger investor bubbles have more portfolio connections.
+              <p style={{ fontSize: 12, color: "#6b6b66", lineHeight: 1.6, margin: 0 }}>
+                Lines show capital flow: which investors have funded which companies.
               </p>
             </div>
           )}
