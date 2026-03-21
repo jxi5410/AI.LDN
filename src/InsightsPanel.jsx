@@ -2,12 +2,8 @@ import { useMemo, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, AreaChart, Area, Legend } from "recharts";
 import { UPDATES, companies } from "./data";
 
-const ACCENT = "#C15F3C";
-const ACCENT2 = "#d97757";
-const BG = "#ffffff";
-const BORDER = "#e8e5dc";
-const TEXT = "#8a8a85";
-const TEXT_LIGHT = "#2d2d2a";
+// Fallback colors if no theme passed
+const DEFAULTS = { accent: "#C15F3C", accent2: "#d97757", card: "#ffffff", border: "#e8e5dc", mutedLight: "#8a8a85", text: "#2d2d2a", muted: "#a0a09b" };
 
 // Aggregate capital raised per year from UPDATES funding entries
 function buildCapitalData() {
@@ -65,21 +61,28 @@ function buildStats() {
   return { totalCos: cos.length, totalFunding, unicorns, dmAlumni };
 }
 
-const CustomTooltip = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div style={{ background: "#ffffff", border: `1px solid ${BORDER}`, borderRadius: 6, padding: "8px 12px", fontSize: 12 }}>
-      <div style={{ color: TEXT_LIGHT, fontWeight: 600, marginBottom: 2 }}>{label}</div>
-      {payload.map((p, i) => (
-        <div key={i} style={{ color: p.color || ACCENT, fontSize: 11 }}>
-          {p.name}: {typeof p.value === "number" && p.name.includes("$") ? `$${p.value.toLocaleString()}M` : p.value}
-        </div>
-      ))}
-    </div>
-  );
-};
+export default function InsightsPanel({ isMobile, theme }) {
+  const t = theme || DEFAULTS;
+  const ACCENT = t.accent || DEFAULTS.accent;
+  const BG = t.card || DEFAULTS.card;
+  const BORDER = t.border || DEFAULTS.border;
+  const TEXT = t.mutedLight || DEFAULTS.mutedLight;
+  const TEXT_LIGHT = t.text || DEFAULTS.text;
 
-export default function InsightsPanel({ isMobile }) {
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (!active || !payload?.length) return null;
+    return (
+      <div style={{ background: BG, border: `1px solid ${BORDER}`, borderRadius: 6, padding: "8px 12px", fontSize: 12 }}>
+        <div style={{ color: TEXT_LIGHT, fontWeight: 600, marginBottom: 2 }}>{label}</div>
+        {payload.map((p, i) => (
+          <div key={i} style={{ color: p.color || ACCENT, fontSize: 11 }}>
+            {p.name}: {typeof p.value === "number" && p.name.includes("$") ? `$${p.value.toLocaleString()}M` : p.value}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const capitalData = useMemo(buildCapitalData, []);
   const cumulativeData = useMemo(buildCumulativeData, []);
   const stats = useMemo(buildStats, []);
@@ -93,7 +96,7 @@ export default function InsightsPanel({ isMobile }) {
           <h3 style={{ fontFamily: "'Inter',sans-serif", fontSize: 13, color: TEXT_LIGHT, fontWeight: 600, margin: "0 0 8px" }}>Capital Raised ($M)</h3>
           <ResponsiveContainer width="100%" height={160}>
             <BarChart data={capitalData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e8e5dc" />
+              <CartesianGrid strokeDasharray="3 3" stroke={BORDER} />
               <XAxis dataKey="year" tick={{ fontSize: 9, fill: TEXT }} />
               <YAxis tick={{ fontSize: 9, fill: TEXT }} tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}B` : `${v}M`} />
               <Tooltip content={<CustomTooltip />} />
@@ -105,7 +108,7 @@ export default function InsightsPanel({ isMobile }) {
           <h3 style={{ fontFamily: "'Inter',sans-serif", fontSize: 13, color: TEXT_LIGHT, fontWeight: 600, margin: "0 0 8px" }}>Ecosystem Growth</h3>
           <ResponsiveContainer width="100%" height={160}>
             <AreaChart data={cumulativeData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e8e5dc" />
+              <CartesianGrid strokeDasharray="3 3" stroke={BORDER} />
               <XAxis dataKey="year" tick={{ fontSize: 9, fill: TEXT }} />
               <YAxis tick={{ fontSize: 9, fill: TEXT }} />
               <Tooltip content={<CustomTooltip />} />
@@ -116,19 +119,20 @@ export default function InsightsPanel({ isMobile }) {
         </div>
       </div>
 
-      <p style={{ fontSize: 9, color: "#a0a09b", textAlign: "center", marginTop: 8 }}>
+      <p style={{ fontSize: 9, color: t.muted || DEFAULTS.muted, textAlign: "center", marginTop: 8 }}>
         Data sourced from tracked companies and public funding announcements in the London AI ecosystem
       </p>
     </div>
   );
 }
 
-function StatCard({ label, value, icon }) {
+function StatCard({ label, value, icon, theme }) {
+  const t = theme || DEFAULTS;
   return (
-    <div style={{ background: BG, borderRadius: 8, border: `1px solid ${BORDER}`, padding: "12px", textAlign: "center" }}>
+    <div style={{ background: t.card || DEFAULTS.card, borderRadius: 8, border: `1px solid ${t.border || DEFAULTS.border}`, padding: "12px", textAlign: "center" }}>
       <div style={{ fontSize: 20 }}>{icon}</div>
-      <div style={{ fontSize: 22, fontWeight: 800, color: "#1a1a18", fontFamily: "'Inter',sans-serif", marginTop: 2 }}>{value}</div>
-      <div style={{ fontSize: 9, color: TEXT, marginTop: 2 }}>{label}</div>
+      <div style={{ fontSize: 22, fontWeight: 800, color: t.text || DEFAULTS.text, fontFamily: "'Inter',sans-serif", marginTop: 2 }}>{value}</div>
+      <div style={{ fontSize: 9, color: t.mutedLight || DEFAULTS.mutedLight, marginTop: 2 }}>{label}</div>
     </div>
   );
 }
