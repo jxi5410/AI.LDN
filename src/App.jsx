@@ -108,16 +108,42 @@ export default function App() {
 
   // Theme
   const THEMES = {
-    warm: { bg: '#faf9f5', card: '#ffffff', accent: '#C15F3C', text: '#2d2d2a', textSecondary: '#4a4a45', border: '#e8e5dc', muted: '#a0a09b', mutedLight: '#8a8a85', mutedDark: '#6b6b66', subtleBg: '#f5f4f0', radius: 8, footerBg: '#1a1a18', footerText: '#6b6b66' },
-    dark: { bg: '#0f0f1a', card: '#1e1e2e', accent: '#60a5fa', text: '#e2e8f0', textSecondary: '#cbd5e1', border: '#2d2d44', muted: '#94a3b8', mutedLight: '#64748b', mutedDark: '#94a3b8', subtleBg: '#252540', radius: 8, footerBg: '#0a0a10', footerText: '#94a3b8' },
-    minimal: { bg: '#ffffff', card: '#f8f8f8', accent: '#000000', text: '#1a1a1a', textSecondary: '#333333', border: '#e0e0e0', muted: '#888888', mutedLight: '#999999', mutedDark: '#666666', subtleBg: '#f0f0f0', radius: 4, footerBg: '#1a1a1a', footerText: '#666666' },
-    midnight: { bg: '#0a0a12', card: '#12121e', accent: '#a78bfa', text: '#d4d4e0', textSecondary: '#b4b4c0', border: '#1f1f30', muted: '#6b6b80', mutedLight: '#55556a', mutedDark: '#8888a0', subtleBg: '#18182a', radius: 8, footerBg: '#08080e', footerText: '#6b6b80' },
+    editorial: {
+      name: 'Editorial', desc: 'Light, elegant, Financial Times feel',
+      swatches: ['#faf8f4', '#C15F3C', '#1a1a18'],
+      bg: '#faf8f4', card: '#ffffff', accent: '#C15F3C', text: '#1a1a18',
+      textSecondary: '#4a4a45', border: '#e2ded6', muted: '#8a8a85',
+      mutedLight: '#8a8a85', mutedDark: '#6b6b66', subtleBg: '#f5f4f0',
+      radius: 6, footerBg: '#1a1a18', footerText: '#6b6b66'
+    },
+    bloomberg: {
+      name: 'Bloomberg Terminal', desc: 'Dark, information-dense, electric cyan',
+      swatches: ['#0a0a0a', '#00d4ff', '#e8e8e8'],
+      bg: '#0a0a0a', card: '#141414', accent: '#00d4ff', text: '#e8e8e8',
+      textSecondary: '#cccccc', border: '#2a2a2a', muted: '#666666',
+      mutedLight: '#555555', mutedDark: '#888888', subtleBg: '#1a1a1a',
+      radius: 4, footerBg: '#050505', footerText: '#666666'
+    },
+    brutalist: {
+      name: 'Brutalist', desc: 'Raw, aggressive, exposed structure',
+      swatches: ['#ffffff', '#000000', '#000000'],
+      bg: '#ffffff', card: '#f0f0f0', accent: '#000000', text: '#000000',
+      textSecondary: '#333333', border: '#000000', muted: '#666666',
+      mutedLight: '#666666', mutedDark: '#333333', subtleBg: '#e8e8e8',
+      radius: 0, footerBg: '#000000', footerText: '#888888'
+    },
+    midnight: {
+      name: 'Midnight', desc: 'Calm dark mode, soft purple accent',
+      swatches: ['#0f0f1a', '#a78bfa', '#d4d4e0'],
+      bg: '#0f0f1a', card: '#1a1a2e', accent: '#a78bfa', text: '#d4d4e0',
+      textSecondary: '#b4b4c0', border: '#2d2d44', muted: '#6b6b80',
+      mutedLight: '#55556a', mutedDark: '#8888a0', subtleBg: '#252540',
+      radius: 6, footerBg: '#08080e', footerText: '#6b6b80'
+    },
   };
-  const themeNames = Object.keys(THEMES);
-  const [themeName, setThemeName] = useState(() => localStorage.getItem('ldnai-theme') || 'warm');
-  const theme = THEMES[themeName] || THEMES.warm;
+  const [themeName, setThemeName] = useState(() => localStorage.getItem('ldnai-theme') || 'editorial');
+  const theme = THEMES[themeName] || THEMES.editorial;
   useEffect(() => { localStorage.setItem('ldnai-theme', themeName); }, [themeName]);
-  const cycleTheme = () => { const i = themeNames.indexOf(themeName); setThemeName(themeNames[(i + 1) % themeNames.length]); };
 
   // User data (from Supabase or localStorage fallback)
   const [ud, setUd] = useState({}); // connections
@@ -1224,7 +1250,7 @@ export default function App() {
         {insightsLoading ? <div style={{ textAlign: "center", padding: 40, color: theme.muted }}>Loading insights...</div> :
         !selectedInsight ? <>
           {/* ── VERTICAL SECTOR ANALYSIS ── */}
-          <h2 style={{ fontFamily: "inherit", fontSize: 20, fontWeight: 700, color: theme.text, margin: "14px 0 4px" }}>Vertical Sector Analysis</h2>
+          <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 11, fontWeight: 600, color: theme.muted, margin: "18px 0 8px", letterSpacing: '0.08em', textTransform: 'uppercase' }}>Vertical Sector Analysis</h2>
           <p style={{ fontSize: 12, color: theme.muted, margin: "0 0 14px" }}>What problems they solve, what's working, what's not, and where the gaps are · <span style={{ fontStyle: "italic" }}>AI-assisted</span></p>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
             {insights.map(ins => {
@@ -1248,7 +1274,7 @@ export default function App() {
           </div>
 
           {/* ── RESEARCH & ARTICLES ── */}
-          <h2 style={{ fontFamily: "inherit", fontSize: 20, fontWeight: 700, color: theme.text, margin: "28px 0 4px", borderTop: `2px solid ${theme.border}`, paddingTop: 20 }}>Research & Articles</h2>
+          <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 11, fontWeight: 600, color: theme.muted, margin: "28px 0 8px", borderTop: `1px solid ${theme.border}`, paddingTop: 20, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Research & Articles</h2>
           <p style={{ fontSize: 12, color: theme.muted, margin: "0 0 14px" }}>In-depth analysis of London's AI ecosystem</p>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
             {[
@@ -1269,29 +1295,9 @@ export default function App() {
             </a>)}
           </div>
 
-          {/* ── CURATED ARTICLES (from Bits) ── */}
-          {bits.filter(b => !b._pending).length > 0 && <>
-            <h2 style={{ fontFamily: "inherit", fontSize: 20, fontWeight: 700, color: theme.text, margin: "28px 0 4px", borderTop: `2px solid ${theme.border}`, paddingTop: 20 }}>Curated Articles</h2>
-            <p style={{ fontSize: 12, color: theme.muted, margin: "0 0 14px" }}>Hand-picked reads from across the London AI ecosystem</p>
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
-              {bits.filter(b => !b._pending && b.type !== "chart").slice(0, 8).map(bit => (
-                <a key={bit.id} href={bit.url} target="_blank" rel="noopener" style={{ display: "block", background: theme.card, borderRadius: theme.radius, border: `1px solid ${theme.border}`, padding: 14, textDecoration: "none", transition: "border-color 0.15s" }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor=theme.accent}
-                  onMouseLeave={e => e.currentTarget.style.borderColor=theme.border}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                    <span style={{ fontSize: 20 }}>📎</span>
-                    <span style={{ fontWeight: 600, color: theme.text, fontSize: 14, fontFamily: "inherit" }}>{bit.title}</span>
-                  </div>
-                  {bit.summary && <p style={{ margin: 0, fontSize: 12, color: theme.mutedDark, lineHeight: 1.5 }}>{bit.summary.slice(0, 120)}...</p>}
-                  <div style={{ marginTop: 6, fontSize: 10, color: theme.muted }}>{bit.source || new URL(bit.url).hostname} {bit.date && `· ${new Date(bit.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`}</div>
-                </a>
-              ))}
-            </div>
-          </>}
-
           {/* ── CHARTS (from Bits) ── */}
           {bits.filter(b => !b._pending && b.type === "chart").length > 0 && <>
-            <h2 style={{ fontFamily: "inherit", fontSize: 20, fontWeight: 700, color: theme.text, margin: "28px 0 4px", borderTop: `2px solid ${theme.border}`, paddingTop: 20 }}>Charts</h2>
+            <h2 style={{ fontFamily: "'Inter',sans-serif", fontSize: 11, fontWeight: 600, color: theme.muted, margin: "28px 0 8px", borderTop: `1px solid ${theme.border}`, paddingTop: 20, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Charts</h2>
             <p style={{ fontSize: 12, color: theme.muted, margin: "0 0 14px" }}>Data visualisations from the ecosystem</p>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
               {bits.filter(b => !b._pending && b.type === "chart").map(bit => (
@@ -1734,19 +1740,20 @@ export default function App() {
       </div>}
     </div>
 
-    {/* Theme switcher */}
-    <div style={{ position: 'fixed', bottom: isMobile ? 36 : 130, right: 12, zIndex: 9999 }}>
-      <button onClick={cycleTheme} style={{ background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 20, padding: '6px 12px', cursor: 'pointer', fontSize: 11, color: theme.muted, fontFamily: 'inherit', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-        🎨 {themeName.charAt(0).toUpperCase() + themeName.slice(1)}
-      </button>
-    </div>
-
     {/* ── FOOTER ─────────────────────────────────────────────────── */}
     <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: theme.footerBg, zIndex: 999 }}>
       {isMobile ? (
         <div style={{ padding: "6px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span style={{ fontSize: 10, color: theme.footerText }}>© 2026 LDN/ai · <a href="/privacy.html" style={{ color: theme.footerText, textDecoration: "none" }}>Privacy</a> · <a href="/terms.html" style={{ color: theme.footerText, textDecoration: "none" }}>Terms</a></span>
-          <span style={{ fontSize: 10, color: theme.footerText }}>Made in London 🇬🇧</span>
+          <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+            {Object.entries(THEMES).map(([key, t]) => (
+              <button key={key} onClick={() => setThemeName(key)} title={t.name}
+                style={{ width: 16, height: 16, borderRadius: 3, cursor: 'pointer', padding: 0,
+                  border: key === themeName ? `2px solid ${theme.accent}` : `1px solid ${theme.footerText}44`,
+                  background: `linear-gradient(135deg, ${t.swatches[0]} 33%, ${t.swatches[1]} 33%, ${t.swatches[1]} 66%, ${t.swatches[2]} 66%)`,
+                }} />
+            ))}
+          </div>
         </div>
       ) : (
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "20px 20px 12px" }}>
@@ -1779,7 +1786,16 @@ export default function App() {
           </div>
           <div style={{ borderTop: `1px solid ${theme.footerText}44`, paddingTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
             <span style={{ fontSize: 11, color: theme.footerText }}>© 2026 Jie Xi. All rights reserved. Data sourced from public records.</span>
-            <span style={{ fontSize: 11, color: theme.footerText }}>Made in London 🇬🇧</span>
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+              {Object.entries(THEMES).map(([key, t]) => (
+                <button key={key} onClick={() => setThemeName(key)} title={t.name}
+                  style={{ width: 20, height: 20, borderRadius: 3, cursor: 'pointer', padding: 0,
+                    border: key === themeName ? `2px solid ${theme.accent}` : `1px solid ${theme.footerText}44`,
+                    background: `linear-gradient(135deg, ${t.swatches[0]} 33%, ${t.swatches[1]} 33%, ${t.swatches[1]} 66%, ${t.swatches[2]} 66%)`,
+                  }} />
+              ))}
+            </div>
+            <span style={{ fontSize: 11, color: theme.footerText }}>v1.0.0 · Made in London 🇬🇧</span>
           </div>
         </div>
       )}
