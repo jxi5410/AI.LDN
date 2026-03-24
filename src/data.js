@@ -538,6 +538,7 @@ export const companies=[
   {id:"quantexa",name:"Quantexa",s:"Quantexa",cat:"enterprise",yr:2016,emp:"800+",fund:"$2.6B",fn:2600,val:"$2.6B+",founders:"Vishal Marria (CEO), Jamie Hutton (CTO)",focus:"Decision Intelligence · entity resolution · network analytics · financial crime · government",clients:"HSBC, Standard Chartered, Lloyds, UK Government, Dunn & Bradstreet",ethos:"Connect the dots in data",hq:"London (Paddington)",kp:"Vishal Marria (CEO), Jamie Hutton (CTO)",jobs:"https://quantexa.com/careers/"},
   {id:"complyadvantage",name:"ComplyAdvantage",s:"ComplyAdv",cat:"fintech",yr:2014,emp:"500+",fund:"$167M",fn:167,focus:"AI-driven AML screening · real-time risk data · transaction monitoring · adverse media",clients:"Santander, Affirm, Gemini, Zip, global banks",ethos:"Neutralize financial crime with AI",hq:"London (Shoreditch)",kp:"Charles Delingpole (CEO & Founder)",jobs:"https://complyadvantage.com/careers/"},
   {id:"featurespace",name:"Featurespace",s:"Featurespace",cat:"fintech",yr:2008,emp:"400+",fund:"~$1B (Visa exit)",fn:1000,val:"~$1B (exit)",focus:"Adaptive Behavioral Analytics · ARIC fraud detection · $6T+ transactions protected",clients:"Visa, HSBC, NatWest, Worldpay, TSYS",ethos:"World leaders in adaptive behavioral analytics",hq:"Cambridge / London",kp:"Dave Sherwood (CEO)",jobs:null},
+  {id:"general-reasoning",name:"General Reasoning",s:"GenReason",cat:"frontier-emerging",yr:2025,fund:"Stealth",fn:0,focus:"Long-horizon AI capabilities · agent infrastructure · training & eval at scale · world engineering",ethos:"Towards universal intelligence. Empowering more people, avoiding concentration of power.",hq:"London",kp:"Ross Taylor (CEO, ex-Meta AI Llama lead)",jobs:"https://www.gr.inc/careers"},
   {id:"testudo",name:"Testudo",s:"Testudo",cat:"fintech",yr:null,fund:null,fn:0,focus:"Insurance for the AI economy · AI risk underwriting",ethos:"Insure the AI age",hq:"London",jobs:null},
   {id:"legora",name:"Legora",s:"Legora",cat:"enterprise",yr:2023,fund:"$980M",fn:980,val:"$5.55B",focus:"AI platform for legal professionals · research, review, drafting · built on Claude",clients:"Linklaters, White & Case, Deloitte, Dentons, Bird & Bird, Cleary Gottlieb · 800+ law firms",ethos:"Boundless collaboration between lawyer ingenuity and machine intelligence",hq:"Stockholm / London / New York",kp:"Max Junestrand (CEO), August Erseus, Sigge Labor",jobs:"https://legora.com/careers"},
 ];
@@ -675,6 +676,7 @@ export const edges=[
   // Quantexa, ComplyAdvantage, Featurespace
   {s:"balderton",t:"complyadvantage",ty:"investment",l:"Series A-C investor"},
   {s:"index",t:"complyadvantage",ty:"investment",l:"Series C investor"},
+  {s:"meta-ai",t:"general-reasoning",ty:"alumni",l:"Ross Taylor — LLM lead (Llama 2/3)"},
   // Legora
   {s:"accel",t:"legora",ty:"investment",l:"Led $550M D"},
   {s:"legora",t:"anthropic",ty:"partnership",l:"Built on Claude"},
