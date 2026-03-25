@@ -521,7 +521,7 @@ export default function App() {
     if (layout === "cluster") Object.entries(catCenters).forEach(([cat, pos]) => {
       g.append("text").text(CC[cat]?.l || cat).attr("x", pos.x).attr("y", pos.y - 50)
         .attr("text-anchor", "middle").attr("fill", CC[cat]?.c || "#666").attr("font-size", "10px")
-        .attr("font-family", "'Libre Baskerville',Georgia,serif").attr("font-weight", "600").attr("opacity", 0.4);
+        .attr("font-family", "'DM Serif Display',Georgia,serif").attr("font-weight", "600").attr("opacity", 0.4);
     });
 
     const link = g.append("g").selectAll("path").data(links).enter().append("path")
@@ -622,7 +622,7 @@ export default function App() {
         <div style={{ position: "relative" }}>
           <input type="text" placeholder="Search companies, people, contacts…" value={search} onChange={e => setSearch(e.target.value)}
             style={{ padding: "6px 10px", borderRadius: 6, height: 36, boxSizing: "border-box", border: "1px solid var(--border)", background: "var(--bg-elevated)", color: "var(--text-primary)", fontSize: 14, width: isMobile ? 150 : 260, outline: "none", fontFamily: "var(--font-body)" }} />
-          {searchResults && search && <div style={{ position: isMobile ? "fixed" : "absolute", top: isMobile ? 56 : "100%", left: isMobile ? 8 : "auto", right: isMobile ? 8 : 0, width: isMobile ? "auto" : 320, maxHeight: isMobile ? "60vh" : 400, overflowY: "auto", background: "#ffffff", borderRadius: 8, border: "1px solid #e8e5dc", marginTop: isMobile ? 0 : 4, zIndex: 1100, boxShadow: "0 4px 20px rgba(0,0,0,0.12)" }}>
+          {searchResults && search && <div style={{ position: isMobile ? "fixed" : "absolute", top: isMobile ? 56 : "100%", left: isMobile ? 8 : "auto", right: isMobile ? 8 : 0, width: isMobile ? "auto" : 320, maxHeight: isMobile ? "60vh" : 400, overflowY: "auto", background: "#ffffff", borderRadius: 8, border: "1px solid #e8e5dc", marginTop: isMobile ? 0 : 4, zIndex: 1100,  }}>
             {searchResults.companies.length > 0 && <div style={{ padding: "6px 10px", borderBottom: "1px solid #f5f3ee" }}>
               <div style={{ fontSize: 8, color: "#a0a09b", fontWeight: 600, marginBottom: 4 }}>COMPANIES</div>
               {searchResults.companies.map(c => (
@@ -721,13 +721,13 @@ export default function App() {
           {signupSuccess ? <>
             <div style={{ textAlign: "center", padding: "10px 0" }}>
               <div style={{ fontSize: 36, marginBottom: 8 }}>📧</div>
-              <h2 style={{ margin: "0 0 8px", fontSize: 16, fontFamily: "inherit", color: "#1a1a18" }}>Check your email</h2>
+              <h2 style={{ margin: "0 0 8px", fontSize: 16, fontFamily: "var(--font-body)", color: "#1a1a18" }}>Check your email</h2>
               <p style={{ fontSize: 10.5, color: "#6b6b66", lineHeight: 1.5, marginBottom: 12 }}>We've sent a confirmation link to <strong style={{ color: "#2d2d2a" }}>{authForm.email}</strong>. Click the link in the email to activate your account.</p>
               <p style={{ fontSize: 12, color: "#a0a09b" }}>Didn't receive it? Check your spam folder, or try again in a few minutes.</p>
-              <button onClick={() => { setAuthMode(null); setSignupSuccess(false); }} style={{ marginTop: 12, padding: "8px 20px", borderRadius: 7, border: "1px solid #e8e5dc", background: "transparent", color: "#6b6b66", fontSize: 10, cursor: "pointer", fontFamily: "inherit" }}>Close</button>
+              <button onClick={() => { setAuthMode(null); setSignupSuccess(false); }} style={{ marginTop: 12, padding: "8px 20px", borderRadius: 7, border: "1px solid #e8e5dc", background: "transparent", color: "#6b6b66", fontSize: 10, cursor: "pointer", fontFamily: "var(--font-body)" }}>Close</button>
             </div>
           </> : <>
-          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "inherit", color: "#1a1a18" }}>{authMode === "signup" ? "Create Account" : "Welcome Back"}</h2>
+          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "var(--font-body)", color: "#1a1a18" }}>{authMode === "signup" ? "Create Account" : "Welcome Back"}</h2>
           <p style={{ margin: "0 0 16px", fontSize: 14, color: "#8a8a85" }}>{authMode === "signup" ? "Join the LDN/ai network" : "Sign in to track your connections"}</p>
           {authError && <div style={{ padding: "6px 10px", borderRadius: 6, background: "#FF453A18", border: "1px solid #FF453A33", color: "#FF453A", fontSize: 9.5, marginBottom: 10 }}>{authError}</div>}
           {authMode === "signup" && <input type="text" placeholder="Username *" value={authForm.username} onChange={e => setAuthForm(p => ({ ...p, username: e.target.value }))} style={inputStyle} />}
@@ -738,7 +738,7 @@ export default function App() {
             <input type="text" placeholder="LinkedIn URL (optional)" value={authForm.linkedin} onChange={e => setAuthForm(p => ({ ...p, linkedin: e.target.value }))} style={inputStyle} />
             <input type="text" placeholder="Company (optional)" value={authForm.company} onChange={e => setAuthForm(p => ({ ...p, company: e.target.value }))} style={inputStyle} />
           </>}
-          <button onClick={() => handleAuth(authMode)} disabled={authLoading} style={{ width: "100%", padding: "8px", borderRadius: 7, border: "none", background: "#C15F3C", color: "#000", fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", marginTop: 4, opacity: authLoading ? 0.6 : 1 }}>
+          <button onClick={() => handleAuth(authMode)} disabled={authLoading} style={{ width: "100%", padding: "8px", borderRadius: 7, border: "none", background: "#C15F3C", color: "#000", fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-body)", marginTop: 4, opacity: authLoading ? 0.6 : 1 }}>
             {authLoading ? "..." : authMode === "signup" ? "Create Account" : "Sign In"}
           </button>
           <p style={{ margin: "10px 0 0", fontSize: 9, color: "#8a8a85", textAlign: "center" }}>
@@ -752,16 +752,16 @@ export default function App() {
       {/* ── FEEDBACK MODAL ────────────────────────────────────────── */}
       {showFeedback && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setShowFeedback(false)}>
         <div onClick={e => e.stopPropagation()} style={{ background: "#ffffff", borderRadius: 14, padding: 24, border: "1px solid #e8e5dc", width: 400, maxWidth: "90vw", maxHeight: "80vh", overflowY: "auto" }}>
-          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "inherit", color: "#1a1a18" }}>💬 Feedback</h2>
+          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "var(--font-body)", color: "#1a1a18" }}>💬 Feedback</h2>
           <p style={{ margin: "0 0 14px", fontSize: 9.5, color: "#8a8a85" }}>Help us improve LDN/ai</p>
           {fbSubmitted ? <div style={{ padding: 20, textAlign: "center" }}><span style={{ fontSize: 28 }}>✅</span><p style={{ color: "#30D158", marginTop: 8 }}>Thank you! Feedback submitted.</p></div> : <>
             <div style={{ display: "flex", gap: 4, marginBottom: 10 }}>
               {["feature", "bug", "data", "general"].map(c => (
-                <button key={c} onClick={() => setFbForm(p => ({ ...p, category: c }))} style={{ padding: "3px 8px", borderRadius: 4, border: `1px solid ${fbForm.category === c ? "#30D158" : "#e8e5dc"}`, background: fbForm.category === c ? "#30D15818" : "transparent", color: fbForm.category === c ? "#30D158" : "#64748B", fontSize: 9, cursor: "pointer", fontFamily: "inherit", textTransform: "capitalize" }}>{c}</button>
+                <button key={c} onClick={() => setFbForm(p => ({ ...p, category: c }))} style={{ padding: "3px 8px", borderRadius: 4, border: `1px solid ${fbForm.category === c ? "#30D158" : "#e8e5dc"}`, background: fbForm.category === c ? "#30D15818" : "transparent", color: fbForm.category === c ? "#30D158" : "#64748B", fontSize: 9, cursor: "pointer", fontFamily: "var(--font-body)", textTransform: "capitalize" }}>{c}</button>
               ))}
             </div>
             <textarea value={fbForm.message} onChange={e => setFbForm(p => ({ ...p, message: e.target.value }))} placeholder="What would you like to see improved?" rows={4} style={{ ...inputStyle, resize: "vertical" }} />
-            <button onClick={submitFeedback} disabled={!fbForm.message.trim()} style={{ width: "100%", padding: "8px", borderRadius: 7, border: "none", background: "#C15F3C", color: "#000", fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", opacity: fbForm.message.trim() ? 1 : 0.4 }}>Submit Feedback</button>
+            <button onClick={submitFeedback} disabled={!fbForm.message.trim()} style={{ width: "100%", padding: "8px", borderRadius: 7, border: "none", background: "#C15F3C", color: "#000", fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-body)", opacity: fbForm.message.trim() ? 1 : 0.4 }}>Submit Feedback</button>
           </>}
           {/* My feedback history */}
           {myFeedback.length > 0 && <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid #e8e5dc" }}>
@@ -814,16 +814,16 @@ export default function App() {
 
       {/* ── MOBILE FILTER BUTTON + DRAWER ──────────────────────── */}
       {panel === "graph" && isMobile && <>
-        <button onClick={() => setMobileFiltersOpen(o => !o)} style={{ position: "fixed", top: headerHeight + 6, left: 8, zIndex: 20001, padding: "6px 10px", borderRadius: 8, border: "1px solid #e8e5dc", background: mobileFiltersOpen ? "#C15F3C" : "rgba(255,255,255,0.95)", color: mobileFiltersOpen ? "#fff" : "#4a4a45", fontSize: 12, fontFamily: "inherit", fontWeight: 600, cursor: "pointer", backdropFilter: "blur(10px)", boxShadow: "0 2px 8px rgba(0,0,0,0.1)", display: "flex", alignItems: "center", gap: 4 }}>
+        <button onClick={() => setMobileFiltersOpen(o => !o)} style={{ position: "fixed", top: headerHeight + 6, left: 8, zIndex: 20001, padding: "6px 10px", borderRadius: 8, border: "1px solid #e8e5dc", background: mobileFiltersOpen ? "#C15F3C" : "rgba(255,255,255,0.95)", color: mobileFiltersOpen ? "#fff" : "#4a4a45", fontSize: 12, fontFamily: "var(--font-body)", fontWeight: 600, cursor: "pointer", backdropFilter: "blur(10px)", display: "flex", alignItems: "center", gap: 4 }}>
           <span style={{ fontSize: 14 }}>☰</span> Filters
         </button>
         {mobileFiltersOpen && <>
           {/* Backdrop — tap to dismiss */}
           <div onClick={() => setMobileFiltersOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 20001, background: "rgba(0,0,0,0.15)" }} />
-          <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 20002, background: "rgba(255,255,255,0.97)", borderTop: "1px solid #e8e5dc", borderRadius: "14px 14px 0 0", padding: "10px 14px 20px", backdropFilter: "blur(14px)", boxShadow: "0 -4px 20px rgba(0,0,0,0.1)", maxHeight: "60vh", overflowY: "auto" }}>
+          <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 20002, background: "rgba(255,255,255,0.97)", borderTop: "1px solid #e8e5dc", borderRadius: "14px 14px 0 0", padding: "10px 14px 20px", backdropFilter: "blur(14px)", maxHeight: "60vh", overflowY: "auto" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
             <div style={{ width: 36, height: 4, background: "#d1d1cc", borderRadius: 2 }} />
-            <button onClick={() => setMobileFiltersOpen(false)} style={{ width: 28, height: 28, borderRadius: "50%", border: "1px solid #e8e5dc", background: "#f5f4f0", color: "#8a8a85", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, fontFamily: "inherit", lineHeight: 1 }}>✕</button>
+            <button onClick={() => setMobileFiltersOpen(false)} style={{ width: 28, height: 28, borderRadius: "50%", border: "1px solid #e8e5dc", background: "#f5f4f0", color: "#8a8a85", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, fontFamily: "var(--font-body)", lineHeight: 1 }}>✕</button>
           </div>
           <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
             {[["companies", "Companies"], ["investors", "Investors"]].map(([k, l]) => (
@@ -831,12 +831,12 @@ export default function App() {
                 setMapView(k);
                 if (k === "investors") { setCats(prev => new Set([...prev, "investor"])); }
                 else { setCats(prev => { const n = new Set(prev); n.delete("investor"); return n; }); }
-              }} style={{ flex: 1, padding: "6px", borderRadius: 6, border: `1px solid ${mapView === k ? "#C15F3C" : "#e8e5dc"}`, background: mapView === k ? "#C15F3C18" : "transparent", color: mapView === k ? "#C15F3C" : "#8a8a85", fontSize: 13, cursor: "pointer", fontFamily: "inherit", fontWeight: mapView === k ? 600 : 400 }}>{l}</button>
+              }} style={{ flex: 1, padding: "6px", borderRadius: 6, border: `1px solid ${mapView === k ? "#C15F3C" : "#e8e5dc"}`, background: mapView === k ? "#C15F3C18" : "transparent", color: mapView === k ? "#C15F3C" : "#8a8a85", fontSize: 13, cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: mapView === k ? 600 : 400 }}>{l}</button>
             ))}
           </div>
           <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
             {[["All", () => setCats(new Set(mapView === "companies" ? Object.keys(CC).filter(k => k !== "investor") : Object.keys(CC)))], ["None", () => setCats(mapView === "investors" ? new Set(["investor"]) : new Set())]].map(([l, fn]) => (
-              <button key={l} onClick={fn} style={{ flex: 1, padding: "5px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 13, cursor: "pointer", fontFamily: "inherit" }}>{l}</button>
+              <button key={l} onClick={fn} style={{ flex: 1, padding: "5px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 13, cursor: "pointer", fontFamily: "var(--font-body)" }}>{l}</button>
             ))}
           </div>
           {Object.entries(CC).map(([k, cfg]) => (
@@ -873,7 +873,7 @@ export default function App() {
               setBitsFetched(false);
             } catch (e) { alert("Scrape failed: " + e.message); }
             setBitsLoading(false);
-          }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid #C15F3C", background: "#C15F3C18", color: "#C15F3C", fontSize: 10, cursor: "pointer", fontFamily: "inherit", fontWeight: 600 }}>🔍 Scrape</button>
+          }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid #C15F3C", background: "#C15F3C18", color: "#C15F3C", fontSize: 10, cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: 600 }}>🔍 Scrape</button>
         </div>}
         {/* Insights section */}
         <InsightsPanel isMobile={isMobile} />
@@ -899,7 +899,7 @@ export default function App() {
                     </div>
                     {bit.engagement && <span style={{ fontSize: 9, color: "#a0a09b" }}>{bit.engagement}</span>}
                   </div>
-                  <h3 style={{ margin: "0 0 3px", fontSize: 14, fontFamily: "inherit", fontWeight: 700, color: "#1a1a18", lineHeight: 1.3 }}>{bit.title}</h3>
+                  <h3 style={{ margin: "0 0 3px", fontSize: 14, fontFamily: "var(--font-body)", fontWeight: 700, color: "#1a1a18", lineHeight: 1.3 }}>{bit.title}</h3>
                   {bit.description && <p style={{ fontSize: 12, color: "#4a4a45", lineHeight: 1.5, margin: "0 0 5px" }}>{bit.description.replace(/<[^>]*>/g, "")}</p>}
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
                     {bit.author && <span style={{ fontSize: 10, color: "#6b6b66" }}>{bit.author}</span>}
@@ -936,7 +936,7 @@ export default function App() {
           <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 12px" }}>Funding, acquisitions, people moves, milestones, interviews</p>
           <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
             {Object.entries(UPDATE_TYPES).map(([k, cfg]) => (
-              <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${updateFilter === k ? cfg.c : "#e8e5dc"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit", fontWeight: updateFilter === k ? 600 : (k === "regulation" ? 700 : 400), letterSpacing: k === "regulation" ? 0.3 : 0 }}>{cfg.label}</button>
+              <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${updateFilter === k ? cfg.c : "#e8e5dc"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: updateFilter === k ? 600 : (k === "regulation" ? 700 : 400), letterSpacing: k === "regulation" ? 0.3 : 0 }}>{cfg.label}</button>
             ))}
           </div>
         </div>
@@ -946,7 +946,7 @@ export default function App() {
           /* ── AI REGULATION SECTION ── */
           <div style={{ padding: isMobile ? "12px" : "16px 20px" }}>
             <div style={{ background: "#ffffff", borderRadius: 10, border: "1px solid #e8e5dc", padding: isMobile ? "12px 10px" : "16px 18px", marginBottom: 16 }}>
-              <h3 style={{ fontFamily: "inherit", fontSize: 20, fontWeight: 700, margin: "0 0 4px", color: "#4a4a45" }}>🏛️ UK AI Regulation</h3>
+              <h3 style={{ fontFamily: "var(--font-body)", fontSize: 20, fontWeight: 700, margin: "0 0 4px", color: "#4a4a45" }}>🏛️ UK AI Regulation</h3>
               <p style={{ fontSize: 13, color: "#8a8a85", margin: "0 0 14px" }}>The UK is charting a distinct path — pro-innovation, sector-specific, and deliberately avoiding the EU's prescriptive model</p>
               <div style={{ fontSize: 14, color: "#4a4a45", lineHeight: 1.7, marginBottom: 14 }}>
                 <p style={{ margin: "0 0 10px" }}>The UK government has opted against comprehensive AI legislation, instead relying on <strong style={{ color: "#1a1a18" }}>existing regulators</strong> (FCA, ICO, CMA, Ofcom) to apply five cross-sector principles: safety, transparency, fairness, accountability, and contestability. A dedicated <strong style={{ color: "#1a1a18" }}>UK AI Bill</strong> is expected no earlier than H2 2026.</p>
@@ -1055,8 +1055,8 @@ export default function App() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 12px" }}>Founders, CEOs, investors, and leaders</p>
           <div style={{ display: "flex", gap: 4 }}>
-            <button onClick={() => { const allCats = new Set(); Object.values(PEOPLE).forEach(p => { const co = companies.find(c => p.co.includes(c.id)); if (co) allCats.add(co.cat); }); setOpenCats(allCats); setAllPeopleOpen(true); }} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit", height: 36 }}>Expand All</button>
-            <button onClick={() => { setOpenCats(new Set()); setAllPeopleOpen(false); }} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit", height: 36 }}>Collapse All</button>
+            <button onClick={() => { const allCats = new Set(); Object.values(PEOPLE).forEach(p => { const co = companies.find(c => p.co.includes(c.id)); if (co) allCats.add(co.cat); }); setOpenCats(allCats); setAllPeopleOpen(true); }} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>Expand All</button>
+            <button onClick={() => { setOpenCats(new Set()); setAllPeopleOpen(false); }} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>Collapse All</button>
           </div>
         </div>
         {(() => {
@@ -1185,7 +1185,7 @@ export default function App() {
           const pkLogo = domainMap[pk.id] ? `https://logo.clearbit.com/${domainMap[pk.id]}` : null;
           return (
             <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 999, background: "rgba(26,26,24,0.45)", backdropFilter: "blur(4px)", top: headerHeight, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={e => { if (e.target === e.currentTarget) setPeoplePeek(null); }}>
-              <div style={{ background: "#faf9f5", borderRadius: "16px 16px 0 0", maxWidth: 480, width: "100%", maxHeight: "75vh", overflowY: "auto", boxShadow: "0 -4px 30px rgba(0,0,0,0.15)", border: "1px solid #e8e5dc", borderBottom: "none" }}>
+              <div style={{ background: "#faf9f5", borderRadius: "16px 16px 0 0", maxWidth: 480, width: "100%", maxHeight: "75vh", overflowY: "auto", border: "1px solid #e8e5dc", borderBottom: "none" }}>
                 {/* Header */}
                 <div style={{ padding: "14px 16px 10px", borderBottom: "1px solid #e8e5dc", position: "sticky", top: 0, background: "#faf9f5", borderRadius: "16px 16px 0 0", zIndex: 1 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
@@ -1210,7 +1210,7 @@ export default function App() {
                   {pk.ethos && <S t="Ethos" v={pk.ethos} />}
                   {pk.founders && <S t="Founders" v={pk.founders} />}
                   {pk.ms && <S t="Milestones" v={pk.ms} />}
-                  {pk.jobs && <a href={pk.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#e8e5dc", color: "#2d2d2a", fontSize: 9.5, textDecoration: "none", fontFamily: "inherit", border: "1px solid #d5d3ca", marginTop: 4 }}>🔗 Careers →</a>}
+                  {pk.jobs && <a href={pk.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#e8e5dc", color: "#2d2d2a", fontSize: 9.5, textDecoration: "none", fontFamily: "var(--font-body)", border: "1px solid #d5d3ca", marginTop: 4 }}>🔗 Careers →</a>}
                   {/* Connected people */}
                   {pkRelPeople.length > 0 && <div style={{ marginTop: 12, paddingTop: 10, borderTop: "1px solid #e8e5dc" }}>
                     <div style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>People ({pkRelPeople.length})</div>
@@ -1239,7 +1239,7 @@ export default function App() {
                   </div>}
                   {/* Go to Map button */}
                   <div style={{ marginTop: 14, textAlign: "center" }}>
-                    <button onClick={() => { setSel(pk); setPanel("graph"); setTab("info"); setPeoplePeek(null); }} style={{ padding: "7px 16px", borderRadius: 6, border: "1px solid #d5d3ca", background: "#ffffff", color: "#4a4a45", fontSize: 11, cursor: "pointer", fontFamily: "inherit", fontWeight: 500 }}>🌌 View on Map</button>
+                    <button onClick={() => { setSel(pk); setPanel("graph"); setTab("info"); setPeoplePeek(null); }} style={{ padding: "7px 16px", borderRadius: 6, border: "1px solid #d5d3ca", background: "#ffffff", color: "#4a4a45", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: 500 }}>🌌 View on Map</button>
                   </div>
                 </div>
               </div>
@@ -1300,7 +1300,7 @@ export default function App() {
 
           {/* ── CHARTS (from Bits) ── */}
           {bits.filter(b => !b._pending && b.type === "chart").length > 0 && <>
-            <h2 style={{ fontFamily: "inherit", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "28px 0 4px", borderTop: "2px solid #e8e5dc", paddingTop: 20 }}>Charts</h2>
+            <h2 style={{ fontFamily: "var(--font-body)", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "28px 0 4px", borderTop: "2px solid #e8e5dc", paddingTop: 20 }}>Charts</h2>
             <p style={{ fontSize: 12, color: "#a0a09b", margin: "0 0 14px" }}>Data visualisations from the ecosystem</p>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
               {bits.filter(b => !b._pending && b.type === "chart").map(bit => (
@@ -1309,7 +1309,7 @@ export default function App() {
                   onMouseLeave={e => e.currentTarget.style.borderColor="#e8e5dc"}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                     <span style={{ fontSize: 20 }}>📊</span>
-                    <span style={{ fontWeight: 600, color: "#1a1a18", fontSize: 14, fontFamily: "inherit" }}>{bit.title}</span>
+                    <span style={{ fontWeight: 600, color: "#1a1a18", fontSize: 14, fontFamily: "var(--font-body)" }}>{bit.title}</span>
                   </div>
                   {bit.summary && <p style={{ margin: 0, fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{bit.summary.slice(0, 120)}...</p>}
                 </a>
@@ -1346,10 +1346,10 @@ export default function App() {
             { key: "adjacent_bets", title: "Adjacent Bets", icon: "🔮" },
           ];
           return <div>
-            <button onClick={() => setSelectedInsight(null)} style={{ background: "none", border: "none", color: "#C15F3C", fontSize: 13, cursor: "pointer", fontFamily: "inherit", padding: "10px 0 6px", fontWeight: 500 }}>← All sectors</button>
+            <button onClick={() => setSelectedInsight(null)} style={{ background: "none", border: "none", color: "#C15F3C", fontSize: 13, cursor: "pointer", fontFamily: "var(--font-body)", padding: "10px 0 6px", fontWeight: 500 }}>← All sectors</button>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
               <span style={{ fontSize: 32 }}>{ins.icon}</span>
-              <h2 style={{ fontFamily: "inherit", fontSize: isMobile ? 22 : 28, fontWeight: 700, color: "#1a1a18", margin: 0 }}>{ins.title}</h2>
+              <h2 style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? 22 : 28, fontWeight: 700, color: "#1a1a18", margin: 0 }}>{ins.title}</h2>
             </div>
             {/* Company pills */}
             <div style={{ display: "flex", gap: 4, flexWrap: "wrap", margin: "8px 0 16px" }}>
@@ -1364,7 +1364,7 @@ export default function App() {
                 <div key={key} style={{ background: "#ffffff", borderRadius: 10, border: "1px solid #e8e5dc", padding: 16 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
                     <span style={{ fontSize: 16 }}>{icon}</span>
-                    <h3 style={{ margin: 0, fontSize: 14, fontFamily: "inherit", fontWeight: 700, color: "#1a1a18", textTransform: "uppercase", letterSpacing: 0.5 }}>{title}</h3>
+                    <h3 style={{ margin: 0, fontSize: 14, fontFamily: "var(--font-body)", fontWeight: 700, color: "#1a1a18", textTransform: "uppercase", letterSpacing: 0.5 }}>{title}</h3>
                   </div>
                   <p style={{ margin: 0, fontSize: 13, color: "#4a4a45", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{boldNames(ins[key])}</p>
                 </div>
@@ -1374,16 +1374,16 @@ export default function App() {
             <div style={{ marginTop: 20, background: "linear-gradient(135deg,#C15F3C08,#d9775710)", borderRadius: 10, border: "1px solid #C15F3C22", padding: 16 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
                 <span style={{ fontSize: 14 }}>🧠</span>
-                <h3 style={{ margin: 0, fontSize: 13, fontFamily: "inherit", fontWeight: 700, color: "#C15F3C", textTransform: "uppercase", letterSpacing: 0.5 }}>Ask deeper</h3>
+                <h3 style={{ margin: 0, fontSize: 13, fontFamily: "var(--font-body)", fontWeight: 700, color: "#C15F3C", textTransform: "uppercase", letterSpacing: 0.5 }}>Ask deeper</h3>
               </div>
               <p style={{ fontSize: 11, color: "#8a8a85", margin: "0 0 8px" }}>Ask a specific question about this sector — grounded in our company data</p>
               <div style={{ display: "flex", gap: 6 }}>
                 <input value={insightAsk} onChange={e => setInsightAsk(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && insightAsk.trim() && !insightAsking) askInsight(ins, insightAsk.trim()); }}
                   placeholder={`e.g. "Which company is best positioned to win NHS contracts?"`}
-                  style={{ flex: 1, padding: "8px 12px", borderRadius: 6, border: "1px solid #e8e5dc", fontSize: 13, fontFamily: "inherit", background: "#fff", outline: "none" }} />
+                  style={{ flex: 1, padding: "8px 12px", borderRadius: 6, border: "1px solid #e8e5dc", fontSize: 13, fontFamily: "var(--font-body)", background: "#fff", outline: "none" }} />
                 <button onClick={() => { if (insightAsk.trim() && !insightAsking) askInsight(ins, insightAsk.trim()); }}
                   disabled={!insightAsk.trim() || insightAsking}
-                  style={{ padding: "8px 14px", borderRadius: 6, border: "none", background: insightAsking ? "#e8e5dc" : "#C15F3C", color: insightAsking ? "#8a8a85" : "#fff", fontSize: 12, fontWeight: 600, fontFamily: "inherit", cursor: insightAsking ? "wait" : "pointer" }}>
+                  style={{ padding: "8px 14px", borderRadius: 6, border: "none", background: insightAsking ? "#e8e5dc" : "#C15F3C", color: insightAsking ? "#8a8a85" : "#fff", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-body)", cursor: insightAsking ? "wait" : "pointer" }}>
                   {insightAsking ? "Thinking..." : "Ask"}
                 </button>
               </div>
@@ -1417,7 +1417,7 @@ export default function App() {
                       {new Date(ev.date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
                       {ev.time && <span style={{ color: "#8a8a85", fontWeight: 400 }}> · {ev.time}</span>}
                     </div>
-                    <h3 style={{ margin: "4px 0 0", fontSize: 17, fontFamily: "inherit", fontWeight: 700, color: "#1a1a18" }}>{ev.title}</h3>
+                    <h3 style={{ margin: "4px 0 0", fontSize: 17, fontFamily: "var(--font-body)", fontWeight: 700, color: "#1a1a18" }}>{ev.title}</h3>
                   </div>
                   {ev.recurring && <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "#30D15818", color: "#30D158", fontWeight: 600 }}>RECURRING</span>}
                 </div>
@@ -1428,7 +1428,7 @@ export default function App() {
                 {ev.topics?.length > 0 && <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 8 }}>
                   {ev.topics.map((t, j) => <span key={j} style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#e8e5dc", color: "#6b6b66" }}>{t}</span>)}
                 </div>}
-                {ev.registration_url && <a href={ev.registration_url} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#C15F3C", color: "#fff", fontSize: 11, textDecoration: "none", fontFamily: "inherit", fontWeight: 600 }}>{isPast ? "View details →" : "Register →"}</a>}
+                {ev.registration_url && <a href={ev.registration_url} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#C15F3C", color: "#fff", fontSize: 11, textDecoration: "none", fontFamily: "var(--font-body)", fontWeight: 600 }}>{isPast ? "View details →" : "Register →"}</a>}
               </div>
             );
           })}
@@ -1437,7 +1437,7 @@ export default function App() {
 
       {/* ── SCORE PANEL ──────────────────────────────────────────── */}
       {panel === "score" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", paddingBottom: isMobile ? 40 : 130, background: "#faf9f5" }}>
-        <h2 style={{ fontFamily: "inherit", fontSize: 26, fontWeight: 700, color: "#1a1a18", margin: "16px 0 6px" }}>Network Score & Badges</h2>
+        <h2 style={{ fontFamily: "var(--font-body)", fontSize: 26, fontWeight: 700, color: "#1a1a18", margin: "16px 0 6px" }}>Network Score & Badges</h2>
         {!user && <div style={{ padding: "12px", borderRadius: 8, background: "#FF9F0A18", border: "1px solid #FF9F0A33", marginBottom: 12 }}>
           <span style={{ fontSize: 10, color: "#FF9F0A" }}>⚠️ Sign up to save your score, appear on the leaderboard, and track connections across devices.</span>
           <button onClick={() => setAuthMode("signup")} style={{ marginLeft: 8, padding: "3px 8px", borderRadius: 4, border: "1px solid #30D158", background: "#30D15818", color: "#30D158", fontSize: 9, cursor: "pointer" }}>Sign up</button>
@@ -1445,7 +1445,7 @@ export default function App() {
         {/* Score card */}
         <div style={{ background: "linear-gradient(135deg,#e8e5dc,#ffffff)", borderRadius: 12, padding: "20px", border: "1px solid #d5d3ca", marginBottom: 12, textAlign: "center" }}>
           <div style={{ fontSize: 40 }}>{score.emoji || "🔭"}</div>
-          <div style={{ fontSize: 34, fontWeight: 800, fontFamily: "inherit", color: "#FFD700", marginTop: 4 }}>{score.score}</div>
+          <div style={{ fontSize: 34, fontWeight: 800, fontFamily: "var(--font-body)", color: "#FFD700", marginTop: 4 }}>{score.score}</div>
           <div style={{ fontSize: 16, color: "#2d2d2a", fontWeight: 600 }}>{score.level || "Explorer"}</div>
           {score.nextLevel && <>
             <div style={{ width: "100%", height: 4, background: "#e8e5dc", borderRadius: 2, marginTop: 10 }}>
@@ -1510,8 +1510,8 @@ export default function App() {
             {sel.clients && <S t="Clients & Markets" v={sel.clients} />}
             {sel.ethos && <S t="Ethos" v={sel.ethos} />}
             {sel.ms && <S t="Milestones" v={sel.ms} />}
-            {sel.jobs && <a href={sel.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#e8e5dc", color: "#2d2d2a", fontSize: 9.5, textDecoration: "none", fontFamily: "inherit", border: "1px solid #d5d3ca", marginTop: 6 }}>🔗 Careers →</a>}
-            {sel.cat !== "investor" && <a href={`/company/${sel.id}.html`} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#C15F3C18", color: "#C15F3C", fontSize: 9.5, textDecoration: "none", fontFamily: "inherit", border: "1px solid #C15F3C33", marginTop: 6, marginLeft: 4 }}>📄 Profile →</a>}
+            {sel.jobs && <a href={sel.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#e8e5dc", color: "#2d2d2a", fontSize: 9.5, textDecoration: "none", fontFamily: "var(--font-body)", border: "1px solid #d5d3ca", marginTop: 6 }}>🔗 Careers →</a>}
+            {sel.cat !== "investor" && <a href={`/company/${sel.id}.html`} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#C15F3C18", color: "#C15F3C", fontSize: 9.5, textDecoration: "none", fontFamily: "var(--font-body)", border: "1px solid #C15F3C33", marginTop: 6, marginLeft: 4 }}>📄 Profile →</a>}
           </>}
           {tab === "funding" && <>
             {sel.cat === "investor" ? (
@@ -1670,7 +1670,7 @@ export default function App() {
                 <div style={{ fontSize: 8, color: "#8a8a85", marginBottom: 3 }}>STATUS</div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
                   {Object.entries(US).map(([k, cfg]) => (
-                    <button key={k} onClick={() => setCf(p => ({ ...p, status: k }))} style={{ padding: "2px 6px", borderRadius: 4, border: `1px solid ${cf.status === k ? cfg.c : "#e8e5dc"}`, background: cf.status === k ? cfg.c + "20" : "transparent", color: cf.status === k ? cfg.c : "#64748B", fontSize: 8, cursor: "pointer", fontFamily: "inherit" }}>{cfg.i} {cfg.l}</button>
+                    <button key={k} onClick={() => setCf(p => ({ ...p, status: k }))} style={{ padding: "2px 6px", borderRadius: 4, border: `1px solid ${cf.status === k ? cfg.c : "#e8e5dc"}`, background: cf.status === k ? cfg.c + "20" : "transparent", color: cf.status === k ? cfg.c : "#64748B", fontSize: 8, cursor: "pointer", fontFamily: "var(--font-body)" }}>{cfg.i} {cfg.l}</button>
                   ))}
                 </div>
               </div>
@@ -1806,7 +1806,7 @@ function UpdateSummariseBtn({ url, label, person }) {
     setLoading(false);
   };
   return (<>
-    <button onClick={doSummarise} style={{ padding: "1px 6px", borderRadius: 3, border: "1px solid #e8e5dc", background: summary ? "#C15F3C10" : "transparent", color: summary ? "#C15F3C" : "#a0a09b", fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>
+    <button onClick={doSummarise} style={{ padding: "1px 6px", borderRadius: 3, border: "1px solid #e8e5dc", background: summary ? "#C15F3C10" : "transparent", color: summary ? "#C15F3C" : "#a0a09b", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)" }}>
       {loading ? <span style={{ animation: "pulse 1s infinite" }}>⏳</span> : summary ? "✓ Summary" : "✨ Summarise"}
     </button>
     {summary && <div style={{ width: "100%", fontSize: 12, color: "#6b6b66", lineHeight: 1.5, padding: "4px 0 2px", borderLeft: "2px solid #e8e5dc", paddingLeft: 10, marginTop: 4 }}>
@@ -1850,7 +1850,7 @@ function DraggableCard({ isMobile, onClose, children, headerHeight = 70 }) {
   if (!isMobile) {
     // Desktop: plain fixed card, no drag
     return (
-      <div style={{ position: "fixed", top: headerHeight + 6, right: 6, width: 320, maxHeight: `calc(100vh - ${headerHeight + 12}px)`, overflowY: "auto", background: "rgba(255,255,255,0.98)", borderRadius: 12, backdropFilter: "blur(16px)", border: "1px solid #e8e5dc", zIndex: 600, boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}>
+      <div style={{ position: "fixed", top: headerHeight + 6, right: 6, width: 320, maxHeight: `calc(100vh - ${headerHeight + 12}px)`, overflowY: "auto", background: "rgba(255,255,255,0.98)", borderRadius: 12, backdropFilter: "blur(16px)", border: "1px solid #e8e5dc", zIndex: 600,  }}>
         {children}
       </div>
     );
@@ -1877,7 +1877,6 @@ function DraggableCard({ isMobile, onClose, children, headerHeight = 70 }) {
         border: "1px solid #e8e5dc",
         borderBottom: "none",
         zIndex: 30,
-        boxShadow: "0 -4px 24px rgba(0,0,0,0.08)",
         transform: `translateY(${dragY}px)`,
         opacity,
         transition: isDragging ? "none" : "transform 0.3s ease, opacity 0.3s ease",
@@ -1893,7 +1892,7 @@ function DraggableCard({ isMobile, onClose, children, headerHeight = 70 }) {
   );
 }
 
-function SB({ l, v, c }) { return (<div style={{ background: "rgba(255,255,255,0.96)", borderRadius: 6, padding: "3px 8px", border: "1px solid #e8e5dc", textAlign: "center" }}><div style={{ fontSize: 14, fontWeight: 700, color: c, fontFamily: "inherit" }}>{v}</div><div style={{ fontSize: 10, color: "#a0a09b", textTransform: "uppercase" }}>{l}</div></div>); }
+function SB({ l, v, c }) { return (<div style={{ background: "rgba(255,255,255,0.96)", borderRadius: 6, padding: "3px 8px", border: "1px solid #e8e5dc", textAlign: "center" }}><div style={{ fontSize: 14, fontWeight: 700, color: c, fontFamily: "var(--font-body)" }}>{v}</div><div style={{ fontSize: 10, color: "#a0a09b", textTransform: "uppercase" }}>{l}</div></div>); }
 
 function PodcastList({ pods, compact, personName }) {
   const [showAll, setShowAll] = useState(false);
@@ -1976,7 +1975,7 @@ function PodcastList({ pods, compact, personName }) {
             <a href={pod.url} target="_blank" rel="noopener" style={{ flex: 1, fontSize: compact ? 12 : 13, color: "#6b6b66", textDecoration: "none", lineHeight: 1.4 }}>
               <span style={{ color: "#8a8a85" }}>🎙️</span> <span style={{ color: "#4a4a45" }}>{pod.label}</span>
             </a>
-            <button onClick={() => summarize(pod)} style={{ flexShrink: 0, padding: "1px 5px", borderRadius: 3, border: "1px solid #e8e5dc", background: hasSummary ? "#C15F3C18" : "transparent", color: hasSummary ? "#C15F3C" : "#5a564e", fontSize: 8, cursor: "pointer", fontFamily: "inherit" }}>
+            <button onClick={() => summarize(pod)} style={{ flexShrink: 0, padding: "1px 5px", borderRadius: 3, border: "1px solid #e8e5dc", background: hasSummary ? "#C15F3C18" : "transparent", color: hasSummary ? "#C15F3C" : "#5a564e", fontSize: 8, cursor: "pointer", fontFamily: "var(--font-body)" }}>
               {isLoading ? <span style={{ display: "inline-block", animation: "pulse 1s infinite" }}>⏳</span> : hasSummary ? "✓" : "✨"}
             </button>
           </div>
@@ -1984,7 +1983,7 @@ function PodcastList({ pods, compact, personName }) {
             {hasSummary.split("•").filter(Boolean).map((b, j) => (
               <div key={j} style={{ marginBottom: 2 }}>• {b.trim()}</div>
             ))}
-            <button onClick={() => setChatOpen(isChatOpen ? null : key)} style={{ fontSize: 8, color: "#6a9bcc", background: "none", border: "none", cursor: "pointer", padding: 0, marginTop: 2, fontFamily: "inherit" }}>
+            <button onClick={() => setChatOpen(isChatOpen ? null : key)} style={{ fontSize: 8, color: "#6a9bcc", background: "none", border: "none", cursor: "pointer", padding: 0, marginTop: 2, fontFamily: "var(--font-body)" }}>
               {isChatOpen ? "close chat" : "💬 ask about this"}
             </button>
           </div>}
@@ -1995,7 +1994,7 @@ function PodcastList({ pods, compact, personName }) {
               </div>
             ))}
             <div style={{ display: "flex", gap: 4, marginTop: 3 }}>
-              <input type="text" value={chatMsg} onChange={e => setChatMsg(e.target.value)} onKeyDown={e => e.key === "Enter" && sendChat(pod)} placeholder="Ask a question..." style={{ flex: 1, padding: "3px 6px", borderRadius: 4, border: "1px solid #e8e5dc", background: "#f5f3ee", color: "#4a4a45", fontSize: 9, fontFamily: "inherit", outline: "none" }} />
+              <input type="text" value={chatMsg} onChange={e => setChatMsg(e.target.value)} onKeyDown={e => e.key === "Enter" && sendChat(pod)} placeholder="Ask a question..." style={{ flex: 1, padding: "3px 6px", borderRadius: 4, border: "1px solid #e8e5dc", background: "#f5f3ee", color: "#4a4a45", fontSize: 9, fontFamily: "var(--font-body)", outline: "none" }} />
               <button onClick={() => sendChat(pod)} disabled={chatLoading} style={{ padding: "3px 8px", borderRadius: 4, border: "none", background: "#C15F3C", color: "#fff", fontSize: 8, cursor: "pointer", opacity: chatLoading ? 0.5 : 1 }}>{chatLoading ? "..." : "→"}</button>
             </div>
           </div>}

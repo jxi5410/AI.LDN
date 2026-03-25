@@ -221,6 +221,18 @@ Company and funding data from public sources: company websites, Crunchbase, Sift
 
 Built by [Jie Xi](https://linkedin.com/in/jiexi) · [github.com/jxi5410](https://github.com/jxi5410)
 
+## Changelog
+
+### v2.0 — UI/UX Redesign (March 2026)
+- **Typography system:** DM Serif Display + DM Sans + JetBrains Mono replacing Inter/system fonts
+- **Color system:** 3-level elevation, 4-level text contrast, terracotta accent
+- **Map view:** Dismissable legend, redesigned sidebar, hover tooltips, click-to-zoom, entrance animations
+- **Company cards:** Metric chips, clean tab system, editorial signal cards
+- **Content pages:** Static page template upgrade, dynamic stats, editorial article layout
+- **Mobile:** Hamburger navigation, bottom sheet for company details, touch-friendly nodes
+- **Motion:** Panel transitions, staggered reveals, skeleton loading states
+- **API:** Agent-callable metadata, API docs link
+
 ## License
 
 MIT

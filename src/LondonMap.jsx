@@ -130,7 +130,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
       .style("background", "rgba(255,255,255,0.96)").style("backdrop-filter", "blur(8px)")
       .style("border", "1px solid #e8e5dc").style("border-radius", "6px")
       .style("padding", "5px 10px").style("font-size", "11px").style("font-family", "'DM Sans',sans-serif")
-      .style("color", "#2d2d2a").style("z-index", "600").style("box-shadow", "0 2px 8px rgba(0,0,0,0.1)")
+      .style("color", "#2d2d2a").style("z-index", "600")
       .style("max-width", "240px").style("white-space", "nowrap");
 
     link.style("cursor", "pointer")
