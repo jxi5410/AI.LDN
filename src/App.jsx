@@ -106,6 +106,7 @@ export default function App() {
   const [legendOpen, setLegendOpen] = useState(true);
   const [legendDismissed, setLegendDismissed] = useState(() => localStorage.getItem('ldnai-legend-dismissed') === '1');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // User data (from Supabase or localStorage fallback)
   const [ud, setUd] = useState({}); // connections
@@ -597,8 +598,8 @@ export default function App() {
       <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}@keyframes skeletonPulse{0%,100%{opacity:0.6}50%{opacity:1}}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#c5c3ba;border-radius:4px}input[type=range]{-webkit-appearance:none;background:transparent}input[type=range]::-webkit-slider-track{height:2px;background:var(--border);border-radius:2px}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:-3px;cursor:pointer}.panel-enter{opacity:0;transform:translateY(8px)}.panel-enter-active{opacity:1;transform:translateY(0);transition:opacity 200ms ease,transform 200ms ease}`}</style>
 
       {/* ── HEADER ──────────────────────────────────────────────────── */}
-      <div ref={headerRef} style={{ position: "fixed", top: 0, left: 0, right: 0, padding: isMobile ? "6px 8px" : "10px 14px", background: "var(--bg-base)", borderBottom: "1px solid var(--border)", zIndex: 1000, display: "flex", alignItems: "center", gap: isMobile ? 6 : 10, flexWrap: "wrap" }}>
-        <div style={{ flexShrink: 0, cursor: "pointer" }} onClick={() => { setPanel("graph"); setSel(null); }}>
+      <div ref={headerRef} style={{ position: "fixed", top: 0, left: 0, right: 0, padding: isMobile ? "6px 8px" : "10px 14px", background: "var(--bg-base)", borderBottom: "1px solid var(--border)", zIndex: 1000, display: "flex", alignItems: "center", gap: isMobile ? 6 : 10, flexWrap: "wrap", maxHeight: isMobile ? 48 : "auto" }}>
+        <div style={{ flexShrink: 0, cursor: "pointer" }} onClick={() => { setPanel("graph"); setSel(null); setMobileMenuOpen(false); }}>
           <h1 style={{ margin: 0, fontSize: isMobile ? 20 : 30, fontFamily: "var(--font-body)", fontWeight: 800, background: "linear-gradient(135deg,var(--accent),#d97757,#e8a87c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</h1>
           {!isMobile && <p style={{ margin: 0, fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
             {companies.filter(c => !["investor", "academic"].includes(c.cat)).length} companies · {edges.length} connections
@@ -659,15 +660,13 @@ export default function App() {
           </div>}
         </div>
         
-        <button onClick={() => setShowFeedback(true)} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", fontSize: 12, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>💬</button>
-        {/* Trophy */}
-        <button onClick={() => setPanel("score")} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid var(--border)", background: panel === "score" ? "rgba(255,215,0,0.1)" : "transparent", color: "var(--warning)", fontSize: 14, height: 36, cursor: "pointer", fontFamily: "var(--font-body)" }}>🏆{score.score > 0 ? ` ${score.score}` : ""}</button>
-        {/* My Network toggle */}
+        {!isMobile && <button onClick={() => setShowFeedback(true)} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", fontSize: 12, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>💬</button>}
+        {!isMobile && <button onClick={() => setPanel("score")} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid var(--border)", background: panel === "score" ? "rgba(255,215,0,0.1)" : "transparent", color: "var(--warning)", fontSize: 14, height: 36, cursor: "pointer", fontFamily: "var(--font-body)" }}>🏆{score.score > 0 ? ` ${score.score}` : ""}</button>}
         {!isMobile &&
           <button onClick={() => { setShowMyNet(!showMyNet); if (panel !== "graph") setPanel("graph"); }} style={{ padding: "6px 10px", borderRadius: 6, border: `1px solid ${showMyNet ? "var(--success)" : "var(--border)"}`, background: showMyNet ? "rgba(48,209,88,0.1)" : "transparent", color: showMyNet ? "var(--success)" : "var(--text-muted)", fontSize: 12, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>🤝</button>
         }
-        {/* Auth — below icon buttons */}
-        {user ? (
+        {/* Auth — desktop only */}
+        {!isMobile && (user ? (
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid var(--border)", background: "transparent", fontSize: 12, color: "var(--footer-text)", fontFamily: "var(--font-body)", height: 36, boxSizing: "border-box", display: "flex", alignItems: "center" }}>👤 {profile?.username || user.email}</div>
             <button onClick={signOut} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", fontSize: 12, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>Sign out</button>
@@ -677,8 +676,38 @@ export default function App() {
             <button onClick={() => setAuthMode("login")} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid var(--border)", background: "transparent", color: "var(--footer-text)", fontSize: 12, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>Log in</button>
             <button onClick={() => setAuthMode("signup")} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid var(--success)", background: "rgba(48,209,88,0.1)", color: "var(--success)", fontSize: 12, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>Sign up</button>
           </div>
-        )}
+        ))}
+        {/* Mobile hamburger */}
+        {isMobile && <button onClick={() => setMobileMenuOpen(o => !o)} style={{ width: 36, height: 36, borderRadius: 6, border: "1px solid var(--border)", background: mobileMenuOpen ? "var(--accent)" : "transparent", color: mobileMenuOpen ? "#fff" : "var(--text-secondary)", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, fontFamily: "var(--font-body)" }}>{mobileMenuOpen ? "✕" : "☰"}</button>}
       </div>
+
+      {/* ── MOBILE NAV OVERLAY ────────────────────────────────────── */}
+      {isMobile && mobileMenuOpen && <div style={{ position: "fixed", inset: 0, background: "var(--bg-base)", zIndex: 1000, paddingTop: 56, overflowY: "auto" }}>
+        <button onClick={() => setMobileMenuOpen(false)} style={{ position: "absolute", top: 10, right: 10, width: 44, height: 44, borderRadius: 8, border: "1px solid var(--border)", background: "transparent", color: "var(--text-secondary)", fontSize: 20, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+        <div style={{ padding: "20px 24px" }}>
+          {[["graph", "Map"], ["people", "People"], ["insights", "Insights"], ["events", "Events"], ["updates", "News"], ["bits", "Bits"]].map(([k, l]) => (
+            <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); setMobileMenuOpen(false); }} style={{ display: "block", width: "100%", padding: "14px 0", border: "none", borderBottom: "1px solid var(--border)", background: "transparent", color: panel === k ? "var(--accent)" : "var(--text-primary)", fontSize: 18, fontFamily: "var(--font-display)", cursor: "pointer", textAlign: "left", fontWeight: 400 }}>{l}</button>
+          ))}
+          <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
+            {user ? (
+              <div>
+                <div style={{ fontSize: 14, color: "var(--text-secondary)", marginBottom: 8, fontFamily: "var(--font-body)" }}>👤 {profile?.username || user.email}</div>
+                <button onClick={() => { signOut(); setMobileMenuOpen(false); }} style={{ padding: "10px 16px", borderRadius: 6, border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", fontSize: 14, cursor: "pointer", fontFamily: "var(--font-body)" }}>Sign out</button>
+              </div>
+            ) : (
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={() => { setAuthMode("login"); setMobileMenuOpen(false); }} style={{ flex: 1, padding: "10px 16px", borderRadius: 6, border: "1px solid var(--border)", background: "transparent", color: "var(--text-secondary)", fontSize: 14, cursor: "pointer", fontFamily: "var(--font-body)" }}>Log in</button>
+                <button onClick={() => { setAuthMode("signup"); setMobileMenuOpen(false); }} style={{ flex: 1, padding: "10px 16px", borderRadius: 6, border: "1px solid var(--success)", background: "rgba(48,209,88,0.1)", color: "var(--success)", fontSize: 14, cursor: "pointer", fontFamily: "var(--font-body)" }}>Sign up</button>
+              </div>
+            )}
+          </div>
+          <div style={{ marginTop: 20, display: "flex", gap: 16 }}>
+            <a href="/privacy.html" style={{ fontSize: 13, color: "var(--text-muted)", textDecoration: "none", fontFamily: "var(--font-body)" }}>Privacy</a>
+            <a href="/terms.html" style={{ fontSize: 13, color: "var(--text-muted)", textDecoration: "none", fontFamily: "var(--font-body)" }}>Terms</a>
+            <a href="https://github.com/jxi5410/AI.LDN" target="_blank" rel="noopener" style={{ fontSize: 13, color: "var(--text-muted)", textDecoration: "none", fontFamily: "var(--font-body)" }}>GitHub</a>
+          </div>
+        </div>
+      </div>}
 
       {/* ── AUTH MODAL ────────────────────────────────────────────── */}
       {authMode && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => { setAuthMode(null); setSignupSuccess(false); }}>

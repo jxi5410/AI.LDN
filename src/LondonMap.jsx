@@ -33,15 +33,16 @@ const INVESTOR_BRAND = {
 
 function nr(c, view, mobile) {
   const m = mobile ? 1.5 : 1;
+  const minR = mobile ? 22 : 0;
   if (view === "investors") {
-    if (c.cat === "investor") return 32 * m;
+    if (c.cat === "investor") return Math.max(minR, 32 * m);
     const f = c.fn || 0;
-    if (f >= 1000) return 14 * m; if (f >= 500) return 12 * m; if (f >= 200) return 10 * m; if (f >= 50) return 8 * m; return 6 * m;
+    if (f >= 1000) return Math.max(minR, 14 * m); if (f >= 500) return Math.max(minR, 12 * m); if (f >= 200) return Math.max(minR, 10 * m); if (f >= 50) return Math.max(minR, 8 * m); return Math.max(minR, 6 * m);
   }
-  if (c.cat === "frontier") return 26 * m; if (c.cat === "investor") return 10 * m; if (c.cat === "academic") return 13 * m;
-  if (c.cat === "frontier-emerging") return 18 * m;
+  if (c.cat === "frontier") return Math.max(minR, 26 * m); if (c.cat === "investor") return Math.max(minR, 10 * m); if (c.cat === "academic") return Math.max(minR, 13 * m);
+  if (c.cat === "frontier-emerging") return Math.max(minR, 18 * m);
   const f = c.fn || 0;
-  if (f >= 1000) return 22 * m; if (f >= 500) return 18 * m; if (f >= 200) return 15 * m; if (f >= 50) return 12 * m; if (f >= 10) return 10 * m; return 8 * m;
+  if (f >= 1000) return Math.max(minR, 22 * m); if (f >= 500) return Math.max(minR, 18 * m); if (f >= 200) return Math.max(minR, 15 * m); if (f >= 50) return Math.max(minR, 12 * m); if (f >= 10) return Math.max(minR, 10 * m); return Math.max(minR, 8 * m);
 }
 
 // Get the investor colour for a portfolio company (find which investor it's connected to)
@@ -105,7 +106,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
         .strength(0.3))
       .force("charge", d3.forceManyBody().strength(d => isInv && d.cat === "investor" ? -d.r * 30 : -120))
       .force("center", d3.forceCenter(w / 2, h / 2))
-      .force("collision", d3.forceCollide().radius(d => d.r + (isInv && d.cat === "investor" ? 16 : isMobile ? 18 : 14)))
+      .force("collision", d3.forceCollide().radius(d => d.r + (isInv && d.cat === "investor" ? 16 : isMobile ? 20 : 14)))
       .force("x", d3.forceX(w / 2).strength(0.04))
       .force("y", d3.forceY(h / 2).strength(0.04));
     simRef.current = sim;
@@ -160,12 +161,15 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
       .attr("class", "node-g")
       .attr("cursor", "pointer")
       .attr("opacity", 0)
-      .transition().duration(600).delay((d, i) => i * 8).attr("opacity", 1).selection()
-      .call(d3.drag()
+      .transition().duration(600).delay((d, i) => i * 8).attr("opacity", 1).selection();
+    // Drag only on desktop — disable on mobile to avoid scroll/pan conflicts
+    if (!isMobile) {
+      node.call(d3.drag()
         .on("start", (e, d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
         .on("drag", (e, d) => { d.fx = e.x; d.fy = e.y; })
         .on("end", (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; })
       );
+    }
 
     // Glow for investors in investor view — use brand colour
     if (isInv) {
@@ -351,6 +355,6 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
   }, [companies, edges, selected, isMobile, mapView]);
 
   return (
-    <svg ref={svgRef} style={{ width: "100%", height: "100%", display: "block" }} />
+    <svg ref={svgRef} style={{ width: "100%", height: "100%", display: "block", touchAction: "manipulation" }} />
   );
 }
