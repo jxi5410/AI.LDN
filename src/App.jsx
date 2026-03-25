@@ -95,7 +95,13 @@ export default function App() {
   const [fundingRounds, setFundingRounds] = useState([]);
   const [signals, setSignals] = useState([]);
   const layout = "force";
-  const [panel, setPanel] = useState("graph");
+  const [panel, _setPanel] = useState("graph");
+  const [panelAnim, setPanelAnim] = useState(false);
+  const setPanel = useCallback((p) => {
+    if (p === panel) return;
+    setPanelAnim(true);
+    setTimeout(() => { _setPanel(p); setPanelAnim(false); }, 200);
+  }, [panel]);
   const [highlightPerson, setHighlightPerson] = useState(null);
   const [openCats, setOpenCats] = useState(new Set());
   const [allPeopleOpen, setAllPeopleOpen] = useState(false);
@@ -1241,7 +1247,9 @@ export default function App() {
 
       {/* ── INSIGHTS PANEL ───────────────────────────────────────── */}
       {panel === "insights" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", paddingBottom: isMobile ? 40 : 130, background: "var(--bg-base)" }}>
-        {insightsLoading ? <div style={{ textAlign: "center", padding: 40, color: "var(--text-muted)" }}>Loading insights...</div> :
+        {insightsLoading ? <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10, marginTop: 14 }}>
+          {[1,2,3,4,5,6].map(i => <SkeletonCard key={i} />)}
+        </div> :
         !selectedInsight ? <>
           {/* ── VERTICAL SECTOR ANALYSIS ── */}
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 400, color: "var(--text-primary)", margin: "14px 0 4px" }}>Vertical Sector Analysis</h2>
@@ -1391,7 +1399,9 @@ export default function App() {
       {/* ── EVENTS PANEL ─────────────────────────────────────────── */}
       {panel === "events" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", paddingBottom: isMobile ? 40 : 130, background: "#faf9f5" }}>
         <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 12px" }}>Curated meetups, conferences, and community gatherings</p>
-        {eventsLoading ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>Loading events...</div> :
+        {eventsLoading ? <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(340px,1fr))", gap: 12, marginTop: 10 }}>
+          {[1,2,3,4].map(i => <SkeletonCard key={i} />)}
+        </div> :
         events.length === 0 ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>No events found</div> :
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(340px,1fr))", gap: 12 }}>
           {events.map((ev, i) => {
@@ -1758,7 +1768,23 @@ export default function App() {
 }
 
 // ── SUBCOMPONENTS ───────────────────────────────────────────────────────
-const inputStyle = { width: "100%", padding: "6px 8px", borderRadius: 5, border: "1px solid #e8e5dc", background: "#f5f3ee", color: "#2d2d2a", fontSize: 12, fontFamily: "inherit", outline: "none", marginBottom: 8, boxSizing: "border-box" };
+const inputStyle = { width: "100%", padding: "6px 8px", borderRadius: 5, border: "1px solid var(--border)", background: "var(--bg-sunken)", color: "var(--text-primary)", fontSize: 12, fontFamily: "var(--font-body)", outline: "none", marginBottom: 8, boxSizing: "border-box" };
+
+function Skeleton({ width = "100%", height = 14, style = {} }) {
+  return <div style={{ width, height, borderRadius: 4, background: "var(--bg-sunken)", animation: "skeletonPulse 1.5s ease-in-out infinite", ...style }} />;
+}
+
+function SkeletonCard() {
+  return <div style={{ background: "var(--bg-elevated)", borderRadius: 8, border: "1px solid var(--border)", padding: 14 }}>
+    <Skeleton height={18} width="60%" style={{ marginBottom: 8 }} />
+    <Skeleton height={12} width="90%" style={{ marginBottom: 6 }} />
+    <Skeleton height={12} width="75%" style={{ marginBottom: 10 }} />
+    <div style={{ display: "flex", gap: 6 }}>
+      <Skeleton height={10} width={60} />
+      <Skeleton height={10} width={80} />
+    </div>
+  </div>;
+}
 
 function M({ l, v }) { return (<div style={{ background: "var(--bg-sunken)", borderRadius: 8, padding: "8px 12px", border: "1px solid var(--border)" }}><div style={{ fontSize: 16, color: "var(--text-primary)", fontWeight: 600, fontFamily: "var(--font-mono)" }}>{String(v)}</div><div style={{ fontSize: 9, color: "var(--text-muted)", textTransform: "uppercase", fontFamily: "var(--font-body)" }}>{l}</div></div>); }
 function S({ t, v }) { return (<div style={{ marginBottom: 8 }}><div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 1.5, fontWeight: 600, fontFamily: "var(--font-body)" }}>{t}</div><div style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.5, fontFamily: "var(--font-body)" }}>{v}</div></div>); }
