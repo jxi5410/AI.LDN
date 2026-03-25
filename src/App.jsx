@@ -1437,7 +1437,7 @@ export default function App() {
 
       {/* ── DETAIL PANEL (graph) ──────────────────────────────────── */}
       {sel && panel === "graph" && <DraggableCard isMobile={isMobile} onClose={() => setSel(null)} headerHeight={headerHeight}>
-        <div style={{ padding: "12px 14px 8px", borderBottom: "1px solid #e8e5dc" }}>
+        <div style={{ padding: "12px 14px 8px", borderBottom: "1px solid var(--border)" }}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ flex: 1 }}>
               <span style={{ fontSize: 9, color: CC[sel.cat]?.c, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "var(--font-body)", background: "var(--accent-bg)", padding: "2px 6px", borderRadius: 3 }}>{CC[sel.cat]?.i} {CC[sel.cat]?.l}</span>
@@ -1446,25 +1446,26 @@ export default function App() {
             </div>
             <div style={{ display: "flex", gap: 12, alignItems: "start", marginLeft: 8 }}>
               <span onClick={() => toggleStar("company", sel.id)} style={{ cursor: "pointer", padding: 4 }}><StarIcon filled={stars.has(`company:${sel.id}`)} /></span>
-              <button onClick={() => setSel(null)} style={{ background: "none", border: "none", color: "#a0a09b", fontSize: 18, cursor: "pointer", padding: 4, lineHeight: 1 }}>✕</button>
+              <button onClick={() => setSel(null)} style={{ background: "none", border: "none", color: "var(--text-muted)", fontSize: 18, cursor: "pointer", padding: 4, lineHeight: 1 }}>✕</button>
             </div>
           </div>
-          {selUD && <div style={{ marginTop: 6, padding: "4px 7px", borderRadius: 5, background: US[selUD.status]?.c + "18", border: `1px solid ${US[selUD.status]?.c}30`, display: "flex", alignItems: "center", gap: 5 }}>
+          {/* Metric chips */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 10 }}>
+            {sel.fund && <M l="Funding" v={sel.fund} />}{sel.yr && <M l="Founded" v={sel.yr} />}{sel.emp && <M l="Team" v={sel.emp} />}{sel.val && <M l="Valuation" v={sel.val} />}
+          </div>
+          {selUD && <div style={{ marginTop: 8, padding: "4px 7px", borderRadius: 5, background: US[selUD.status]?.c + "18", border: `1px solid ${US[selUD.status]?.c}30`, display: "flex", alignItems: "center", gap: 5 }}>
             <span style={{ fontSize: 9 }}>{US[selUD.status]?.i}</span>
             <span style={{ fontSize: 9, color: US[selUD.status]?.c, fontWeight: 600 }}>{US[selUD.status]?.l}</span>
-            {(selUD.contact_name || selUD.contact) && <span style={{ fontSize: 8, color: "#6b6b66" }}>· {selUD.contact_name || selUD.contact}</span>}
+            {(selUD.contact_name || selUD.contact) && <span style={{ fontSize: 8, color: "var(--footer-text)" }}>· {selUD.contact_name || selUD.contact}</span>}
           </div>}
-          <div style={{ display: "flex", gap: 0, marginTop: 8 }}>
+          <div style={{ display: "flex", gap: 0, marginTop: 10, flexWrap: "wrap" }}>
             {[["info","Info"], ["funding","Funding"], ["people","People"], ...(signals.length > 0 ? [["signals","Signals"]] : []), ["links","Links"], ["network","Network"]].map(([k, l]) => (
-              <button key={k} onClick={() => setTab(k)} style={{ flex: 1, padding: "4px 0", border: "none", borderBottom: tab === k ? "2px solid var(--accent)" : "2px solid transparent", background: "none", color: tab === k ? "var(--text-primary)" : "var(--text-muted)", fontSize: 11, fontFamily: "var(--font-body)", cursor: "pointer", textTransform: "uppercase", fontWeight: 600, letterSpacing: "0.5px" }}>{l}</button>
+              <button key={k} onClick={() => setTab(k)} style={{ flex: 1, padding: "6px 0", border: "none", borderBottom: tab === k ? "2px solid var(--accent)" : "2px solid transparent", background: "none", color: tab === k ? "var(--text-primary)" : "var(--text-muted)", fontSize: 11, fontFamily: "var(--font-body)", cursor: "pointer", textTransform: "uppercase", fontWeight: 600, letterSpacing: "0.5px" }}>{l}</button>
             ))}
           </div>
         </div>
         <div style={{ padding: isMobile ? "10px 14px calc(14px + env(safe-area-inset-bottom, 20px))" : "10px 14px 14px" }}>
           {tab === "info" && <>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4, marginBottom: 10 }}>
-              {sel.fund && <M l="Funding" v={sel.fund} />}{sel.val && <M l="Valuation" v={sel.val} />}{sel.emp && <M l="Team" v={sel.emp} />}{sel.yr && <M l="Founded" v={sel.yr} />}
-            </div>
             {sel.focus && <S t="Focus" v={sel.focus} />}
             {sel.clients && <S t="Clients & Markets" v={sel.clients} />}
             {sel.ethos && <S t="Ethos" v={sel.ethos} />}
@@ -1580,40 +1581,42 @@ export default function App() {
             </div>}
           </>}
           {tab === "signals" && <>
-            <div style={{ fontSize: 11, color: "#a0a09b", marginBottom: 8 }}>What founders and leaders are saying — sourced from podcasts, interviews, and conferences.</div>
-            {signals.map((sig, i) => (
-              <div key={i} style={{ marginBottom: 12, padding: "10px", borderRadius: 8, background: "#ffffff", border: "1px solid #e8e5dc" }}>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 8, fontFamily: "var(--font-body)" }}>What founders and leaders are saying — sourced from podcasts, interviews, and conferences.</div>
+            {signals.map((sig, i) => {
+              const borderColor = sig.source_type === "podcast" ? "var(--accent)" : sig.source_type === "interview" ? "#4A90D9" : sig.source_type === "conference" ? "var(--success)" : "var(--border-strong)";
+              return (
+              <div key={i} style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 8, background: "var(--bg-elevated)", border: "1px solid var(--border)", borderLeft: `3px solid ${borderColor}` }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
-                  <span style={{ fontSize: 14 }}>{sig.source_type === "podcast" ? "🎙️" : sig.source_type === "conference" ? "🎤" : sig.source_type === "video" ? "🎬" : "📰"}</span>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 11, color: "#1a1a18", fontWeight: 600 }}>{sig.speaker}</div>
-                    <div style={{ fontSize: 9, color: "#a0a09b" }}>{sig.speaker_role}</div>
+                    <div style={{ fontSize: 15, color: "var(--text-primary)", fontFamily: "var(--font-display)", fontStyle: "italic" }}>{sig.speaker}</div>
+                    <div style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "var(--font-body)" }}>{sig.speaker_role}</div>
                   </div>
-                  {sig.date && <span style={{ fontSize: 9, color: "#b5b3ae" }}>{sig.date}</span>}
+                  {sig.date && <span style={{ fontSize: 9, color: "var(--text-faint)", fontFamily: "var(--font-mono)" }}>{sig.date}</span>}
                 </div>
                 {sig.source_url ? (
-                  <a href={sig.source_url} target="_blank" rel="noopener" style={{ fontSize: 10, color: "#C15F3C", textDecoration: "none", display: "block", marginBottom: 6 }}>{sig.source_title} →</a>
+                  <a href={sig.source_url} target="_blank" rel="noopener" style={{ fontSize: 10, color: "var(--accent)", textDecoration: "none", display: "block", marginBottom: 6, fontFamily: "var(--font-body)" }}>Read more →</a>
                 ) : (
-                  <div style={{ fontSize: 10, color: "#6b6b66", marginBottom: 6 }}>{sig.source_title}</div>
+                  <div style={{ fontSize: 10, color: "var(--footer-text)", marginBottom: 6, fontFamily: "var(--font-body)" }}>{sig.source_title}</div>
                 )}
-                <div style={{ fontSize: 11, color: "#4a4a45", lineHeight: 1.6, marginBottom: 6 }}>{sig.summary}</div>
+                <div style={{ fontSize: 11, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 6, fontFamily: "var(--font-body)" }}>{sig.summary}</div>
                 {sig.key_quotes && sig.key_quotes.length > 0 && (
-                  <div style={{ borderLeft: "2px solid #C15F3C33", paddingLeft: 8, marginBottom: 6 }}>
+                  <div style={{ borderLeft: "2px solid rgba(193,95,60,0.2)", paddingLeft: 8, marginBottom: 6 }}>
                     {sig.key_quotes.map((q, qi) => (
-                      <div key={qi} style={{ fontSize: 10, color: "#6b6b66", fontStyle: "italic", marginBottom: 3, lineHeight: 1.5 }}>"{q}"</div>
+                      <div key={qi} style={{ fontSize: 10, color: "var(--footer-text)", fontStyle: "italic", marginBottom: 3, lineHeight: 1.5, fontFamily: "var(--font-body)" }}>"{q}"</div>
                     ))}
                   </div>
                 )}
                 {sig.themes && sig.themes.length > 0 && (
                   <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
                     {sig.themes.map((t, ti) => (
-                      <span key={ti} style={{ fontSize: 8, padding: "2px 6px", borderRadius: 4, background: "#C15F3C12", color: "#C15F3C", fontWeight: 500 }}>{t}</span>
+                      <span key={ti} style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "var(--accent-bg)", color: "var(--accent)", fontWeight: 500, fontFamily: "var(--font-body)" }}>{t}</span>
                     ))}
                   </div>
                 )}
               </div>
-            ))}
-            <div style={{ fontSize: 9, color: "#b5b3ae", fontStyle: "italic", marginTop: 8 }}>Signals are curated from public sources. Summaries may not reflect the speaker's full views.</div>
+              );
+            })}
+            <div style={{ fontSize: 9, color: "var(--text-faint)", fontStyle: "italic", marginTop: 8, fontFamily: "var(--font-body)" }}>Signals are curated from public sources. Summaries may not reflect the speaker's full views.</div>
           </>}
           {tab === "links" && <>
             {ce.length === 0 ? <p style={{ fontSize: 12, color: "#a0a09b" }}>No connections.</p> :
