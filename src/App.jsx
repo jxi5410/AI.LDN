@@ -856,9 +856,12 @@ export default function App() {
 
       {/* ── UPDATES PANEL ────────────────────────────────────────── */}
       {/* ── INSIGHTS PANEL ────────────────────────────────────────── */}
-      {panel === "bits" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", paddingBottom: isMobile ? 40 : 130, background: "#faf9f5" }}>
+      {panel === "bits" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", paddingBottom: isMobile ? 40 : 130, background: "var(--bg-base)" }}>
         {/* Subtitle */}
-        <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 20px 12px" }}>Data, charts, ecosystem signals, and curated reads from London's AI scene</p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "10px 20px 12px" }}>
+          <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0, fontFamily: "var(--font-body)" }}>Data, charts, ecosystem signals, and curated reads from London's AI scene</p>
+          <a href="https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api" target="_blank" rel="noopener" style={{ fontSize: 11, color: "var(--accent)", textDecoration: "none", fontFamily: "var(--font-mono)", fontWeight: 500, whiteSpace: "nowrap" }}>API Docs →</a>
+        </div>
         {/* Admin scrape button */}
         {user?.id === ADMIN_UID && <div style={{ padding: "6px 20px 0", display: "flex", justifyContent: "flex-end" }}>
           <button onClick={async () => {
