@@ -68,6 +68,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
     svg.selectAll("*").remove();
     // Also clean up tooltips from previous renders
     d3.select(svgRef.current.parentNode).selectAll(".edge-tooltip").remove();
+    d3.select(svgRef.current.parentNode).selectAll(".node-tooltip").remove();
 
     svg.append("rect").attr("width", w).attr("height", h).attr("fill", "#faf9f5");
     const defs = svg.append("defs");
@@ -154,10 +155,12 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
 
     const edgeLabels = g.append("g").attr("class", "edge-labels").style("pointer-events", "none");
 
-    // Draw nodes
+    // Draw nodes with entrance animation
     const node = g.append("g").selectAll("g").data(nodes).join("g")
       .attr("class", "node-g")
       .attr("cursor", "pointer")
+      .attr("opacity", 0)
+      .transition().duration(600).delay((d, i) => i * 8).attr("opacity", 1).selection()
       .call(d3.drag()
         .on("start", (e, d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
         .on("drag", (e, d) => { d.fx = e.x; d.fy = e.y; })
@@ -251,6 +254,13 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
       })
       .attr("pointer-events", "none");
 
+    // Node hover tooltip
+    const nodeTip = d3.select(svgRef.current.parentNode).append("div").attr("class", "node-tooltip")
+      .style("position", "absolute").style("pointer-events", "none").style("display", "none")
+      .style("background", "var(--bg-elevated)").style("border", "1px solid var(--border)")
+      .style("border-radius", "8px").style("padding", "8px 12px").style("z-index", "700")
+      .style("font-family", "'DM Sans',sans-serif").style("opacity", "0").style("transition", "opacity 150ms ease");
+
     node.on("click", (e, d) => { e.stopPropagation(); onSelect(d); });
     svg.on("click", () => onSelect(null));
 
@@ -283,6 +293,13 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
 
     node.on("mouseenter", (e, d) => {
       applyHighlight(d.id);
+      // Show tooltip
+      const catLabel = CC[d.cat]?.l || d.cat;
+      const funding = d.fund || "";
+      nodeTip.html(`<div style="font-family:'DM Serif Display',Georgia,serif;font-size:16px;color:var(--text-primary)">${d.name}</div>${funding ? `<div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);margin-top:2px">${funding}</div>` : ""}<div style="font-size:11px;color:${CC[d.cat]?.c || "var(--text-muted)"};margin-top:2px">${catLabel}</div>`)
+        .style("display", "block");
+      setTimeout(() => nodeTip.style("opacity", "1"), 10);
+      // Edge labels
       edgeLabels.selectAll("text").remove();
       links.forEach(l => {
         const sid = typeof l.source === "object" ? l.source.id : l.source;
@@ -309,7 +326,12 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
           }
         }
       });
+    }).on("mousemove", (e) => {
+      const rect = svgRef.current.parentNode.getBoundingClientRect();
+      nodeTip.style("left", (e.clientX - rect.left + 14) + "px").style("top", (e.clientY - rect.top - 10) + "px");
     }).on("mouseleave", () => {
+      nodeTip.style("opacity", "0");
+      setTimeout(() => nodeTip.style("display", "none"), 150);
       edgeLabels.selectAll("text").remove();
       if (selected) { applyHighlight(selected.id); }
       else { applyHighlight(null); }

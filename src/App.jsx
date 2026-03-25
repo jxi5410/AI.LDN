@@ -104,6 +104,7 @@ export default function App() {
   const [updateFilter, setUpdateFilter] = useState("all");
   const [mapView, setMapView] = useState("companies"); // "companies" | "investors"
   const [legendOpen, setLegendOpen] = useState(true);
+  const [legendDismissed, setLegendDismissed] = useState(() => localStorage.getItem('ldnai-legend-dismissed') === '1');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // User data (from Supabase or localStorage fallback)
@@ -746,28 +747,32 @@ export default function App() {
       </div>}
 
       {/* ── LEFT SIDEBAR (graph) ──────────────────────────────────── */}
-      {panel === "graph" && !isMobile && <div style={{ position: "absolute", top: headerHeight + 10, left: 6, zIndex: 20000, background: "rgba(255,255,255,0.97)", borderRadius: 10, padding: "7px 7px 10px", backdropFilter: "blur(14px)", border: "1px solid #e8e5dc", maxHeight: `calc(100vh - ${headerHeight + 16}px)`, overflowY: "auto", width: 210 }}>
-        {/* View toggle */}
-        <div style={{ display: "flex", gap: 2, marginBottom: 5 }}>
+      {panel === "graph" && !isMobile && <div style={{ position: "absolute", top: headerHeight + 10, left: 6, zIndex: 20000, background: "var(--bg-elevated)", borderRadius: 10, padding: "10px", border: "1px solid var(--border)", maxHeight: `calc(100vh - ${headerHeight + 16}px)`, overflowY: "auto", width: 220, flex: "0 0 220px" }}>
+        {/* Segmented control */}
+        <div style={{ display: "flex", gap: 0, marginBottom: 8, background: "var(--bg-sunken)", borderRadius: 6, padding: 2 }}>
           {[["companies", "Companies"], ["investors", "Investors"]].map(([k, l]) => (
             <button key={k} onClick={() => {
               setMapView(k);
               if (k === "investors") { setCats(prev => new Set([...prev, "investor"])); }
               else { setCats(prev => { const n = new Set(prev); n.delete("investor"); return n; }); }
-            }} style={{ flex: 1, padding: "3px", borderRadius: 4, border: `1px solid ${mapView === k ? "#C15F3C" : "#e8e5dc"}`, background: mapView === k ? "#C15F3C18" : "transparent", color: mapView === k ? "#C15F3C" : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit", fontWeight: mapView === k ? 600 : 400 }}>{l}</button>
+            }} style={{ flex: 1, padding: "5px 8px", borderRadius: 5, border: "none", background: mapView === k ? "var(--bg-elevated)" : "transparent", color: mapView === k ? "var(--text-primary)" : "var(--text-muted)", fontSize: 12, cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: mapView === k ? 600 : 400, transition: "all 0.15s" }}>{l}</button>
           ))}
         </div>
-        <div style={{ display: "flex", gap: 2, marginBottom: 5 }}>
-          {[["All", () => setCats(new Set(mapView === "companies" ? Object.keys(CC).filter(k => k !== "investor") : Object.keys(CC)))], ["None", () => setCats(mapView === "investors" ? new Set(["investor"]) : new Set())]].map(([l, fn]) => (
-            <button key={l} onClick={fn} style={{ flex: 1, padding: "2px", borderRadius: 4, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "inherit" }}>{l}</button>
-          ))}
+        {/* All/None links */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 8, paddingLeft: 2 }}>
+          <span onClick={() => setCats(new Set(mapView === "companies" ? Object.keys(CC).filter(k => k !== "investor") : Object.keys(CC)))} style={{ fontSize: 11, color: "var(--text-muted)", cursor: "pointer", fontFamily: "var(--font-body)" }}>All</span>
+          <span onClick={() => setCats(mapView === "investors" ? new Set(["investor"]) : new Set())} style={{ fontSize: 11, color: "var(--text-muted)", cursor: "pointer", fontFamily: "var(--font-body)" }}>None</span>
         </div>
         {Object.entries(CC).map(([k, cfg]) => (
-          <div key={k} onClick={() => tc(k)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "3px 4px", borderRadius: 4, cursor: "pointer", opacity: cats.has(k) ? 1 : 0.3 }}>
-            <span style={{ fontSize: 13, width: 16, textAlign: "center", color: cats.has(k) ? "#30D158" : "#ccc" }}>{cats.has(k) ? "✓" : ""}</span>
-            <div style={{ width: 10, height: 10, borderRadius: "50%", background: cfg.c, flexShrink: 0 }} />
-            <span style={{ fontSize: 13, color: "#4a4a45", flex: 1 }}>{cfg.l}</span>
-            <span style={{ fontSize: 13, color: "#a0a09b" }}>{companies.filter(c => c.cat === k).length}</span>
+          <div key={k} onClick={() => tc(k)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", borderRadius: 4, cursor: "pointer", opacity: cats.has(k) ? 1 : 0.35, transition: "all 0.15s" }}
+            onMouseEnter={e => { if (cats.has(k)) e.currentTarget.style.background = "var(--bg-sunken)"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}>
+            <div style={{ width: 3, height: 18, borderRadius: 2, background: cfg.c, flexShrink: 0 }} />
+            <div style={{ width: 14, height: 14, borderRadius: 3, border: `1.5px solid ${cats.has(k) ? "var(--success)" : "var(--border)"}`, background: cats.has(k) ? "var(--success)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.15s" }}>
+              {cats.has(k) && <svg width="8" height="8" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+            </div>
+            <span style={{ fontSize: 13, color: "var(--text-secondary)", flex: 1, fontFamily: "var(--font-body)", fontWeight: 500 }}>{cfg.l}</span>
+            <span style={{ fontSize: 11, color: "var(--text-faint)", fontFamily: "var(--font-mono)", background: "var(--bg-sunken)", padding: "1px 6px", borderRadius: 10 }}>{companies.filter(c => c.cat === k).length}</span>
           </div>
         ))}
       </div>}
@@ -1651,38 +1656,12 @@ export default function App() {
       </DraggableCard>}
 
       {/* ── MAP STATS + LEGENDS ─────────────────────────────────────── */}
-      {panel === "graph" && !sel && !isMobile && <>
-        {/* Desktop: contextual map guide — top center */}
-        <div style={{ position: "absolute", top: headerHeight + 8, left: "50%", transform: "translateX(-50%)", zIndex: 500, background: "rgba(255,255,255,0.96)", backdropFilter: "blur(10px)", borderRadius: 10, border: "1px solid #e8e5dc", padding: "12px 20px", maxWidth: 680, width: "fit-content", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", fontFamily: "'Libre Baskerville',Georgia,serif" }}>
-          {mapView === "companies" ? (
-            <div>
-              <p style={{ fontSize: 12, color: "#1a1a18", lineHeight: 1.6, margin: "0 0 6px" }}>
-                Each bubble is a company. Click any bubble for details.
-              </p>
-              <p style={{ fontSize: 12, color: "#6b6b66", lineHeight: 1.6, margin: "0 0 8px" }}>
-                Lines between companies show founder-level relationships: where founders previously worked together, spun out from, invested in, co-published research with, or formed strategic partnerships.
-              </p>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                <span style={{ fontSize: 12, color: "#a0a09b", fontWeight: 600 }}>Bubble size:</span>
-                <svg width="60" height="16" style={{ verticalAlign: "middle" }}><circle cx="6" cy="8" r="4" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="0.8"/><circle cx="22" cy="8" r="7" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="0.8"/><circle cx="42" cy="8" r="10" fill="#C15F3C" opacity="0.3" stroke="#C15F3C" strokeWidth="0.8"/></svg>
-                <span style={{ fontSize: 12, color: "#8a8a85" }}>= total funding raised (Seed → $1B+)</span>
-              </div>
-              <p style={{ fontSize: 12, color: "#b5b3ae", marginTop: 8, fontStyle: "italic", margin: "8px 0 0" }}>
-                Note: Relationships are tracked at the founder and C-suite level only.
-              </p>
-            </div>
-          ) : (
-            <div>
-              <p style={{ fontSize: 12, color: "#1a1a18", lineHeight: 1.6, margin: "0 0 6px" }}>
-                Each bubble is an investor or portfolio company. Click any bubble to see their portfolio.
-              </p>
-              <p style={{ fontSize: 12, color: "#6b6b66", lineHeight: 1.6, margin: 0 }}>
-                Lines show capital flow: which investors have funded which companies.
-              </p>
-            </div>
-          )}
+      {panel === "graph" && !sel && !isMobile && !legendDismissed && (
+        <div style={{ position: "absolute", top: headerHeight + 8, left: 240, right: 10, zIndex: 500, background: "var(--bg-sunken)", borderRadius: 6, padding: "8px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", fontFamily: "var(--font-body)" }}>
+          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Click any bubble to explore · Bubble size = funding raised · Lines = relationships</span>
+          <button onClick={() => { setLegendDismissed(true); localStorage.setItem('ldnai-legend-dismissed', '1'); }} style={{ background: "none", border: "none", color: "var(--text-faint)", fontSize: 14, cursor: "pointer", padding: "0 4px", lineHeight: 1 }}>✕</button>
         </div>
-      </>}
+      )}
       {/* Mobile: pullable legend */}
       {panel === "graph" && !sel && isMobile && <div
         onClick={() => setLegendOpen(prev => !prev)}
