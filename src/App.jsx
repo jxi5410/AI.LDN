@@ -1211,27 +1211,27 @@ export default function App() {
       </div>}
 
       {/* ── INSIGHTS PANEL ───────────────────────────────────────── */}
-      {panel === "insights" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", paddingBottom: isMobile ? 40 : 130, background: "#faf9f5" }}>
-        {insightsLoading ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>Loading insights...</div> :
+      {panel === "insights" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", paddingBottom: isMobile ? 40 : 130, background: "var(--bg-base)" }}>
+        {insightsLoading ? <div style={{ textAlign: "center", padding: 40, color: "var(--text-muted)" }}>Loading insights...</div> :
         !selectedInsight ? <>
           {/* ── VERTICAL SECTOR ANALYSIS ── */}
-          <h2 style={{ fontFamily: "inherit", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "14px 0 4px" }}>Vertical Sector Analysis</h2>
-          <p style={{ fontSize: 12, color: "#a0a09b", margin: "0 0 14px" }}>What problems they solve, what's working, what's not, and where the gaps are · <span style={{ fontStyle: "italic" }}>AI-assisted</span></p>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 400, color: "var(--text-primary)", margin: "14px 0 4px" }}>Vertical Sector Analysis</h2>
+          <p style={{ fontSize: 12, color: "var(--text-muted)", margin: "0 0 14px", fontFamily: "var(--font-body)" }}>What problems they solve, what's working, what's not, and where the gaps are · <span style={{ fontStyle: "italic" }}>AI-assisted</span></p>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
             {insights.map(ins => {
               const sectorCos = companies.filter(c => (ins.company_ids || []).includes(c.id));
               return (
-                <div key={ins.id} onClick={() => { setSelectedInsight(ins); setInsightAnswer(""); setInsightAsk(""); }} style={{ background: "#ffffff", borderRadius: 8, border: "1px solid #e8e5dc", padding: 14, cursor: "pointer", transition: "border-color 0.15s" }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = "#C15F3C"}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = "#e8e5dc"}>
+                <div key={ins.id} onClick={() => { setSelectedInsight(ins); setInsightAnswer(""); setInsightAsk(""); }} style={{ background: "var(--bg-elevated)", borderRadius: 8, border: "1px solid var(--border)", borderLeft: "3px solid var(--accent)", padding: 14, cursor: "pointer", transition: "transform 0.15s, border-color 0.15s" }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--border-strong)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)"; }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                     <span style={{ fontSize: 20 }}>{ins.icon}</span>
-                    <span style={{ fontWeight: 600, color: "#1a1a18", fontSize: 14, fontFamily: "inherit" }}>{ins.title}</span>
+                    <span style={{ fontWeight: 400, color: "var(--text-primary)", fontSize: 18, fontFamily: "var(--font-display)" }}>{ins.title}</span>
                   </div>
-                  <p style={{ margin: "0 0 8px", fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{(ins.the_problem || "").slice(0, 120)}...</p>
+                  <p style={{ margin: "0 0 8px", fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5, fontFamily: "var(--font-body)", overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{ins.the_problem || ""}</p>
                   <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
-                    {sectorCos.slice(0, 5).map(c => <span key={c.id} style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: "#f5f4f0", color: "#8a8a85" }}>{c.name}</span>)}
-                    {sectorCos.length > 5 && <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: "#f5f4f0", color: "#a0a09b" }}>+{sectorCos.length - 5}</span>}
+                    {sectorCos.slice(0, 5).map(c => <span key={c.id} style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: "var(--bg-sunken)", color: "var(--text-muted)", fontFamily: "var(--font-body)" }}>{c.name}</span>)}
+                    {sectorCos.length > 5 && <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: "var(--bg-sunken)", color: "var(--text-faint)", fontFamily: "var(--font-body)" }}>+{sectorCos.length - 5}</span>}
                   </div>
                 </div>
               );
@@ -1239,24 +1239,22 @@ export default function App() {
           </div>
 
           {/* ── RESEARCH & ARTICLES ── */}
-          <h2 style={{ fontFamily: "inherit", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "28px 0 4px", borderTop: "2px solid #e8e5dc", paddingTop: 20 }}>Research & Articles</h2>
-          <p style={{ fontSize: 12, color: "#a0a09b", margin: "0 0 14px" }}>In-depth analysis of London's AI ecosystem</p>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 400, color: "var(--text-primary)", margin: "28px 0 4px", borderTop: "2px solid var(--border)", paddingTop: 20 }}>Research & Articles</h2>
+          <p style={{ fontSize: 12, color: "var(--text-muted)", margin: "0 0 14px", fontFamily: "var(--font-body)" }}>In-depth analysis of London's AI ecosystem</p>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
             {[
-              { href: "/ecosystem/", icon: "🗺️", title: "The London AI Ecosystem in 2026", desc: "Complete guide: 74 companies, 20 investors, $37B+ funding across 7 sectors" },
-              { href: "/insights/fifteen-papers.html", icon: "📄", title: "Fifteen Papers That Built Modern AI", desc: "The paradigm-defining papers behind everything — told through the people, not the proofs" },
-              { href: "/insights/londonmaxxing.html", icon: "🔥", title: "Londonmaxxing: The Data", desc: "Why the meme is backed by real numbers — funding, unicorns, infrastructure" },
-              { href: "/insights/unicorns.html", icon: "🦄", title: "London AI Unicorns", desc: "Every billion-dollar AI company: nScale, ElevenLabs, Wayve, Helsing, Synthesia" },
-              { href: "/insights/funding.html", icon: "💰", title: "$37B Funding Analysis", desc: "Where London AI funding actually goes — largest rounds, sector breakdown" },
-              { href: "/insights/compare.html", icon: "⚖️", title: "Dealroom vs Beauhurst vs LDN/ai", desc: "How LDN/ai compares to paid platforms for London AI data" },
-            ].map(a => <a key={a.href} href={a.href} style={{ display: "block", background: "#fff", borderRadius: 8, border: "1px solid #e8e5dc", padding: 14, textDecoration: "none", transition: "border-color 0.15s" }}
-              onMouseEnter={e => e.currentTarget.style.borderColor="#C15F3C"}
-              onMouseLeave={e => e.currentTarget.style.borderColor="#e8e5dc"}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                <span style={{ fontSize: 20 }}>{a.icon}</span>
-                <span style={{ fontWeight: 600, color: "#1a1a18", fontSize: 14, fontFamily: "inherit" }}>{a.title}</span>
-              </div>
-              <p style={{ margin: 0, fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{a.desc}</p>
+              { href: "/ecosystem/", title: "The London AI Ecosystem in 2026", desc: "Complete guide: 74 companies, 20 investors, $37B+ funding across 7 sectors", meta: "Pillar page" },
+              { href: "/insights/fifteen-papers.html", title: "Fifteen Papers That Built Modern AI", desc: "The paradigm-defining papers behind everything — told through the people, not the proofs", meta: "16 Mar 2026 · 5 min read" },
+              { href: "/insights/londonmaxxing.html", title: "Londonmaxxing: The Data", desc: "Why the meme is backed by real numbers — funding, unicorns, infrastructure", meta: "Analysis" },
+              { href: "/insights/unicorns.html", title: "London AI Unicorns", desc: "Every billion-dollar AI company: nScale, ElevenLabs, Wayve, Helsing, Synthesia", meta: "Analysis" },
+              { href: "/insights/funding.html", title: "$37B Funding Analysis", desc: "Where London AI funding actually goes — largest rounds, sector breakdown", meta: "Analysis" },
+              { href: "/insights/compare.html", title: "Dealroom vs Beauhurst vs LDN/ai", desc: "How LDN/ai compares to paid platforms for London AI data", meta: "Comparison" },
+            ].map(a => <a key={a.href} href={a.href} style={{ display: "block", background: "var(--bg-elevated)", borderRadius: 8, border: "1px solid var(--border)", padding: 14, textDecoration: "none", transition: "border-color 0.15s" }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor="var(--border-strong)"; e.currentTarget.querySelector('.art-title').style.color = "var(--accent)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor="var(--border)"; e.currentTarget.querySelector('.art-title').style.color = "var(--text-primary)"; }}>
+              <span className="art-title" style={{ fontWeight: 400, color: "var(--text-primary)", fontSize: 20, fontFamily: "var(--font-display)", display: "block", marginBottom: 4, transition: "color 0.15s" }}>{a.title}</span>
+              <p style={{ margin: "0 0 6px", fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.5, fontFamily: "var(--font-body)" }}>{a.desc}</p>
+              <span style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-body)" }}>{a.meta}</span>
             </a>)}
           </div>
 
