@@ -90,7 +90,7 @@ export default function InsightsPanel({ isMobile }) {
       {/* ── CHARTS (compact 2-column) ────────────────────────────── */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 12, marginBottom: 16 }}>
         <div style={{ background: BG, borderRadius: 10, border: `1px solid ${BORDER}`, padding: "12px" }}>
-          <h3 style={{ fontFamily: "'Inter',sans-serif", fontSize: 13, color: TEXT_LIGHT, fontWeight: 600, margin: "0 0 8px" }}>Capital Raised ($M)</h3>
+          <h3 style={{ fontFamily: "var(--font-body)", fontSize: 13, color: TEXT_LIGHT, fontWeight: 600, margin: "0 0 8px" }}>Capital Raised ($M)</h3>
           <ResponsiveContainer width="100%" height={160}>
             <BarChart data={capitalData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e8e5dc" />
@@ -102,7 +102,7 @@ export default function InsightsPanel({ isMobile }) {
           </ResponsiveContainer>
         </div>
         <div style={{ background: BG, borderRadius: 10, border: `1px solid ${BORDER}`, padding: "12px" }}>
-          <h3 style={{ fontFamily: "'Inter',sans-serif", fontSize: 13, color: TEXT_LIGHT, fontWeight: 600, margin: "0 0 8px" }}>Ecosystem Growth</h3>
+          <h3 style={{ fontFamily: "var(--font-body)", fontSize: 13, color: TEXT_LIGHT, fontWeight: 600, margin: "0 0 8px" }}>Ecosystem Growth</h3>
           <ResponsiveContainer width="100%" height={160}>
             <AreaChart data={cumulativeData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e8e5dc" />
@@ -127,7 +127,7 @@ function StatCard({ label, value, icon }) {
   return (
     <div style={{ background: BG, borderRadius: 8, border: `1px solid ${BORDER}`, padding: "12px", textAlign: "center" }}>
       <div style={{ fontSize: 20 }}>{icon}</div>
-      <div style={{ fontSize: 22, fontWeight: 800, color: "#1a1a18", fontFamily: "'Inter',sans-serif", marginTop: 2 }}>{value}</div>
+      <div style={{ fontSize: 22, fontWeight: 800, color: "#1a1a18", fontFamily: "var(--font-body)", marginTop: 2 }}>{value}</div>
       <div style={{ fontSize: 9, color: TEXT, marginTop: 2 }}>{label}</div>
     </div>
   );

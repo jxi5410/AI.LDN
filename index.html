@@ -24,6 +24,11 @@
     <meta name="twitter:image" content="https://londonai.network/og/default.png" />
     <meta name="twitter:description" content="99+ AI companies, 20 investors, 67 key people, $37B+ funding tracked. Explore London's AI ecosystem." />
 
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
     <!-- RSS Discovery -->
     <link rel="alternate" type="application/rss+xml" title="LDN/ai Ecosystem Updates" href="/feed.xml" />
 
@@ -86,15 +91,51 @@
     </script>
 
     <style>
+      :root {
+        /* Typography */
+        --font-display: 'DM Serif Display', Georgia, serif;
+        --font-body: 'DM Sans', -apple-system, sans-serif;
+        --font-mono: 'JetBrains Mono', monospace;
+
+        /* Backgrounds — 3 elevation levels */
+        --bg-base: #faf9f5;
+        --bg-elevated: #ffffff;
+        --bg-sunken: #f2f0ea;
+
+        /* Text — 4 contrast levels */
+        --text-primary: #1a1a18;
+        --text-secondary: #4a4a45;
+        --text-muted: #8a8a85;
+        --text-faint: #b5b3ae;
+
+        /* Accent — single hue, 3 intensities */
+        --accent: #C15F3C;
+        --accent-hover: #a84e30;
+        --accent-bg: rgba(193, 95, 60, 0.07);
+
+        /* Borders */
+        --border: #e8e5dc;
+        --border-strong: #d5d3ca;
+
+        /* Status */
+        --success: #30D158;
+        --warning: #FFD700;
+        --danger: #FF453A;
+
+        /* Footer */
+        --footer-bg: #1a1a18;
+        --footer-text: #6b6b66;
+        --footer-text-bright: #8a8a85;
+      }
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { background: #faf9f5; overflow: hidden; overflow-x: hidden; max-width: 100vw; }
-      #ssr-content { display: none; color: #4a4a45; font-family: -apple-system, sans-serif; padding: 24px; max-width: 860px; margin: 0 auto; line-height: 1.7; }
-      #ssr-content h1 { color: #C15F3C; font-size: 28px; margin: 0 0 12px; }
-      #ssr-content h2 { color: #1a1a18; font-size: 20px; margin: 24px 0 8px; }
-      #ssr-content h3 { color: #C15F3C; font-size: 16px; margin: 18px 0 6px; }
-      #ssr-content a { color: #C15F3C; }
+      body { background: var(--bg-base); overflow: hidden; overflow-x: hidden; max-width: 100vw; }
+      #ssr-content { display: none; color: var(--text-secondary); font-family: var(--font-body); padding: 24px; max-width: 860px; margin: 0 auto; line-height: 1.7; }
+      #ssr-content h1 { color: var(--accent); font-size: 28px; margin: 0 0 12px; font-family: var(--font-display); }
+      #ssr-content h2 { color: var(--text-primary); font-size: 20px; margin: 24px 0 8px; font-family: var(--font-display); }
+      #ssr-content h3 { color: var(--accent); font-size: 16px; margin: 18px 0 6px; }
+      #ssr-content a { color: var(--accent); }
       #ssr-content p { margin: 0 0 12px; font-size: 15px; }
-      #ssr-content strong { color: #1a1a18; }
+      #ssr-content strong { color: var(--text-primary); }
     </style>
   </head>
   <body>

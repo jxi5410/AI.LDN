@@ -546,7 +546,7 @@ export default function App() {
       .attr("fill", "#6b6b66")
       .attr("font-size", d => d.r > 14 ? "11px" : "10px")
       .attr("font-weight", "400")
-      .attr("font-family", "'Inter',-apple-system,BlinkMacSystemFont,sans-serif").attr("pointer-events", "none");
+      .attr("font-family", "'DM Sans',-apple-system,sans-serif").attr("pointer-events", "none");
 
     svg.on("click", () => setSel(null));
     sim.on("tick", () => {
@@ -592,29 +592,28 @@ export default function App() {
 
   // ── RENDER ──────────────────────────────────────────────────────────
   return (<>
-    <div style={{ width: "100%", height: "100vh", background: "#faf9f5", overflow: "hidden", fontFamily: "'Libre Baskerville',Georgia,serif", position: "relative", color: "#2d2d2a" }}>
-      <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-      <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#c5c3ba;border-radius:4px}input[type=range]{-webkit-appearance:none;background:transparent}input[type=range]::-webkit-slider-track{height:2px;background:#e8e5dc;border-radius:2px}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:#FF2D55;margin-top:-3px;cursor:pointer}`}</style>
+    <div style={{ width: "100%", height: "100vh", background: "var(--bg-base)", overflow: "hidden", fontFamily: "var(--font-body)", position: "relative", color: "var(--text-primary)" }}>
+      <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}@keyframes skeletonPulse{0%,100%{opacity:0.6}50%{opacity:1}}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#c5c3ba;border-radius:4px}input[type=range]{-webkit-appearance:none;background:transparent}input[type=range]::-webkit-slider-track{height:2px;background:var(--border);border-radius:2px}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:-3px;cursor:pointer}.panel-enter{opacity:0;transform:translateY(8px)}.panel-enter-active{opacity:1;transform:translateY(0);transition:opacity 200ms ease,transform 200ms ease}`}</style>
 
       {/* ── HEADER ──────────────────────────────────────────────────── */}
-      <div ref={headerRef} style={{ position: "fixed", top: 0, left: 0, right: 0, padding: isMobile ? "6px 8px" : "10px 14px", background: "#faf9f5", borderBottom: "1px solid #e8e5dc", zIndex: 1000, display: "flex", alignItems: "center", gap: isMobile ? 6 : 10, flexWrap: "wrap" }}>
+      <div ref={headerRef} style={{ position: "fixed", top: 0, left: 0, right: 0, padding: isMobile ? "6px 8px" : "10px 14px", background: "var(--bg-base)", borderBottom: "1px solid var(--border)", zIndex: 1000, display: "flex", alignItems: "center", gap: isMobile ? 6 : 10, flexWrap: "wrap" }}>
         <div style={{ flexShrink: 0, cursor: "pointer" }} onClick={() => { setPanel("graph"); setSel(null); }}>
-          <h1 style={{ margin: 0, fontSize: isMobile ? 20 : 30, fontFamily: "'Inter',sans-serif", fontWeight: 800, background: "linear-gradient(135deg,#C15F3C,#d97757,#e8a87c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</h1>
-          {!isMobile && <p style={{ margin: 0, fontSize: 13, color: "#a0a09b" }}>
-            {companies.filter(c => !["investor", "academic"].includes(c.cat)).length} companies · {edges.length} connections{mn > 0 ? ` · ${mn} tracked` : ""}
+          <h1 style={{ margin: 0, fontSize: isMobile ? 20 : 30, fontFamily: "var(--font-body)", fontWeight: 800, background: "linear-gradient(135deg,var(--accent),#d97757,#e8a87c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</h1>
+          {!isMobile && <p style={{ margin: 0, fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+            {companies.filter(c => !["investor", "academic"].includes(c.cat)).length} companies · {edges.length} connections
           </p>}
         </div>
         <div style={{ flex: 1 }} />
         {/* Nav */}
-        <div style={{ display: "flex", gap: 0, borderRadius: 6, overflow: "hidden", border: "1px solid #e8e5dc" }}>
-          {[["graph", "🌌 Map"], ["people", "👤 People"], ["insights", "🔍 Insights"], ["events", "📅 Events"], ["updates", "📰 News"]].map(([k, l]) => (
-            <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "6px 12px", border: "none", height: 36, lineHeight: "24px", background: panel === k ? "#e8e5dc" : "transparent", color: panel === k ? "#1a1a18" : "#8a8a85", fontSize: isMobile ? 11 : 14, fontFamily: "inherit", cursor: "pointer", fontWeight: panel === k ? 600 : 400 }}>{l}</button>
+        {!isMobile && <div style={{ display: "flex", gap: 0, borderRadius: 6, overflow: "hidden", border: "1px solid var(--border)" }}>
+          {[["graph", "Map"], ["people", "People"], ["insights", "Insights"], ["events", "Events"], ["updates", "News"], ["bits", "Bits"]].map(([k, l]) => (
+            <button key={k} onClick={() => { setPanel(k); if (k !== "graph") setSel(null); }} style={{ padding: "6px 12px", border: "none", height: 36, lineHeight: "24px", background: panel === k ? "var(--bg-sunken)" : "transparent", color: panel === k ? "var(--text-primary)" : "var(--text-muted)", fontSize: 14, fontFamily: "var(--font-body)", cursor: "pointer", fontWeight: panel === k ? 500 : 400 }}>{l}</button>
           ))}
-        </div>
+        </div>}
         {/* Search */}
         <div style={{ position: "relative" }}>
           <input type="text" placeholder="Search companies, people, contacts…" value={search} onChange={e => setSearch(e.target.value)}
-            style={{ padding: "6px 10px", borderRadius: 6, height: 36, boxSizing: "border-box", border: "1px solid #e8e5dc", background: "#ffffff", color: "#2d2d2a", fontSize: 14, width: isMobile ? 150 : 260, outline: "none", fontFamily: "inherit" }} />
+            style={{ padding: "6px 10px", borderRadius: 6, height: 36, boxSizing: "border-box", border: "1px solid var(--border)", background: "var(--bg-elevated)", color: "var(--text-primary)", fontSize: 14, width: isMobile ? 150 : 260, outline: "none", fontFamily: "var(--font-body)" }} />
           {searchResults && search && <div style={{ position: isMobile ? "fixed" : "absolute", top: isMobile ? 56 : "100%", left: isMobile ? 8 : "auto", right: isMobile ? 8 : 0, width: isMobile ? "auto" : 320, maxHeight: isMobile ? "60vh" : 400, overflowY: "auto", background: "#ffffff", borderRadius: 8, border: "1px solid #e8e5dc", marginTop: isMobile ? 0 : 4, zIndex: 1100, boxShadow: "0 4px 20px rgba(0,0,0,0.12)" }}>
             {searchResults.companies.length > 0 && <div style={{ padding: "6px 10px", borderBottom: "1px solid #f5f3ee" }}>
               <div style={{ fontSize: 8, color: "#a0a09b", fontWeight: 600, marginBottom: 4 }}>COMPANIES</div>
@@ -647,7 +646,7 @@ export default function App() {
             {searchResults.connections.length > 0 && <div style={{ padding: "6px 10px" }}>
               <div style={{ fontSize: 8, color: "#30D158", fontWeight: 600, marginBottom: 4 }}>YOUR CONNECTIONS</div>
               {searchResults.connections.map((m, i) => (
-                <div key={i} onClick={() => { setSel(m.company); setPanel("graph"); setTab("🤝"); setSearch(""); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", cursor: "pointer" }}>
+                <div key={i} onClick={() => { setSel(m.company); setPanel("graph"); setTab("network"); setSearch(""); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", cursor: "pointer" }}>
                   <span style={{ fontSize: 9 }}>{US[m.status]?.i}</span>
                   <span style={{ fontSize: 10.5, color: "#2d2d2a" }}>{m.company.name}</span>
                   {m.contact_name && <span style={{ fontSize: 8, color: "#6b6b66" }}>· {m.contact_name}</span>}
@@ -659,23 +658,23 @@ export default function App() {
           </div>}
         </div>
         
-        <button onClick={() => setShowFeedback(true)} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#a0a09b", fontSize: 12, cursor: "pointer", fontFamily: "inherit", height: 36 }}>💬</button>
+        <button onClick={() => setShowFeedback(true)} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", fontSize: 12, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>💬</button>
         {/* Trophy */}
-        <button onClick={() => setPanel("score")} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid #e8e5dc", background: panel === "score" ? "#FFD70018" : "transparent", color: "#FFD700", fontSize: 14, height: 36, cursor: "pointer", fontFamily: "inherit" }}>🏆{score.score > 0 ? ` ${score.score}` : ""}</button>
+        <button onClick={() => setPanel("score")} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid var(--border)", background: panel === "score" ? "rgba(255,215,0,0.1)" : "transparent", color: "var(--warning)", fontSize: 14, height: 36, cursor: "pointer", fontFamily: "var(--font-body)" }}>🏆{score.score > 0 ? ` ${score.score}` : ""}</button>
         {/* My Network toggle */}
         {!isMobile &&
-          <button onClick={() => { setShowMyNet(!showMyNet); if (panel !== "graph") setPanel("graph"); }} style={{ padding: "6px 10px", borderRadius: 6, border: `1px solid ${showMyNet ? "#30D158" : "#e8e5dc"}`, background: showMyNet ? "#30D15818" : "transparent", color: showMyNet ? "#30D158" : "#a0a09b", fontSize: 12, cursor: "pointer", fontFamily: "inherit", height: 36 }}>🤝</button>
+          <button onClick={() => { setShowMyNet(!showMyNet); if (panel !== "graph") setPanel("graph"); }} style={{ padding: "6px 10px", borderRadius: 6, border: `1px solid ${showMyNet ? "var(--success)" : "var(--border)"}`, background: showMyNet ? "rgba(48,209,88,0.1)" : "transparent", color: showMyNet ? "var(--success)" : "var(--text-muted)", fontSize: 12, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>🤝</button>
         }
         {/* Auth — below icon buttons */}
         {user ? (
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", fontSize: 12, color: "#6b6b66", fontFamily: "inherit", height: 36, boxSizing: "border-box", display: "flex", alignItems: "center" }}>👤 {profile?.username || user.email}</div>
-            <button onClick={signOut} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 12, cursor: "pointer", fontFamily: "inherit", height: 36 }}>Sign out</button>
+            <div style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid var(--border)", background: "transparent", fontSize: 12, color: "var(--footer-text)", fontFamily: "var(--font-body)", height: 36, boxSizing: "border-box", display: "flex", alignItems: "center" }}>👤 {profile?.username || user.email}</div>
+            <button onClick={signOut} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", fontSize: 12, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>Sign out</button>
           </div>
         ) : (
           <div style={{ display: "flex", gap: 4 }}>
-            <button onClick={() => setAuthMode("login")} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#6b6b66", fontSize: 12, cursor: "pointer", fontFamily: "inherit", height: 36 }}>Log in</button>
-            <button onClick={() => setAuthMode("signup")} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid #30D158", background: "#30D15818", color: "#30D158", fontSize: 12, cursor: "pointer", fontFamily: "inherit", height: 36 }}>Sign up</button>
+            <button onClick={() => setAuthMode("login")} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid var(--border)", background: "transparent", color: "var(--footer-text)", fontSize: 12, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>Log in</button>
+            <button onClick={() => setAuthMode("signup")} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid var(--success)", background: "rgba(48,209,88,0.1)", color: "var(--success)", fontSize: 12, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>Sign up</button>
           </div>
         )}
       </div>
@@ -1436,9 +1435,9 @@ export default function App() {
         <div style={{ padding: "12px 14px 8px", borderBottom: "1px solid #e8e5dc" }}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ flex: 1 }}>
-              <span style={{ fontSize: 11, color: CC[sel.cat]?.c, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>{CC[sel.cat]?.i} {CC[sel.cat]?.l}</span>
-              <h2 style={{ margin: "2px 0 0", fontSize: 18, fontFamily: "inherit", fontWeight: 700, color: "#1a1a18" }}>{sel.name}</h2>
-              {sel.hq && <p style={{ margin: "1px 0 0", fontSize: 12, color: "#8a8a85" }}>📍 {sel.hq}</p>}
+              <span style={{ fontSize: 9, color: CC[sel.cat]?.c, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, fontFamily: "var(--font-body)", background: "var(--accent-bg)", padding: "2px 6px", borderRadius: 3 }}>{CC[sel.cat]?.i} {CC[sel.cat]?.l}</span>
+              <h2 style={{ margin: "6px 0 0", fontSize: 24, fontFamily: "var(--font-display)", fontWeight: 400, color: "var(--text-primary)" }}>{sel.name}</h2>
+              {sel.hq && <p style={{ margin: "2px 0 0", fontSize: 13, color: "var(--text-muted)", fontFamily: "var(--font-body)" }}>📍 {sel.hq}</p>}
             </div>
             <div style={{ display: "flex", gap: 12, alignItems: "start", marginLeft: 8 }}>
               <span onClick={() => toggleStar("company", sel.id)} style={{ cursor: "pointer", padding: 4 }}><StarIcon filled={stars.has(`company:${sel.id}`)} /></span>
@@ -1451,8 +1450,8 @@ export default function App() {
             {(selUD.contact_name || selUD.contact) && <span style={{ fontSize: 8, color: "#6b6b66" }}>· {selUD.contact_name || selUD.contact}</span>}
           </div>}
           <div style={{ display: "flex", gap: 0, marginTop: 8 }}>
-            {["info", "funding", "people", ...(signals.length > 0 ? ["🎙️"] : []), "links", "🤝"].map(t => (
-              <button key={t} onClick={() => setTab(t)} style={{ flex: 1, padding: "4px 0", border: "none", borderBottom: tab === t ? `2px solid ${CC[sel.cat]?.c}` : "2px solid transparent", background: "none", color: tab === t ? "#1a1a18" : "#a0a09b", fontSize: 11, fontFamily: "inherit", cursor: "pointer", textTransform: "uppercase", fontWeight: 600 }}>{t}</button>
+            {[["info","Info"], ["funding","Funding"], ["people","People"], ...(signals.length > 0 ? [["signals","Signals"]] : []), ["links","Links"], ["network","Network"]].map(([k, l]) => (
+              <button key={k} onClick={() => setTab(k)} style={{ flex: 1, padding: "4px 0", border: "none", borderBottom: tab === k ? "2px solid var(--accent)" : "2px solid transparent", background: "none", color: tab === k ? "var(--text-primary)" : "var(--text-muted)", fontSize: 11, fontFamily: "var(--font-body)", cursor: "pointer", textTransform: "uppercase", fontWeight: 600, letterSpacing: "0.5px" }}>{l}</button>
             ))}
           </div>
         </div>
@@ -1575,7 +1574,7 @@ export default function App() {
               </div>}
             </div>}
           </>}
-          {tab === "🎙️" && <>
+          {tab === "signals" && <>
             <div style={{ fontSize: 11, color: "#a0a09b", marginBottom: 8 }}>What founders and leaders are saying — sourced from podcasts, interviews, and conferences.</div>
             {signals.map((sig, i) => (
               <div key={i} style={{ marginBottom: 12, padding: "10px", borderRadius: 8, background: "#ffffff", border: "1px solid #e8e5dc" }}>
@@ -1615,7 +1614,7 @@ export default function App() {
             {ce.length === 0 ? <p style={{ fontSize: 12, color: "#a0a09b" }}>No connections.</p> :
               ce.map((e, i) => { const oid = e.s === sel.id ? e.t : e.s; const o = companies.find(c => c.id === oid); if (!o) return null; return (<div key={i} onClick={() => { setSel(o); setTab("info"); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", borderRadius: 4, cursor: "pointer", marginBottom: 2, background: "rgba(0,0,0,0.02)" }}><div style={{ width: 6, height: 6, borderRadius: "50%", background: ECfg[e.ty]?.c || "#444" }} /><span style={{ fontSize: 10, color: "#4a4a45", flex: 1 }}>{o.name}</span>{e.l && <span style={{ fontSize: 7.5, color: "#a0a09b" }}>{e.l}</span>}<span style={{ fontSize: 7, color: "#c5c3ba", textTransform: "uppercase" }}>{e.ty}</span></div>); })}
           </>}
-          {tab === "🤝" && <>
+          {tab === "network" && <>
             <p style={{ fontSize: 9, color: "#8a8a85", marginBottom: 8 }}>Your connection to {sel.s || sel.name}.</p>
             {!user && <div style={{ padding: "6px 8px", borderRadius: 5, background: "#FF9F0A18", border: "1px solid #FF9F0A33", marginBottom: 8, fontSize: 9, color: "#FF9F0A" }}>Sign up to save connections across devices. <span onClick={() => setAuthMode("signup")} style={{ textDecoration: "underline", cursor: "pointer" }}>Sign up</span></div>}
             {editConn === sel.id ? <>
@@ -1702,48 +1701,48 @@ export default function App() {
     </div>
 
     {/* ── FOOTER ─────────────────────────────────────────────────── */}
-    <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "#1a1a18", zIndex: 999 }}>
+    {panel !== "graph" && <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "var(--footer-bg)", zIndex: 999 }}>
       {isMobile ? (
-        <div style={{ padding: "6px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ fontSize: 10, color: "#4a4a45" }}>© 2026 LDN/ai · <a href="/privacy.html" style={{ color: "#4a4a45", textDecoration: "none" }}>Privacy</a> · <a href="/terms.html" style={{ color: "#4a4a45", textDecoration: "none" }}>Terms</a></span>
-          <span style={{ fontSize: 10, color: "#4a4a45" }}>Made in London 🇬🇧</span>
+        <div style={{ padding: "6px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 24 }}>
+          <span style={{ fontSize: 10, color: "var(--footer-text)", fontFamily: "var(--font-body)" }}>© 2026 LDN/ai · <a href="/privacy.html" style={{ color: "var(--footer-text)", textDecoration: "none" }}>Privacy</a> · <a href="/terms.html" style={{ color: "var(--footer-text)", textDecoration: "none" }}>Terms</a></span>
+          <span style={{ fontSize: 10, color: "var(--footer-text)", fontFamily: "var(--font-body)" }}>Made in London 🇬🇧</span>
         </div>
       ) : (
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "20px 20px 12px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 20, marginBottom: 12 }}>
             <div>
-              <span style={{ fontSize: 18, fontWeight: 700, fontFamily: "'Inter',sans-serif", background: "linear-gradient(135deg,#C15F3C,#d97757)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</span>
-              <p style={{ margin: "4px 0 0", fontSize: 12, color: "#6b6b66", maxWidth: 300 }}>Interactive intelligence platform mapping London's AI ecosystem. 74 companies, 20 investors, 67 people, $37B+ funding.</p>
+              <span style={{ fontSize: 18, fontWeight: 700, fontFamily: "var(--font-body)", background: "linear-gradient(135deg,var(--accent),#d97757)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</span>
+              <p style={{ margin: "4px 0 0", fontSize: 12, color: "var(--footer-text)", maxWidth: 300, fontFamily: "var(--font-body)" }}>Interactive intelligence platform mapping London's AI ecosystem. 89 companies, 20 investors, 67 people, $37B+ funding.</p>
             </div>
             <div style={{ display: "flex", gap: 32 }}>
               <div>
-                <p style={{ margin: "0 0 8px", fontSize: 10, color: "#8a8a85", textTransform: "uppercase", fontWeight: 600, letterSpacing: 0.5 }}>Platform</p>
-                <a href="/" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Interactive Map</a>
-                <a href="/ecosystem/" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Ecosystem Guide</a>
-                <a href="/sourcing" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Sourcing API</a>
+                <p style={{ margin: "0 0 8px", fontSize: 10, color: "var(--footer-text-bright)", textTransform: "uppercase", fontWeight: 600, letterSpacing: 0.5, fontFamily: "var(--font-body)" }}>Platform</p>
+                <a href="/" style={{ display: "block", fontSize: 12, color: "var(--footer-text)", textDecoration: "none", marginBottom: 4, fontFamily: "var(--font-body)" }}>Interactive Map</a>
+                <a href="/ecosystem/" style={{ display: "block", fontSize: 12, color: "var(--footer-text)", textDecoration: "none", marginBottom: 4, fontFamily: "var(--font-body)" }}>Ecosystem Guide</a>
+                <a href="/sourcing" style={{ display: "block", fontSize: 12, color: "var(--footer-text)", textDecoration: "none", marginBottom: 4, fontFamily: "var(--font-body)" }}>Sourcing API</a>
               </div>
               <div>
-                <p style={{ margin: "0 0 8px", fontSize: 10, color: "#8a8a85", textTransform: "uppercase", fontWeight: 600, letterSpacing: 0.5 }}>Research</p>
-                <a href="/insights/londonmaxxing.html" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Londonmaxxing</a>
-                <a href="/insights/unicorns.html" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>AI Unicorns</a>
-                <a href="/insights/funding.html" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Funding Analysis</a>
+                <p style={{ margin: "0 0 8px", fontSize: 10, color: "var(--footer-text-bright)", textTransform: "uppercase", fontWeight: 600, letterSpacing: 0.5, fontFamily: "var(--font-body)" }}>Research</p>
+                <a href="/insights/londonmaxxing.html" style={{ display: "block", fontSize: 12, color: "var(--footer-text)", textDecoration: "none", marginBottom: 4, fontFamily: "var(--font-body)" }}>Londonmaxxing</a>
+                <a href="/insights/unicorns.html" style={{ display: "block", fontSize: 12, color: "var(--footer-text)", textDecoration: "none", marginBottom: 4, fontFamily: "var(--font-body)" }}>AI Unicorns</a>
+                <a href="/insights/funding.html" style={{ display: "block", fontSize: 12, color: "var(--footer-text)", textDecoration: "none", marginBottom: 4, fontFamily: "var(--font-body)" }}>Funding Analysis</a>
               </div>
               <div>
-                <p style={{ margin: "0 0 8px", fontSize: 10, color: "#8a8a85", textTransform: "uppercase", fontWeight: 600, letterSpacing: 0.5 }}>About</p>
-                <a href="mailto:jxi5410@gmail.com" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Contact</a>
-                <a href="https://github.com/jxi5410/AI.LDN" target="_blank" rel="noopener" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>GitHub</a>
-                <a href="/privacy.html" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Privacy Policy</a>
-                <a href="/terms.html" style={{ display: "block", fontSize: 12, color: "#6b6b66", textDecoration: "none", marginBottom: 4 }}>Terms of Use</a>
+                <p style={{ margin: "0 0 8px", fontSize: 10, color: "var(--footer-text-bright)", textTransform: "uppercase", fontWeight: 600, letterSpacing: 0.5, fontFamily: "var(--font-body)" }}>About</p>
+                <a href="mailto:jxi5410@gmail.com" style={{ display: "block", fontSize: 12, color: "var(--footer-text)", textDecoration: "none", marginBottom: 4, fontFamily: "var(--font-body)" }}>Contact</a>
+                <a href="https://github.com/jxi5410/AI.LDN" target="_blank" rel="noopener" style={{ display: "block", fontSize: 12, color: "var(--footer-text)", textDecoration: "none", marginBottom: 4, fontFamily: "var(--font-body)" }}>GitHub</a>
+                <a href="/privacy.html" style={{ display: "block", fontSize: 12, color: "var(--footer-text)", textDecoration: "none", marginBottom: 4, fontFamily: "var(--font-body)" }}>Privacy Policy</a>
+                <a href="/terms.html" style={{ display: "block", fontSize: 12, color: "var(--footer-text)", textDecoration: "none", marginBottom: 4, fontFamily: "var(--font-body)" }}>Terms of Use</a>
               </div>
             </div>
           </div>
           <div style={{ borderTop: "1px solid #2d2d2a", paddingTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-            <span style={{ fontSize: 11, color: "#4a4a45" }}>© 2026 Jie Xi. All rights reserved. Data sourced from public records.</span>
-            <span style={{ fontSize: 11, color: "#4a4a45" }}>Made in London 🇬🇧</span>
+            <span style={{ fontSize: 11, color: "var(--footer-text)", fontFamily: "var(--font-body)" }}>© 2026 Jie Xi. All rights reserved. Data sourced from public records.</span>
+            <span style={{ fontSize: 11, color: "var(--footer-text)", fontFamily: "var(--font-body)" }}>Made in London 🇬🇧</span>
           </div>
         </div>
       )}
-    </div>
+    </div>}
 
   </>
   );
@@ -1752,8 +1751,8 @@ export default function App() {
 // ── SUBCOMPONENTS ───────────────────────────────────────────────────────
 const inputStyle = { width: "100%", padding: "6px 8px", borderRadius: 5, border: "1px solid #e8e5dc", background: "#f5f3ee", color: "#2d2d2a", fontSize: 12, fontFamily: "inherit", outline: "none", marginBottom: 8, boxSizing: "border-box" };
 
-function M({ l, v }) { return (<div style={{ background: "#ffffff", borderRadius: 5, padding: "5px 7px" }}><div style={{ fontSize: 10, color: "#a0a09b", textTransform: "uppercase", letterSpacing: 0.3 }}>{l}</div><div style={{ fontSize: 15, color: "#2d2d2a", fontWeight: 500 }}>{String(v)}</div></div>); }
-function S({ t, v }) { return (<div style={{ marginBottom: 8 }}><div style={{ fontSize: 11, color: "#8a8a85", textTransform: "uppercase", letterSpacing: 0.3, marginBottom: 1.5, fontWeight: 600 }}>{t}</div><div style={{ fontSize: 14, color: "#4a4a45", lineHeight: 1.5 }}>{v}</div></div>); }
+function M({ l, v }) { return (<div style={{ background: "var(--bg-sunken)", borderRadius: 8, padding: "8px 12px", border: "1px solid var(--border)" }}><div style={{ fontSize: 16, color: "var(--text-primary)", fontWeight: 600, fontFamily: "var(--font-mono)" }}>{String(v)}</div><div style={{ fontSize: 9, color: "var(--text-muted)", textTransform: "uppercase", fontFamily: "var(--font-body)" }}>{l}</div></div>); }
+function S({ t, v }) { return (<div style={{ marginBottom: 8 }}><div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 1.5, fontWeight: 600, fontFamily: "var(--font-body)" }}>{t}</div><div style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.5, fontFamily: "var(--font-body)" }}>{v}</div></div>); }
 function UpdateSummariseBtn({ url, label, person }) {
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(false);

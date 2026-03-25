@@ -127,7 +127,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
       .style("position", "absolute").style("pointer-events", "none").style("display", "none")
       .style("background", "rgba(255,255,255,0.96)").style("backdrop-filter", "blur(8px)")
       .style("border", "1px solid #e8e5dc").style("border-radius", "6px")
-      .style("padding", "5px 10px").style("font-size", "11px").style("font-family", "'Inter',sans-serif")
+      .style("padding", "5px 10px").style("font-size", "11px").style("font-family", "'DM Sans',sans-serif")
       .style("color", "#2d2d2a").style("z-index", "600").style("box-shadow", "0 2px 8px rgba(0,0,0,0.1)")
       .style("max-width", "240px").style("white-space", "nowrap");
 
@@ -220,7 +220,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
             .style("font-size", (sz * 0.4) + "px")
             .style("font-weight", "800")
             .style("color", brand.c)
-            .style("font-family", "'Inter',sans-serif")
+            .style("font-family", "'DM Sans',sans-serif")
             .text(d.name.charAt(0));
         };
       });
@@ -242,7 +242,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
         if (isInv && d.cat === "investor") return "13px";
         return d.r > 14 ? "10px" : "8px";
       })
-      .attr("font-family", "'Inter', sans-serif")
+      .attr("font-family", "'DM Sans', sans-serif")
       .attr("font-weight", d => isInv && d.cat === "investor" ? 700 : 500)
       .attr("fill", d => {
         if (isInv && d.cat === "investor" && INVESTOR_BRAND[d.id]) return INVESTOR_BRAND[d.id].c;
@@ -300,7 +300,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
               .text(l.l)
               .attr("text-anchor", "middle")
               .attr("font-size", "9px")
-              .attr("font-family", "'Inter',sans-serif")
+              .attr("font-family", "'DM Sans',sans-serif")
               .attr("fill", edgeCol)
               .attr("font-weight", 600)
               .attr("paint-order", "stroke")
