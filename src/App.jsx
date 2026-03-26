@@ -102,6 +102,7 @@ export default function App() {
     setPanelAnim(true);
     setTimeout(() => { _setPanel(p); setPanelAnim(false); }, 200);
   }, [panel]);
+  const panelTransition = { opacity: panelAnim ? 0 : 1, transform: panelAnim ? "translateY(8px)" : "translateY(0)", transition: "opacity 200ms ease, transform 200ms ease" };
   const [highlightPerson, setHighlightPerson] = useState(null);
   const [openCats, setOpenCats] = useState(new Set());
   const [allPeopleOpen, setAllPeopleOpen] = useState(false);
@@ -551,7 +552,7 @@ export default function App() {
       .attr("font-size", d => Math.max(d.r * 0.7, 9) + "px").attr("pointer-events", "none");
     node.append("text").text(d => { const n = d.s || d.name; return n.length > 16 ? n.slice(0, 14) + "…" : n; })
       .attr("text-anchor", "middle").attr("dy", d => d.r + 13)
-      .attr("fill", "#6b6b66")
+      .attr("fill", "var(--footer-text)")
       .attr("font-size", d => d.r > 14 ? "11px" : "10px")
       .attr("font-weight", "400")
       .attr("font-family", "'DM Sans',-apple-system,sans-serif").attr("pointer-events", "none");
@@ -601,7 +602,7 @@ export default function App() {
   // ── RENDER ──────────────────────────────────────────────────────────
   return (<>
     <div style={{ width: "100%", height: "100vh", background: "var(--bg-base)", overflow: "hidden", fontFamily: "var(--font-body)", position: "relative", color: "var(--text-primary)" }}>
-      <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}@keyframes skeletonPulse{0%,100%{opacity:0.6}50%{opacity:1}}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#c5c3ba;border-radius:4px}input[type=range]{-webkit-appearance:none;background:transparent}input[type=range]::-webkit-slider-track{height:2px;background:var(--border);border-radius:2px}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:-3px;cursor:pointer}.panel-enter{opacity:0;transform:translateY(8px)}.panel-enter-active{opacity:1;transform:translateY(0);transition:opacity 200ms ease,transform 200ms ease}`}</style>
+      <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}@keyframes skeletonPulse{0%,100%{opacity:0.6}50%{opacity:1}}@keyframes slideInRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}@keyframes staggerFadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#c5c3ba;border-radius:4px}input[type=range]{-webkit-appearance:none;background:transparent}input[type=range]::-webkit-slider-track{height:2px;background:var(--border);border-radius:2px}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:-3px;cursor:pointer}.panel-enter{opacity:0;transform:translateY(8px)}.panel-enter-active{opacity:1;transform:translateY(0);transition:opacity 200ms ease,transform 200ms ease}`}</style>
 
       {/* ── HEADER ──────────────────────────────────────────────────── */}
       <div ref={headerRef} style={{ position: "fixed", top: 0, left: 0, right: 0, padding: isMobile ? "6px 8px" : "10px 14px", background: "var(--bg-base)", borderBottom: "1px solid var(--border)", zIndex: 1000, display: "flex", alignItems: "center", gap: isMobile ? 6 : 10, flexWrap: "wrap", maxHeight: isMobile ? 48 : "auto" }}>
@@ -622,19 +623,19 @@ export default function App() {
         <div style={{ position: "relative" }}>
           <input type="text" placeholder="Search companies, people, contacts…" value={search} onChange={e => setSearch(e.target.value)}
             style={{ padding: "6px 10px", borderRadius: 6, height: 36, boxSizing: "border-box", border: "1px solid var(--border)", background: "var(--bg-elevated)", color: "var(--text-primary)", fontSize: 14, width: isMobile ? 150 : 260, outline: "none", fontFamily: "var(--font-body)" }} />
-          {searchResults && search && <div style={{ position: isMobile ? "fixed" : "absolute", top: isMobile ? 56 : "100%", left: isMobile ? 8 : "auto", right: isMobile ? 8 : 0, width: isMobile ? "auto" : 320, maxHeight: isMobile ? "60vh" : 400, overflowY: "auto", background: "#ffffff", borderRadius: 8, border: "1px solid #e8e5dc", marginTop: isMobile ? 0 : 4, zIndex: 1100,  }}>
-            {searchResults.companies.length > 0 && <div style={{ padding: "6px 10px", borderBottom: "1px solid #f5f3ee" }}>
-              <div style={{ fontSize: 8, color: "#a0a09b", fontWeight: 600, marginBottom: 4 }}>COMPANIES</div>
+          {searchResults && search && <div style={{ position: isMobile ? "fixed" : "absolute", top: isMobile ? 56 : "100%", left: isMobile ? 8 : "auto", right: isMobile ? 8 : 0, width: isMobile ? "auto" : 320, maxHeight: isMobile ? "60vh" : 400, overflowY: "auto", background: "var(--bg-elevated)", borderRadius: 8, border: "1px solid var(--border)", marginTop: isMobile ? 0 : 4, zIndex: 1100,  }}>
+            {searchResults.companies.length > 0 && <div style={{ padding: "6px 10px", borderBottom: "1px solid var(--bg-sunken)" }}>
+              <div style={{ fontSize: 8, color: "var(--text-muted)", fontWeight: 600, marginBottom: 4 }}>COMPANIES</div>
               {searchResults.companies.map(c => (
                 <div key={c.id} onClick={() => { setSel(c); setPanel("graph"); setTab("info"); setSearch(""); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", cursor: "pointer" }}>
                   <span style={{ fontSize: 10 }}>{CC[c.cat]?.i}</span>
-                  <span style={{ fontSize: 12, color: "#2d2d2a" }}>{c.name}</span>
+                  <span style={{ fontSize: 12, color: "var(--text-primary)" }}>{c.name}</span>
                   {ud[c.id] && <span style={{ fontSize: 7, color: US[ud[c.id].status]?.c }}>{US[ud[c.id].status]?.i}</span>}
                 </div>
               ))}
             </div>}
-            {searchResults.people.length > 0 && <div style={{ padding: "6px 10px", borderBottom: "1px solid #f5f3ee" }}>
-              <div style={{ fontSize: 8, color: "#a0a09b", fontWeight: 600, marginBottom: 4 }}>PEOPLE</div>
+            {searchResults.people.length > 0 && <div style={{ padding: "6px 10px", borderBottom: "1px solid var(--bg-sunken)" }}>
+              <div style={{ fontSize: 8, color: "var(--text-muted)", fontWeight: 600, marginBottom: 4 }}>PEOPLE</div>
               {searchResults.people.map(([name, p]) => (
                 <div key={name} onClick={() => {
                   // Find the person's category
@@ -646,8 +647,8 @@ export default function App() {
                   setTimeout(() => { const el = document.getElementById(`person-${name.replace(/\s+/g, "-")}`); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 300);
                   setTimeout(() => setHighlightPerson(null), 4000);
                 }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", cursor: "pointer" }}>
-                  <span style={{ fontSize: 10.5, color: "#2d2d2a" }}>{name}</span>
-                  <span style={{ fontSize: 8, color: "#8a8a85" }}>{p.role}</span>
+                  <span style={{ fontSize: 10.5, color: "var(--text-primary)" }}>{name}</span>
+                  <span style={{ fontSize: 8, color: "var(--text-muted)" }}>{p.role}</span>
                 </div>
               ))}
             </div>}
@@ -656,13 +657,13 @@ export default function App() {
               {searchResults.connections.map((m, i) => (
                 <div key={i} onClick={() => { setSel(m.company); setPanel("graph"); setTab("network"); setSearch(""); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0", cursor: "pointer" }}>
                   <span style={{ fontSize: 9 }}>{US[m.status]?.i}</span>
-                  <span style={{ fontSize: 10.5, color: "#2d2d2a" }}>{m.company.name}</span>
-                  {m.contact_name && <span style={{ fontSize: 8, color: "#6b6b66" }}>· {m.contact_name}</span>}
+                  <span style={{ fontSize: 10.5, color: "var(--text-primary)" }}>{m.company.name}</span>
+                  {m.contact_name && <span style={{ fontSize: 8, color: "var(--footer-text)" }}>· {m.contact_name}</span>}
                 </div>
               ))}
             </div>}
             {searchResults.companies.length === 0 && searchResults.people.length === 0 && searchResults.connections.length === 0 &&
-              <div style={{ padding: 12, fontSize: 13, color: "#a0a09b", textAlign: "center" }}>No results</div>}
+              <div style={{ padding: 12, fontSize: 13, color: "var(--text-muted)", textAlign: "center" }}>No results</div>}
           </div>}
         </div>
         
@@ -684,7 +685,7 @@ export default function App() {
           </div>
         ))}
         {/* Mobile hamburger */}
-        {isMobile && <button onClick={() => setMobileMenuOpen(o => !o)} style={{ width: 36, height: 36, borderRadius: 6, border: "1px solid var(--border)", background: mobileMenuOpen ? "var(--accent)" : "transparent", color: mobileMenuOpen ? "#fff" : "var(--text-secondary)", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, fontFamily: "var(--font-body)" }}>{mobileMenuOpen ? "✕" : "☰"}</button>}
+        {isMobile && <button onClick={() => setMobileMenuOpen(o => !o)} style={{ width: 44, height: 44, borderRadius: 6, border: "1px solid var(--border)", background: mobileMenuOpen ? "var(--accent)" : "transparent", color: mobileMenuOpen ? "#fff" : "var(--text-secondary)", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, fontFamily: "var(--font-body)" }}>{mobileMenuOpen ? "✕" : "☰"}</button>}
       </div>
 
       {/* ── MOBILE NAV OVERLAY ────────────────────────────────────── */}
@@ -717,18 +718,18 @@ export default function App() {
 
       {/* ── AUTH MODAL ────────────────────────────────────────────── */}
       {authMode && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => { setAuthMode(null); setSignupSuccess(false); }}>
-        <div onClick={e => e.stopPropagation()} style={{ background: "#ffffff", borderRadius: 14, padding: 24, border: "1px solid #e8e5dc", width: 360, maxWidth: "90vw" }}>
+        <div onClick={e => e.stopPropagation()} style={{ background: "var(--bg-elevated)", borderRadius: 14, padding: 24, border: "1px solid var(--border)", width: 360, maxWidth: "90vw" }}>
           {signupSuccess ? <>
             <div style={{ textAlign: "center", padding: "10px 0" }}>
               <div style={{ fontSize: 36, marginBottom: 8 }}>📧</div>
-              <h2 style={{ margin: "0 0 8px", fontSize: 16, fontFamily: "var(--font-body)", color: "#1a1a18" }}>Check your email</h2>
-              <p style={{ fontSize: 10.5, color: "#6b6b66", lineHeight: 1.5, marginBottom: 12 }}>We've sent a confirmation link to <strong style={{ color: "#2d2d2a" }}>{authForm.email}</strong>. Click the link in the email to activate your account.</p>
-              <p style={{ fontSize: 12, color: "#a0a09b" }}>Didn't receive it? Check your spam folder, or try again in a few minutes.</p>
-              <button onClick={() => { setAuthMode(null); setSignupSuccess(false); }} style={{ marginTop: 12, padding: "8px 20px", borderRadius: 7, border: "1px solid #e8e5dc", background: "transparent", color: "#6b6b66", fontSize: 10, cursor: "pointer", fontFamily: "var(--font-body)" }}>Close</button>
+              <h2 style={{ margin: "0 0 8px", fontSize: 16, fontFamily: "var(--font-body)", color: "var(--text-primary)" }}>Check your email</h2>
+              <p style={{ fontSize: 10.5, color: "var(--footer-text)", lineHeight: 1.5, marginBottom: 12 }}>We've sent a confirmation link to <strong style={{ color: "var(--text-primary)" }}>{authForm.email}</strong>. Click the link in the email to activate your account.</p>
+              <p style={{ fontSize: 12, color: "var(--text-muted)" }}>Didn't receive it? Check your spam folder, or try again in a few minutes.</p>
+              <button onClick={() => { setAuthMode(null); setSignupSuccess(false); }} style={{ marginTop: 12, padding: "8px 20px", borderRadius: 7, border: "1px solid var(--border)", background: "transparent", color: "var(--footer-text)", fontSize: 10, cursor: "pointer", fontFamily: "var(--font-body)" }}>Close</button>
             </div>
           </> : <>
-          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "var(--font-body)", color: "#1a1a18" }}>{authMode === "signup" ? "Create Account" : "Welcome Back"}</h2>
-          <p style={{ margin: "0 0 16px", fontSize: 14, color: "#8a8a85" }}>{authMode === "signup" ? "Join the LDN/ai network" : "Sign in to track your connections"}</p>
+          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "var(--font-body)", color: "var(--text-primary)" }}>{authMode === "signup" ? "Create Account" : "Welcome Back"}</h2>
+          <p style={{ margin: "0 0 16px", fontSize: 14, color: "var(--text-muted)" }}>{authMode === "signup" ? "Join the LDN/ai network" : "Sign in to track your connections"}</p>
           {authError && <div style={{ padding: "6px 10px", borderRadius: 6, background: "#FF453A18", border: "1px solid #FF453A33", color: "#FF453A", fontSize: 9.5, marginBottom: 10 }}>{authError}</div>}
           {authMode === "signup" && <input type="text" placeholder="Username *" value={authForm.username} onChange={e => setAuthForm(p => ({ ...p, username: e.target.value }))} style={inputStyle} />}
           <input type="email" placeholder="Email *" value={authForm.email} onChange={e => setAuthForm(p => ({ ...p, email: e.target.value }))} style={inputStyle} />
@@ -738,10 +739,10 @@ export default function App() {
             <input type="text" placeholder="LinkedIn URL (optional)" value={authForm.linkedin} onChange={e => setAuthForm(p => ({ ...p, linkedin: e.target.value }))} style={inputStyle} />
             <input type="text" placeholder="Company (optional)" value={authForm.company} onChange={e => setAuthForm(p => ({ ...p, company: e.target.value }))} style={inputStyle} />
           </>}
-          <button onClick={() => handleAuth(authMode)} disabled={authLoading} style={{ width: "100%", padding: "8px", borderRadius: 7, border: "none", background: "#C15F3C", color: "#000", fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-body)", marginTop: 4, opacity: authLoading ? 0.6 : 1 }}>
+          <button onClick={() => handleAuth(authMode)} disabled={authLoading} style={{ width: "100%", padding: "8px", borderRadius: 7, border: "none", background: "var(--accent)", color: "#000", fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-body)", marginTop: 4, opacity: authLoading ? 0.6 : 1 }}>
             {authLoading ? "..." : authMode === "signup" ? "Create Account" : "Sign In"}
           </button>
-          <p style={{ margin: "10px 0 0", fontSize: 9, color: "#8a8a85", textAlign: "center" }}>
+          <p style={{ margin: "10px 0 0", fontSize: 9, color: "var(--text-muted)", textAlign: "center" }}>
             {authMode === "signup" ? "Already have an account?" : "Don't have an account?"}{" "}
             <span onClick={() => { setAuthMode(authMode === "signup" ? "login" : "signup"); setAuthError(""); setSignupSuccess(false); }} style={{ color: "#00D4FF", cursor: "pointer" }}>{authMode === "signup" ? "Log in" : "Sign up"}</span>
           </p>
@@ -751,9 +752,9 @@ export default function App() {
 
       {/* ── FEEDBACK MODAL ────────────────────────────────────────── */}
       {showFeedback && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setShowFeedback(false)}>
-        <div onClick={e => e.stopPropagation()} style={{ background: "#ffffff", borderRadius: 14, padding: 24, border: "1px solid #e8e5dc", width: 400, maxWidth: "90vw", maxHeight: "80vh", overflowY: "auto" }}>
-          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "var(--font-body)", color: "#1a1a18" }}>💬 Feedback</h2>
-          <p style={{ margin: "0 0 14px", fontSize: 9.5, color: "#8a8a85" }}>Help us improve LDN/ai</p>
+        <div onClick={e => e.stopPropagation()} style={{ background: "var(--bg-elevated)", borderRadius: 14, padding: 24, border: "1px solid var(--border)", width: 400, maxWidth: "90vw", maxHeight: "80vh", overflowY: "auto" }}>
+          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "var(--font-body)", color: "var(--text-primary)" }}>💬 Feedback</h2>
+          <p style={{ margin: "0 0 14px", fontSize: 9.5, color: "var(--text-muted)" }}>Help us improve LDN/ai</p>
           {fbSubmitted ? <div style={{ padding: 20, textAlign: "center" }}><span style={{ fontSize: 28 }}>✅</span><p style={{ color: "#30D158", marginTop: 8 }}>Thank you! Feedback submitted.</p></div> : <>
             <div style={{ display: "flex", gap: 4, marginBottom: 10 }}>
               {["feature", "bug", "data", "general"].map(c => (
@@ -761,19 +762,19 @@ export default function App() {
               ))}
             </div>
             <textarea value={fbForm.message} onChange={e => setFbForm(p => ({ ...p, message: e.target.value }))} placeholder="What would you like to see improved?" rows={4} style={{ ...inputStyle, resize: "vertical" }} />
-            <button onClick={submitFeedback} disabled={!fbForm.message.trim()} style={{ width: "100%", padding: "8px", borderRadius: 7, border: "none", background: "#C15F3C", color: "#000", fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-body)", opacity: fbForm.message.trim() ? 1 : 0.4 }}>Submit Feedback</button>
+            <button onClick={submitFeedback} disabled={!fbForm.message.trim()} style={{ width: "100%", padding: "8px", borderRadius: 7, border: "none", background: "var(--accent)", color: "#000", fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-body)", opacity: fbForm.message.trim() ? 1 : 0.4 }}>Submit Feedback</button>
           </>}
           {/* My feedback history */}
-          {myFeedback.length > 0 && <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid #e8e5dc" }}>
-            <div style={{ fontSize: 9, color: "#8a8a85", fontWeight: 600, marginBottom: 6 }}>YOUR FEEDBACK HISTORY</div>
+          {myFeedback.length > 0 && <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
+            <div style={{ fontSize: 9, color: "var(--text-muted)", fontWeight: 600, marginBottom: 6 }}>YOUR FEEDBACK HISTORY</div>
             {myFeedback.map(fb => (
-              <div key={fb.id} style={{ padding: "6px 0", borderBottom: "1px solid #f5f3ee" }}>
+              <div key={fb.id} style={{ padding: "6px 0", borderBottom: "1px solid var(--bg-sunken)" }}>
                 <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                   <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: fb.status === "resolved" ? "#30D15818" : fb.status === "in_progress" ? "#FFD60A18" : "#e8e5dc", color: fb.status === "resolved" ? "#30D158" : fb.status === "in_progress" ? "#FFD60A" : "#64748B", textTransform: "uppercase" }}>{fb.status}</span>
-                  <span style={{ fontSize: 8, color: "#a0a09b" }}>{fb.category}</span>
-                  <span style={{ fontSize: 7.5, color: "#c5c3ba" }}>{new Date(fb.created_at).toLocaleDateString()}</span>
+                  <span style={{ fontSize: 8, color: "var(--text-muted)" }}>{fb.category}</span>
+                  <span style={{ fontSize: 7.5, color: "var(--text-faint)" }}>{new Date(fb.created_at).toLocaleDateString()}</span>
                 </div>
-                <div style={{ fontSize: 10, color: "#4a4a45", marginTop: 2 }}>{fb.message}</div>
+                <div style={{ fontSize: 10, color: "var(--text-secondary)", marginTop: 2 }}>{fb.message}</div>
                 {fb.admin_response && <div style={{ fontSize: 9.5, color: "#30D158", marginTop: 3, padding: "3px 6px", background: "#30D15810", borderRadius: 4 }}>↳ {fb.admin_response}</div>}
               </div>
             ))}
@@ -814,16 +815,16 @@ export default function App() {
 
       {/* ── MOBILE FILTER BUTTON + DRAWER ──────────────────────── */}
       {panel === "graph" && isMobile && <>
-        <button onClick={() => setMobileFiltersOpen(o => !o)} style={{ position: "fixed", top: headerHeight + 6, left: 8, zIndex: 20001, padding: "6px 10px", borderRadius: 8, border: "1px solid #e8e5dc", background: mobileFiltersOpen ? "#C15F3C" : "rgba(255,255,255,0.95)", color: mobileFiltersOpen ? "#fff" : "#4a4a45", fontSize: 12, fontFamily: "var(--font-body)", fontWeight: 600, cursor: "pointer", backdropFilter: "blur(10px)", display: "flex", alignItems: "center", gap: 4 }}>
+        <button onClick={() => setMobileFiltersOpen(o => !o)} style={{ position: "fixed", top: headerHeight + 6, left: 8, zIndex: 20001, padding: "6px 10px", borderRadius: 8, border: "1px solid var(--border)", background: mobileFiltersOpen ? "var(--accent)" : "rgba(255,255,255,0.95)", color: mobileFiltersOpen ? "#fff" : "var(--text-secondary)", fontSize: 12, fontFamily: "var(--font-body)", fontWeight: 600, cursor: "pointer", backdropFilter: "blur(10px)", display: "flex", alignItems: "center", gap: 4 }}>
           <span style={{ fontSize: 14 }}>☰</span> Filters
         </button>
         {mobileFiltersOpen && <>
           {/* Backdrop — tap to dismiss */}
           <div onClick={() => setMobileFiltersOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 20001, background: "rgba(0,0,0,0.15)" }} />
-          <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 20002, background: "rgba(255,255,255,0.97)", borderTop: "1px solid #e8e5dc", borderRadius: "14px 14px 0 0", padding: "10px 14px 20px", backdropFilter: "blur(14px)", maxHeight: "60vh", overflowY: "auto" }}>
+          <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 20002, background: "rgba(255,255,255,0.97)", borderTop: "1px solid var(--border)", borderRadius: "14px 14px 0 0", padding: "10px 14px 20px", backdropFilter: "blur(14px)", maxHeight: "60vh", overflowY: "auto" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
             <div style={{ width: 36, height: 4, background: "#d1d1cc", borderRadius: 2 }} />
-            <button onClick={() => setMobileFiltersOpen(false)} style={{ width: 28, height: 28, borderRadius: "50%", border: "1px solid #e8e5dc", background: "#f5f4f0", color: "#8a8a85", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, fontFamily: "var(--font-body)", lineHeight: 1 }}>✕</button>
+            <button onClick={() => setMobileFiltersOpen(false)} style={{ width: 28, height: 28, borderRadius: "50%", border: "1px solid var(--border)", background: "var(--bg-sunken)", color: "var(--text-muted)", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, fontFamily: "var(--font-body)", lineHeight: 1 }}>✕</button>
           </div>
           <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
             {[["companies", "Companies"], ["investors", "Investors"]].map(([k, l]) => (
@@ -836,15 +837,15 @@ export default function App() {
           </div>
           <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
             {[["All", () => setCats(new Set(mapView === "companies" ? Object.keys(CC).filter(k => k !== "investor") : Object.keys(CC)))], ["None", () => setCats(mapView === "investors" ? new Set(["investor"]) : new Set())]].map(([l, fn]) => (
-              <button key={l} onClick={fn} style={{ flex: 1, padding: "5px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 13, cursor: "pointer", fontFamily: "var(--font-body)" }}>{l}</button>
+              <button key={l} onClick={fn} style={{ flex: 1, padding: "5px", borderRadius: 6, border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", fontSize: 13, cursor: "pointer", fontFamily: "var(--font-body)" }}>{l}</button>
             ))}
           </div>
           {Object.entries(CC).map(([k, cfg]) => (
             <div key={k} onClick={() => tc(k)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 6px", borderRadius: 6, cursor: "pointer", opacity: cats.has(k) ? 1 : 0.3 }}>
               <span style={{ fontSize: 18, width: 20, textAlign: "center", color: cats.has(k) ? "#30D158" : "#ccc" }}>{cats.has(k) ? "✓" : ""}</span>
               <div style={{ width: 12, height: 12, borderRadius: "50%", background: cfg.c, flexShrink: 0 }} />
-              <span style={{ fontSize: 15, color: "#4a4a45", flex: 1 }}>{cfg.l}</span>
-              <span style={{ fontSize: 14, color: "#a0a09b" }}>{companies.filter(c => c.cat === k).length}</span>
+              <span style={{ fontSize: 15, color: "var(--text-secondary)", flex: 1 }}>{cfg.l}</span>
+              <span style={{ fontSize: 14, color: "var(--text-muted)" }}>{companies.filter(c => c.cat === k).length}</span>
             </div>
           ))}
         </div>
@@ -856,7 +857,7 @@ export default function App() {
 
       {/* ── UPDATES PANEL ────────────────────────────────────────── */}
       {/* ── INSIGHTS PANEL ────────────────────────────────────────── */}
-      {panel === "bits" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", paddingBottom: isMobile ? 40 : 130, background: "var(--bg-base)" }}>
+      {panel === "bits" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", paddingBottom: isMobile ? 40 : 130, background: "var(--bg-base)", ...panelTransition }}>
         {/* Subtitle */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "10px 20px 12px" }}>
           <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0, fontFamily: "var(--font-body)" }}>Data, charts, ecosystem signals, and curated reads from London's AI scene</p>
@@ -873,43 +874,43 @@ export default function App() {
               setBitsFetched(false);
             } catch (e) { alert("Scrape failed: " + e.message); }
             setBitsLoading(false);
-          }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid #C15F3C", background: "#C15F3C18", color: "#C15F3C", fontSize: 10, cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: 600 }}>🔍 Scrape</button>
+          }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid var(--accent)", background: "var(--accent-bg)", color: "var(--accent)", fontSize: 10, cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: 600 }}>🔍 Scrape</button>
         </div>}
         {/* Insights section */}
         <InsightsPanel isMobile={isMobile} />
         {/* Curated bits below */}
         <div style={{ padding: isMobile ? "0 12px 20px" : "0 20px 20px" }}>
-          <div style={{ fontSize: 11, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, margin: "8px 0 10px", paddingTop: 12, borderTop: "1px solid #e8e5dc" }}>Curated Reads</div>
-          {bitsLoading ? <div style={{ textAlign: "center", padding: 20, color: "#a0a09b" }}>Loading...</div> :
+          <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, margin: "8px 0 10px", paddingTop: 12, borderTop: "1px solid var(--border)" }}>Curated Reads</div>
+          {bitsLoading ? <div style={{ textAlign: "center", padding: 20, color: "var(--text-muted)" }}>Loading...</div> :
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(340px,1fr))", gap: 10 }}>
             {bits.filter(b => user?.id === ADMIN_UID ? true : !b._pending).map((bit, i) => {
               const typeConfig = { tweet: { icon: "𝕏", c: "#1DA1F2" }, article: { icon: "📰", c: "#30D158" }, chart: { icon: "📊", c: "#BF5AF2" }, podcast: { icon: "🎙️", c: "#FF9F0A" }, video: { icon: "🎬", c: "#FF2D55" }, data: { icon: "📈", c: "#BF5AF2" } };
-              const tc = typeConfig[bit.type] || { icon: "⚡", c: "#C15F3C" };
+              const tc = typeConfig[bit.type] || { icon: "⚡", c: "var(--accent)" };
               return (
-                <div key={bit.id || i} style={{ background: "#ffffff", borderRadius: 10, border: `1px solid ${bit._pending ? "#FF9F0A50" : "#e8e5dc"}`, padding: 14 }}>
+                <div key={bit.id || i} style={{ background: "var(--bg-elevated)", borderRadius: 10, border: `1px solid ${bit._pending ? "#FF9F0A50" : "#e8e5dc"}`, padding: 14 }}>
                   {bit._pending && <div style={{ marginBottom: 4 }}>
                     <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "#FF9F0A18", color: "#FF9F0A", fontWeight: 600 }}>PENDING</span>
-                    {bit.ai_relevance_score && <span style={{ fontSize: 9, color: "#a0a09b", marginLeft: 6 }}>{(bit.ai_relevance_score * 100).toFixed(0)}%</span>}
+                    {bit.ai_relevance_score && <span style={{ fontSize: 9, color: "var(--text-muted)", marginLeft: 6 }}>{(bit.ai_relevance_score * 100).toFixed(0)}%</span>}
                   </div>}
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                       <span style={{ fontSize: 13 }}>{tc.icon}</span>
                       <span style={{ fontSize: 10, color: tc.c, fontWeight: 600, textTransform: "uppercase" }}>{bit.type}</span>
-                      {bit.date && <span style={{ fontSize: 10, color: "#a0a09b" }}>{new Date(bit.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</span>}
+                      {bit.date && <span style={{ fontSize: 10, color: "var(--text-muted)" }}>{new Date(bit.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</span>}
                     </div>
-                    {bit.engagement && <span style={{ fontSize: 9, color: "#a0a09b" }}>{bit.engagement}</span>}
+                    {bit.engagement && <span style={{ fontSize: 9, color: "var(--text-muted)" }}>{bit.engagement}</span>}
                   </div>
-                  <h3 style={{ margin: "0 0 3px", fontSize: 14, fontFamily: "var(--font-body)", fontWeight: 700, color: "#1a1a18", lineHeight: 1.3 }}>{bit.title}</h3>
-                  {bit.description && <p style={{ fontSize: 12, color: "#4a4a45", lineHeight: 1.5, margin: "0 0 5px" }}>{bit.description.replace(/<[^>]*>/g, "")}</p>}
+                  <h3 style={{ margin: "0 0 3px", fontSize: 14, fontFamily: "var(--font-body)", fontWeight: 700, color: "var(--text-primary)", lineHeight: 1.3 }}>{bit.title}</h3>
+                  {bit.description && <p style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5, margin: "0 0 5px" }}>{bit.description.replace(/<[^>]*>/g, "")}</p>}
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                    {bit.author && <span style={{ fontSize: 10, color: "#6b6b66" }}>{bit.author}</span>}
-                    {bit.source && <span style={{ fontSize: 9, color: "#c5c3ba" }}>{bit.source}</span>}
+                    {bit.author && <span style={{ fontSize: 10, color: "var(--footer-text)" }}>{bit.author}</span>}
+                    {bit.source && <span style={{ fontSize: 9, color: "var(--text-faint)" }}>{bit.source}</span>}
                   </div>
                   {bit.tags?.length > 0 && <div style={{ display: "flex", gap: 3, flexWrap: "wrap", marginBottom: 6 }}>
                     {bit.tags.map((t, j) => <span key={j} style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: t === "londonmaxxing" ? "#C15F3C18" : "#f0ede8", color: t === "londonmaxxing" ? "#C15F3C" : "#6b6b66", fontWeight: t === "londonmaxxing" ? 600 : 400 }}>{t}</span>)}
                   </div>}
                   <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                    {bit.url && <a href={bit.url} target="_blank" rel="noopener" style={{ fontSize: 11, color: "#C15F3C", textDecoration: "none", fontWeight: 500 }}>View →</a>}
+                    {bit.url && <a href={bit.url} target="_blank" rel="noopener" style={{ fontSize: 11, color: "var(--accent)", textDecoration: "none", fontWeight: 500 }}>View →</a>}
                     {bit._pending && user?.id === ADMIN_UID && <>
                       <div style={{ flex: 1 }} />
                       <button onClick={async () => {
@@ -930,10 +931,10 @@ export default function App() {
       </div>}
 
       {/* ── NEWS ──────────────────────────────────────────────────── */}
-      {panel === "updates" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, paddingBottom: isMobile ? 40 : 130, background: "#faf9f5", display: "flex", flexDirection: "column" }}>
+      {panel === "updates" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, paddingBottom: isMobile ? 40 : 130, background: "var(--bg-base)", display: "flex", flexDirection: "column", ...panelTransition }}>
         {/* Sticky header with subtitle + filter buttons */}
-        <div style={{ padding: isMobile ? "8px 12px" : "8px 20px", background: "#faf9f5", borderBottom: "1px solid #e8e5dc", flexShrink: 0, zIndex: 10 }}>
-          <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 12px" }}>Funding, acquisitions, people moves, milestones, interviews</p>
+        <div style={{ padding: isMobile ? "8px 12px" : "8px 20px", background: "var(--bg-base)", borderBottom: "1px solid var(--border)", flexShrink: 0, zIndex: 10 }}>
+          <p style={{ fontSize: 13, color: "var(--text-muted)", margin: "10px 0 12px" }}>Funding, acquisitions, people moves, milestones, interviews</p>
           <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
             {Object.entries(UPDATE_TYPES).map(([k, cfg]) => (
               <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${updateFilter === k ? cfg.c : "#e8e5dc"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: updateFilter === k ? 600 : (k === "regulation" ? 700 : 400), letterSpacing: k === "regulation" ? 0.3 : 0 }}>{cfg.label}</button>
@@ -945,15 +946,15 @@ export default function App() {
         {updateFilter === "regulation" ? (
           /* ── AI REGULATION SECTION ── */
           <div style={{ padding: isMobile ? "12px" : "16px 20px" }}>
-            <div style={{ background: "#ffffff", borderRadius: 10, border: "1px solid #e8e5dc", padding: isMobile ? "12px 10px" : "16px 18px", marginBottom: 16 }}>
-              <h3 style={{ fontFamily: "var(--font-body)", fontSize: 20, fontWeight: 700, margin: "0 0 4px", color: "#4a4a45" }}>🏛️ UK AI Regulation</h3>
-              <p style={{ fontSize: 13, color: "#8a8a85", margin: "0 0 14px" }}>The UK is charting a distinct path — pro-innovation, sector-specific, and deliberately avoiding the EU's prescriptive model</p>
-              <div style={{ fontSize: 14, color: "#4a4a45", lineHeight: 1.7, marginBottom: 14 }}>
-                <p style={{ margin: "0 0 10px" }}>The UK government has opted against comprehensive AI legislation, instead relying on <strong style={{ color: "#1a1a18" }}>existing regulators</strong> (FCA, ICO, CMA, Ofcom) to apply five cross-sector principles: safety, transparency, fairness, accountability, and contestability. A dedicated <strong style={{ color: "#1a1a18" }}>UK AI Bill</strong> is expected no earlier than H2 2026.</p>
-                <p style={{ margin: "0 0 10px" }}>The government is betting heavily on <strong style={{ color: "#1a1a18" }}>AI Growth Zones</strong>, <strong style={{ color: "#1a1a18" }}>AI Growth Labs</strong> (regulatory sandboxes), and the <strong style={{ color: "#1a1a18" }}>£500M Sovereign AI fund</strong> (launching April 2026, chaired by Balderton's James Wise) to attract investment — £40B+ in private commitments in 2025 alone.</p>
-                <p style={{ margin: 0 }}>The tension is real. Creative industries want mandatory licensing of copyrighted works for AI training. AI developers want broad exceptions. The government's copyright impact assessment is due by <strong style={{ color: "#1a1a18" }}>18 March 2026</strong>.</p>
+            <div style={{ background: "var(--bg-elevated)", borderRadius: 10, border: "1px solid var(--border)", padding: isMobile ? "12px 10px" : "16px 18px", marginBottom: 16 }}>
+              <h3 style={{ fontFamily: "var(--font-body)", fontSize: 20, fontWeight: 700, margin: "0 0 4px", color: "var(--text-secondary)" }}>🏛️ UK AI Regulation</h3>
+              <p style={{ fontSize: 13, color: "var(--text-muted)", margin: "0 0 14px" }}>The UK is charting a distinct path — pro-innovation, sector-specific, and deliberately avoiding the EU's prescriptive model</p>
+              <div style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7, marginBottom: 14 }}>
+                <p style={{ margin: "0 0 10px" }}>The UK government has opted against comprehensive AI legislation, instead relying on <strong style={{ color: "var(--text-primary)" }}>existing regulators</strong> (FCA, ICO, CMA, Ofcom) to apply five cross-sector principles: safety, transparency, fairness, accountability, and contestability. A dedicated <strong style={{ color: "var(--text-primary)" }}>UK AI Bill</strong> is expected no earlier than H2 2026.</p>
+                <p style={{ margin: "0 0 10px" }}>The government is betting heavily on <strong style={{ color: "var(--text-primary)" }}>AI Growth Zones</strong>, <strong style={{ color: "var(--text-primary)" }}>AI Growth Labs</strong> (regulatory sandboxes), and the <strong style={{ color: "var(--text-primary)" }}>£500M Sovereign AI fund</strong> (launching April 2026, chaired by Balderton's James Wise) to attract investment — £40B+ in private commitments in 2025 alone.</p>
+                <p style={{ margin: 0 }}>The tension is real. Creative industries want mandatory licensing of copyrighted works for AI training. AI developers want broad exceptions. The government's copyright impact assessment is due by <strong style={{ color: "var(--text-primary)" }}>18 March 2026</strong>.</p>
               </div>
-              <div style={{ fontSize: 11, color: "#a0a09b", fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Regulatory Timeline</div>
+              <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Regulatory Timeline</div>
               <div style={{ borderLeft: "2px solid #6a9bcc44", paddingLeft: 12, marginBottom: 14 }}>
                 {[
                   { date: "H2 2026", text: "UK AI Bill expected — frontier AI models, copyright, possibly new AI regulatory body", highlight: true, src: "https://www.taylorwessing.com/en/interface/2025/predictions-2026/uk-tech-and-digital-regulatory-policy-in-2026" },
@@ -970,12 +971,12 @@ export default function App() {
                   { date: "Nov 2023", text: "Bletchley Park AI Safety Summit. Ian Hogarth chairs AI Safety Institute", src: "https://www.gov.uk/government/publications/international-ai-safety-report-2025" },
                 ].map((item, i) => (
                   <div key={i} style={{ marginBottom: 8, display: "flex", gap: 8 }}>
-                    <div style={{ flexShrink: 0, fontSize: 11, color: item.highlight ? "#6a9bcc" : "#8a8a85", fontWeight: 600, minWidth: isMobile ? 65 : 95 }}>{item.date}</div>
-                    <div style={{ flex: 1, fontSize: 13, color: item.highlight ? "#1a1a18" : "#4a4a45", lineHeight: 1.5 }}>{item.text}{item.src && <>{" "}<a href={item.src} target="_blank" rel="noopener" style={{ fontSize: 10, color: "#6a9bcc", textDecoration: "none" }}>📄</a></>}</div>
+                    <div style={{ flexShrink: 0, fontSize: 11, color: item.highlight ? "#6a9bcc" : "var(--text-muted)", fontWeight: 600, minWidth: isMobile ? 65 : 95 }}>{item.date}</div>
+                    <div style={{ flex: 1, fontSize: 13, color: item.highlight ? "var(--text-primary)" : "var(--text-secondary)", lineHeight: 1.5 }}>{item.text}{item.src && <>{" "}<a href={item.src} target="_blank" rel="noopener" style={{ fontSize: 10, color: "#6a9bcc", textDecoration: "none" }}>📄</a></>}</div>
                   </div>
                 ))}
               </div>
-              <div style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Key Voices</div>
+              <div style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Key Voices</div>
               <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 8, marginBottom: 14 }}>
                 {[
                   { name: "Demis Hassabis", role: "CEO, Google DeepMind", view: "Pro 'smart regulation' — warns against 'move fast and break things' for AI." },
@@ -983,10 +984,10 @@ export default function App() {
                   { name: "Dario Amodei", role: "CEO, Anthropic", view: "Supports targeted frontier model regulation. 'Constitutional AI' as self-regulation." },
                   { name: "Connor Leahy", role: "CEO, Conjecture", view: "Strongest safety hawk. Warns of existential risk. Advocates compute caps." },
                 ].map((v, i) => (
-                  <div key={i} style={{ background: "#f8f6f188", borderRadius: 6, padding: "8px 10px", border: "1px solid #e8e5dc" }}>
-                    <div style={{ fontSize: 11, color: "#1a1a18", fontWeight: 600 }}>{v.name}</div>
-                    <div style={{ fontSize: 11, color: "#8a8a85", marginBottom: 3 }}>{v.role}</div>
-                    <div style={{ fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{v.view}</div>
+                  <div key={i} style={{ background: "var(--bg-sunken)", borderRadius: 6, padding: "8px 10px", border: "1px solid var(--border)" }}>
+                    <div style={{ fontSize: 11, color: "var(--text-primary)", fontWeight: 600 }}>{v.name}</div>
+                    <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 3 }}>{v.role}</div>
+                    <div style={{ fontSize: 12, color: "var(--footer-text)", lineHeight: 1.5 }}>{v.view}</div>
                   </div>
                 ))}
               </div>
@@ -1003,17 +1004,17 @@ export default function App() {
               const dateObj = new Date(u.date);
               return (
                 <div key={i} style={{ position: "relative", marginBottom: 16 }}>
-                  <div style={{ position: "absolute", left: -23, top: 14, width: 12, height: 12, borderRadius: "50%", background: tc.c, border: "3px solid #faf9f5", boxShadow: `0 0 0 2px ${tc.c}50`, zIndex: 2 }} />
+                  <div style={{ position: "absolute", left: -23, top: 14, width: 12, height: 12, borderRadius: "50%", background: tc.c, border: "3px solid var(--bg-base)", outline: `2px solid ${tc.c}50`, zIndex: 2 }} />
                   <div style={{ position: "absolute", left: -11, top: 19, width: 11, height: 2, background: tc.c + "60" }} />
-                  <div style={{ background: "#ffffff", borderRadius: 10, border: `1px solid ${tc.c}30`, borderLeft: `3px solid ${tc.c}`, padding: 12 }}>
+                  <div style={{ background: "var(--bg-elevated)", borderRadius: 10, border: `1px solid ${tc.c}30`, borderLeft: `3px solid ${tc.c}`, padding: 12 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
                       <span style={{ fontSize: 10, color: tc.c, fontWeight: 600, textTransform: "uppercase" }}>{tc.label}</span>
-                      <span style={{ fontSize: 10, color: "#a0a09b" }}>{dateObj.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "2-digit" })}</span>
+                      <span style={{ fontSize: 10, color: "var(--text-muted)" }}>{dateObj.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "2-digit" })}</span>
                     </div>
-                    <div style={{ fontSize: 14, color: "#2d2d2a", lineHeight: 1.5, marginBottom: 6 }}>{u.text}</div>
+                    <div style={{ fontSize: 14, color: "var(--text-primary)", lineHeight: 1.5, marginBottom: 6 }}>{u.text}</div>
                     <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
                       {co && <span onClick={() => { setSel(co); setPanel("graph"); setTab("info"); }} style={{ fontSize: 11, color: CC[co.cat]?.c || "#666", cursor: "pointer" }}>{CC[co.cat]?.i} {co.name} →</span>}
-                      {u.link && <a href={u.link} target="_blank" rel="noopener" style={{ fontSize: 10, color: "#a0a09b", textDecoration: "none" }}>Source →</a>}
+                      {u.link && <a href={u.link} target="_blank" rel="noopener" style={{ fontSize: 10, color: "var(--text-muted)", textDecoration: "none" }}>Source →</a>}
                       {u.type === "interview" && u.link && <UpdateSummariseBtn url={u.link} label={u.text} person={u.text.split(" on ")[0] || ""} />}
                     </div>
                   </div>
@@ -1028,17 +1029,17 @@ export default function App() {
               const co = companies.find(c => c.id === u.company);
               const tc = UPDATE_TYPES[u.type] || { c: "#94A3B8", label: u.type };
               return (
-                <div key={i} style={{ display: "flex", gap: 14, padding: "12px 0", borderBottom: "1px solid #f5f3ee" }}>
+                <div key={i} style={{ display: "flex", gap: 14, padding: "12px 0", borderBottom: "1px solid var(--bg-sunken)" }}>
                   <div style={{ flexShrink: 0, width: 90 }}>
-                    <div style={{ fontSize: 14, color: "#a0a09b" }}>{u.date}</div>
+                    <div style={{ fontSize: 14, color: "var(--text-muted)" }}>{u.date}</div>
                     <div style={{ fontSize: 10, color: tc.c, textTransform: "uppercase", fontWeight: 600, marginTop: 2 }}>{tc.label}</div>
                   </div>
                   <div style={{ width: 3, borderRadius: 2, background: tc.c, flexShrink: 0 }} />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 16, color: "#2d2d2a", lineHeight: 1.5 }}>{u.text}</div>
+                    <div style={{ fontSize: 16, color: "var(--text-primary)", lineHeight: 1.5 }}>{u.text}</div>
                     <div style={{ display: "flex", gap: 8, marginTop: 4, alignItems: "center", flexWrap: "wrap" }}>
                       {co && <span onClick={() => { setSel(co); setPanel("graph"); setTab("info"); }} style={{ fontSize: 12, color: CC[co.cat]?.c || "#666", cursor: "pointer" }}>{CC[co.cat]?.i} {co.name} →</span>}
-                      {u.link && <a href={u.link} target="_blank" rel="noopener" style={{ fontSize: 11, color: "#8a8a85", textDecoration: "none" }}>📰 Source →</a>}
+                      {u.link && <a href={u.link} target="_blank" rel="noopener" style={{ fontSize: 11, color: "var(--text-muted)", textDecoration: "none" }}>📰 Source →</a>}
                       {u.type === "interview" && u.link && <UpdateSummariseBtn url={u.link} label={u.text} person={u.text.split(" on ")[0] || ""} />}
                     </div>
                   </div>
@@ -1051,12 +1052,12 @@ export default function App() {
       </div>}
 
       {/* ── PEOPLE PANEL (collapsible categories) ─────────────────── */}
-      {panel === "people" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", paddingBottom: isMobile ? 40 : 130, background: "#faf9f5" }}>
+      {panel === "people" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", paddingBottom: isMobile ? 40 : 130, background: "var(--bg-base)", ...panelTransition }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 12px" }}>Founders, CEOs, investors, and leaders</p>
+          <p style={{ fontSize: 13, color: "var(--text-muted)", margin: "10px 0 12px" }}>Founders, CEOs, investors, and leaders</p>
           <div style={{ display: "flex", gap: 4 }}>
-            <button onClick={() => { const allCats = new Set(); Object.values(PEOPLE).forEach(p => { const co = companies.find(c => p.co.includes(c.id)); if (co) allCats.add(co.cat); }); setOpenCats(allCats); setAllPeopleOpen(true); }} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>Expand All</button>
-            <button onClick={() => { setOpenCats(new Set()); setAllPeopleOpen(false); }} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>Collapse All</button>
+            <button onClick={() => { const allCats = new Set(); Object.values(PEOPLE).forEach(p => { const co = companies.find(c => p.co.includes(c.id)); if (co) allCats.add(co.cat); }); setOpenCats(allCats); setAllPeopleOpen(true); }} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>Expand All</button>
+            <button onClick={() => { setOpenCats(new Set()); setAllPeopleOpen(false); }} style={{ padding: "6px 12px", borderRadius: 6, border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)", height: 36 }}>Collapse All</button>
           </div>
         </div>
         {(() => {
@@ -1080,13 +1081,13 @@ export default function App() {
               <div key={cat} style={{ marginBottom: 8 }}>
                 {/* Category header — clickable */}
                 <div onClick={() => setOpenCats(prev => { const n = new Set(prev); n.has(cat) ? n.delete(cat) : n.add(cat); return n; })}
-                  style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 10, background: "#ffffff", border: `1px solid ${isOpen ? cfg.c + "40" : "#e8e5dc"}`, cursor: "pointer", transition: "all 0.2s" }}>
+                  style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 10, background: "var(--bg-elevated)", border: `1px solid ${isOpen ? cfg.c + "40" : "#e8e5dc"}`, cursor: "pointer", transition: "all 0.2s" }}>
                   <span style={{ fontSize: 18 }}>{cfg.i}</span>
                   <div style={{ flex: 1 }}>
                     <span style={{ fontSize: 15, fontWeight: 700, color: cfg.c }}>{cfg.l}</span>
-                    <span style={{ fontSize: 12, color: "#a0a09b", marginLeft: 8 }}>{people.length} {people.length === 1 ? "person" : "people"}</span>
+                    <span style={{ fontSize: 12, color: "var(--text-muted)", marginLeft: 8 }}>{people.length} {people.length === 1 ? "person" : "people"}</span>
                   </div>
-                  <span style={{ fontSize: 14, color: "#a0a09b", transition: "transform 0.2s", transform: isOpen ? "rotate(180deg)" : "rotate(0)" }}>▾</span>
+                  <span style={{ fontSize: 14, color: "var(--text-muted)", transition: "transform 0.2s", transform: isOpen ? "rotate(180deg)" : "rotate(0)" }}>▾</span>
                 </div>
                 {/* People cards — collapsible */}
                 <div style={{ maxHeight: isOpen ? people.length * 200 : 0, overflow: "hidden", transition: "max-height 0.3s ease-in-out" }}>
@@ -1100,7 +1101,7 @@ export default function App() {
                       const xHandle = p.tw ? p.tw.replace(/https?:\/\/(x|twitter)\.com\//,"").replace(/\//g,"") : null;
                       const avatarUrl = xHandle ? `https://unavatar.io/x/${xHandle}` : null;
                       return (
-                        <div key={name} id={`person-${name.replace(/\s+/g, "-")}`} style={{ background: highlightPerson === name ? "#fff3e0" : "#ffffff", borderRadius: 10, padding: "14px", border: `1px solid ${highlightPerson === name ? "#C15F3C" : "#e8e5dc"}`, transition: "all 0.3s ease", borderTop: `3px solid ${accentColor}30` }}>
+                        <div key={name} id={`person-${name.replace(/\s+/g, "-")}`} style={{ background: highlightPerson === name ? "#fff3e0" : "var(--bg-elevated)", borderRadius: 10, padding: "14px", border: `1px solid ${highlightPerson === name ? "#C15F3C" : "#e8e5dc"}`, transition: "all 0.3s ease", borderTop: `3px solid ${accentColor}30` }}>
                           <div style={{ display: "flex", alignItems: "start", gap: 10 }}>
                             {/* Avatar — photo or initials fallback */}
                             <div style={{ width: 40, height: 40, borderRadius: "50%", background: `${accentColor}18`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: `2px solid ${accentColor}30`, overflow: "hidden", position: "relative" }}>
@@ -1108,8 +1109,8 @@ export default function App() {
                               <span style={{ fontSize: 14, fontWeight: 700, color: accentColor, display: avatarUrl ? "none" : "flex", position: avatarUrl ? "absolute" : "static", inset: 0, alignItems: "center", justifyContent: "center" }}>{initials}</span>
                             </div>
                             <div style={{ flex: 1 }}>
-                              <div style={{ fontSize: 16, color: "#1a1a18", fontWeight: 700 }}>{name}</div>
-                              <div style={{ fontSize: 12, color: "#8a8a85", marginTop: 1 }}>{p.role}</div>
+                              <div style={{ fontSize: 16, color: "var(--text-primary)", fontWeight: 700 }}>{name}</div>
+                              <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 1 }}>{p.role}</div>
                             </div>
                             <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
                               <span onClick={() => toggleStar("person", name)} style={{ cursor: "pointer" }}><StarIcon filled={isStarred} /></span>
@@ -1144,26 +1145,26 @@ export default function App() {
                             const portfolioCos = edges.filter(e => e.ty === "investment" && investorCos.includes(e.s)).map(e => companies.find(c => c.id === e.t)).filter(Boolean);
                             if (portfolioCos.length === 0) return null;
                             return (
-                              <div style={{ marginTop: 10, paddingTop: 8, borderTop: "1px solid #f0ede8" }}>
-                                <div style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Portfolio ({portfolioCos.length})</div>
+                              <div style={{ marginTop: 10, paddingTop: 8, borderTop: "1px solid var(--bg-sunken)" }}>
+                                <div style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 600, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Portfolio ({portfolioCos.length})</div>
                                 <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
                                   {portfolioCos.slice(0, 12).map(co2 => {
                                     const domMap = { deepmind: "deepmind.google", anthropic: "anthropic.com", openai: "openai.com", mistral: "mistral.ai", cohere: "cohere.com", stability: "stability.ai", elevenlabs: "elevenlabs.io", synthesia: "synthesia.io", wayve: "wayve.ai", isomorphic: "isomorphiclabs.com", helsing: "helsing.ai", darktrace: "darktrace.com", nscale: "nscale.com", graphcore: "graphcore.ai", polyai: "poly.ai", tractable: "tractable.ai", faculty: "faculty.ai", "signal-ai": "signal-ai.com", physicsx: "physicsx.ai", healx: "healx.io", encord: "encord.com", "holistic-ai": "holisticai.com", "robin-ai": "robin.ai", condukt: "condukt.ai", blackwall: "blackwall.ai", nexcade: "nexcade.ai", "peak-ai": "peak.ai" };
                                     const logoUrl = domMap[co2.id] ? `https://logo.clearbit.com/${domMap[co2.id]}` : null;
                                     return (
-                                      <span key={co2.id} onClick={() => setPeoplePeek(co2)} style={{ fontSize: 10, color: "#5a5a55", cursor: "pointer", padding: "2px 6px", borderRadius: 4, background: "#f5f3ee", border: "1px solid #e8e5dc", display: "inline-flex", alignItems: "center", gap: 3 }}>
+                                      <span key={co2.id} onClick={() => setPeoplePeek(co2)} style={{ fontSize: 10, color: "#5a5a55", cursor: "pointer", padding: "2px 6px", borderRadius: 4, background: "var(--bg-sunken)", border: "1px solid var(--border)", display: "inline-flex", alignItems: "center", gap: 3 }}>
                                         {logoUrl && <img src={logoUrl} alt="" style={{ width: 12, height: 12, borderRadius: 2, objectFit: "contain" }} onError={e => e.target.style.display="none"} />}
                                         {co2.s || co2.name}
                                       </span>
                                     );
                                   })}
-                                  {portfolioCos.length > 12 && <span style={{ fontSize: 10, color: "#a0a09b", padding: "2px 4px" }}>+{portfolioCos.length - 12}</span>}
+                                  {portfolioCos.length > 12 && <span style={{ fontSize: 10, color: "var(--text-muted)", padding: "2px 4px" }}>+{portfolioCos.length - 12}</span>}
                                 </div>
                               </div>
                             );
                           })()}
-                          {p.pods && p.pods.length > 0 && <div style={{ marginTop: 10, paddingTop: 8, borderTop: "1px solid #f0ede8" }}>
-                            <div style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Interviews & Podcasts</div>
+                          {p.pods && p.pods.length > 0 && <div style={{ marginTop: 10, paddingTop: 8, borderTop: "1px solid var(--bg-sunken)" }}>
+                            <div style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 600, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>Interviews & Podcasts</div>
                             <PodcastList pods={p.pods} personName={name} />
                           </div>}
                         </div>
@@ -1185,20 +1186,20 @@ export default function App() {
           const pkLogo = domainMap[pk.id] ? `https://logo.clearbit.com/${domainMap[pk.id]}` : null;
           return (
             <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 999, background: "rgba(26,26,24,0.45)", backdropFilter: "blur(4px)", top: headerHeight, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={e => { if (e.target === e.currentTarget) setPeoplePeek(null); }}>
-              <div style={{ background: "#faf9f5", borderRadius: "16px 16px 0 0", maxWidth: 480, width: "100%", maxHeight: "75vh", overflowY: "auto", border: "1px solid #e8e5dc", borderBottom: "none" }}>
+              <div style={{ background: "var(--bg-base)", borderRadius: "16px 16px 0 0", maxWidth: 480, width: "100%", maxHeight: "75vh", overflowY: "auto", border: "1px solid var(--border)", borderBottom: "none" }}>
                 {/* Header */}
-                <div style={{ padding: "14px 16px 10px", borderBottom: "1px solid #e8e5dc", position: "sticky", top: 0, background: "#faf9f5", borderRadius: "16px 16px 0 0", zIndex: 1 }}>
+                <div style={{ padding: "14px 16px 10px", borderBottom: "1px solid var(--border)", position: "sticky", top: 0, background: "var(--bg-base)", borderRadius: "16px 16px 0 0", zIndex: 1 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
                     <div style={{ display: "flex", gap: 10, alignItems: "center", flex: 1 }}>
-                      {pkLogo && <img src={pkLogo} alt="" style={{ width: 28, height: 28, borderRadius: 6, objectFit: "contain", border: "1px solid #e8e5dc" }} onError={e => e.target.style.display = "none"} />}
+                      {pkLogo && <img src={pkLogo} alt="" style={{ width: 28, height: 28, borderRadius: 6, objectFit: "contain", border: "1px solid var(--border)" }} onError={e => e.target.style.display = "none"} />}
                       <div>
                         <span style={{ fontSize: 10, color: pkColor, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.8 }}>{CC[pk.cat]?.i} {CC[pk.cat]?.l}</span>
-                        <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: "#1a1a18" }}>{pk.name}</h3>
+                        <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: "var(--text-primary)" }}>{pk.name}</h3>
                       </div>
                     </div>
-                    <button onClick={() => setPeoplePeek(null)} style={{ background: "none", border: "none", color: "#a0a09b", fontSize: 20, cursor: "pointer", padding: "0 4px", lineHeight: 1, flexShrink: 0 }}>✕</button>
+                    <button onClick={() => setPeoplePeek(null)} style={{ background: "none", border: "none", color: "var(--text-muted)", fontSize: 20, cursor: "pointer", padding: "0 4px", lineHeight: 1, flexShrink: 0 }}>✕</button>
                   </div>
-                  {pk.hq && <p style={{ margin: "4px 0 0", fontSize: 11, color: "#8a8a85" }}>📍 {pk.hq}</p>}
+                  {pk.hq && <p style={{ margin: "4px 0 0", fontSize: 11, color: "var(--text-muted)" }}>📍 {pk.hq}</p>}
                 </div>
                 {/* Body */}
                 <div style={{ padding: "12px 16px 20px" }}>
@@ -1210,36 +1211,36 @@ export default function App() {
                   {pk.ethos && <S t="Ethos" v={pk.ethos} />}
                   {pk.founders && <S t="Founders" v={pk.founders} />}
                   {pk.ms && <S t="Milestones" v={pk.ms} />}
-                  {pk.jobs && <a href={pk.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#e8e5dc", color: "#2d2d2a", fontSize: 9.5, textDecoration: "none", fontFamily: "var(--font-body)", border: "1px solid #d5d3ca", marginTop: 4 }}>🔗 Careers →</a>}
+                  {pk.jobs && <a href={pk.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "var(--border)", color: "var(--text-primary)", fontSize: 9.5, textDecoration: "none", fontFamily: "var(--font-body)", border: "1px solid var(--border-strong)", marginTop: 4 }}>🔗 Careers →</a>}
                   {/* Connected people */}
-                  {pkRelPeople.length > 0 && <div style={{ marginTop: 12, paddingTop: 10, borderTop: "1px solid #e8e5dc" }}>
-                    <div style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>People ({pkRelPeople.length})</div>
+                  {pkRelPeople.length > 0 && <div style={{ marginTop: 12, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
+                    <div style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>People ({pkRelPeople.length})</div>
                     {pkRelPeople.map(([pName, pData]) => (
                       <div key={pName} style={{ display: "flex", alignItems: "center", gap: 6, padding: "3px 0", fontSize: 12 }}>
-                        <span style={{ color: "#1a1a18", fontWeight: 500 }}>{pName}</span>
-                        <span style={{ color: "#a0a09b", fontSize: 10 }}>{pData.role}</span>
+                        <span style={{ color: "var(--text-primary)", fontWeight: 500 }}>{pName}</span>
+                        <span style={{ color: "var(--text-muted)", fontSize: 10 }}>{pData.role}</span>
                       </div>
                     ))}
                   </div>}
                   {/* Connections */}
-                  {pkEdges.length > 0 && <div style={{ marginTop: 12, paddingTop: 10, borderTop: "1px solid #e8e5dc" }}>
-                    <div style={{ fontSize: 10, color: "#a0a09b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Connections ({pkEdges.length})</div>
+                  {pkEdges.length > 0 && <div style={{ marginTop: 12, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
+                    <div style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Connections ({pkEdges.length})</div>
                     <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
                       {pkEdges.slice(0, 15).map((e, i) => {
                         const oid = e.s === pk.id ? e.t : e.s;
                         const o = companies.find(c => c.id === oid);
                         if (!o) return null;
-                        return (<span key={i} onClick={() => setPeoplePeek(o)} style={{ fontSize: 10, color: "#5a5a55", cursor: "pointer", padding: "2px 6px", borderRadius: 4, background: "#f0ede8", border: "1px solid #e8e5dc", display: "inline-flex", alignItems: "center", gap: 3 }}>
+                        return (<span key={i} onClick={() => setPeoplePeek(o)} style={{ fontSize: 10, color: "#5a5a55", cursor: "pointer", padding: "2px 6px", borderRadius: 4, background: "var(--bg-sunken)", border: "1px solid var(--border)", display: "inline-flex", alignItems: "center", gap: 3 }}>
                           {domainMap[o.id] && <img src={`https://logo.clearbit.com/${domainMap[o.id]}`} alt="" style={{ width: 11, height: 11, borderRadius: 2 }} onError={e2 => e2.target.style.display="none"} />}
                           {o.s || o.name}
-                          <span style={{ fontSize: 8, color: "#b5b3ae" }}>{e.ty}</span>
+                          <span style={{ fontSize: 8, color: "var(--text-faint)" }}>{e.ty}</span>
                         </span>);
                       })}
                     </div>
                   </div>}
                   {/* Go to Map button */}
                   <div style={{ marginTop: 14, textAlign: "center" }}>
-                    <button onClick={() => { setSel(pk); setPanel("graph"); setTab("info"); setPeoplePeek(null); }} style={{ padding: "7px 16px", borderRadius: 6, border: "1px solid #d5d3ca", background: "#ffffff", color: "#4a4a45", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: 500 }}>🌌 View on Map</button>
+                    <button onClick={() => { setSel(pk); setPanel("graph"); setTab("info"); setPeoplePeek(null); }} style={{ padding: "7px 16px", borderRadius: 6, border: "1px solid var(--border-strong)", background: "var(--bg-elevated)", color: "var(--text-secondary)", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: 500 }}>🌌 View on Map</button>
                   </div>
                 </div>
               </div>
@@ -1249,7 +1250,7 @@ export default function App() {
       </div>}
 
       {/* ── INSIGHTS PANEL ───────────────────────────────────────── */}
-      {panel === "insights" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", paddingBottom: isMobile ? 40 : 130, background: "var(--bg-base)" }}>
+      {panel === "insights" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", paddingBottom: isMobile ? 40 : 130, background: "var(--bg-base)", ...panelTransition }}>
         {insightsLoading ? <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10, marginTop: 14 }}>
           {[1,2,3,4,5,6].map(i => <SkeletonCard key={i} />)}
         </div> :
@@ -1258,10 +1259,10 @@ export default function App() {
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 400, color: "var(--text-primary)", margin: "14px 0 4px" }}>Vertical Sector Analysis</h2>
           <p style={{ fontSize: 12, color: "var(--text-muted)", margin: "0 0 14px", fontFamily: "var(--font-body)" }}>What problems they solve, what's working, what's not, and where the gaps are · <span style={{ fontStyle: "italic" }}>AI-assisted</span></p>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
-            {insights.map(ins => {
+            {insights.map((ins, insIdx) => {
               const sectorCos = companies.filter(c => (ins.company_ids || []).includes(c.id));
               return (
-                <div key={ins.id} onClick={() => { setSelectedInsight(ins); setInsightAnswer(""); setInsightAsk(""); }} style={{ background: "var(--bg-elevated)", borderRadius: 8, border: "1px solid var(--border)", borderLeft: "3px solid var(--accent)", padding: 14, cursor: "pointer", transition: "transform 0.15s, border-color 0.15s" }}
+                <div key={ins.id} onClick={() => { setSelectedInsight(ins); setInsightAnswer(""); setInsightAsk(""); }} style={{ background: "var(--bg-elevated)", borderRadius: 8, border: "1px solid var(--border)", borderLeft: "3px solid var(--accent)", padding: 14, cursor: "pointer", transition: "transform 0.15s, border-color 0.15s", animation: `staggerFadeIn 400ms ease ${insIdx * 80}ms both` }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--border-strong)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)"; }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
@@ -1300,18 +1301,18 @@ export default function App() {
 
           {/* ── CHARTS (from Bits) ── */}
           {bits.filter(b => !b._pending && b.type === "chart").length > 0 && <>
-            <h2 style={{ fontFamily: "var(--font-body)", fontSize: 20, fontWeight: 700, color: "#1a1a18", margin: "28px 0 4px", borderTop: "2px solid #e8e5dc", paddingTop: 20 }}>Charts</h2>
-            <p style={{ fontSize: 12, color: "#a0a09b", margin: "0 0 14px" }}>Data visualisations from the ecosystem</p>
+            <h2 style={{ fontFamily: "var(--font-body)", fontSize: 20, fontWeight: 700, color: "var(--text-primary)", margin: "28px 0 4px", borderTop: "2px solid var(--border)", paddingTop: 20 }}>Charts</h2>
+            <p style={{ fontSize: 12, color: "var(--text-muted)", margin: "0 0 14px" }}>Data visualisations from the ecosystem</p>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(320px,1fr))", gap: 10 }}>
               {bits.filter(b => !b._pending && b.type === "chart").map(bit => (
-                <a key={bit.id} href={bit.url} target="_blank" rel="noopener" style={{ display: "block", background: "#fff", borderRadius: 8, border: "1px solid #e8e5dc", padding: 14, textDecoration: "none", transition: "border-color 0.15s" }}
+                <a key={bit.id} href={bit.url} target="_blank" rel="noopener" style={{ display: "block", background: "var(--bg-elevated)", borderRadius: 8, border: "1px solid var(--border)", padding: 14, textDecoration: "none", transition: "border-color 0.15s" }}
                   onMouseEnter={e => e.currentTarget.style.borderColor="#C15F3C"}
                   onMouseLeave={e => e.currentTarget.style.borderColor="#e8e5dc"}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                     <span style={{ fontSize: 20 }}>📊</span>
-                    <span style={{ fontWeight: 600, color: "#1a1a18", fontSize: 14, fontFamily: "var(--font-body)" }}>{bit.title}</span>
+                    <span style={{ fontWeight: 600, color: "var(--text-primary)", fontSize: 14, fontFamily: "var(--font-body)" }}>{bit.title}</span>
                   </div>
-                  {bit.summary && <p style={{ margin: 0, fontSize: 12, color: "#6b6b66", lineHeight: 1.5 }}>{bit.summary.slice(0, 120)}...</p>}
+                  {bit.summary && <p style={{ margin: 0, fontSize: 12, color: "var(--footer-text)", lineHeight: 1.5 }}>{bit.summary.slice(0, 120)}...</p>}
                 </a>
               ))}
             </div>
@@ -1334,7 +1335,7 @@ export default function App() {
               const re = new RegExp(`(${escaped.join("|")})`, "g");
               const parts = text.split(re);
               const nameSet = new Set(allNames);
-              return parts.map((p, i) => nameSet.has(p) ? <strong key={i} style={{ color: "#1a1a18", fontWeight: 600 }}>{p}</strong> : p);
+              return parts.map((p, i) => nameSet.has(p) ? <strong key={i} style={{ color: "var(--text-primary)", fontWeight: 600 }}>{p}</strong> : p);
             } catch (e) { return text; }
           };
           const sections = [
@@ -1346,14 +1347,14 @@ export default function App() {
             { key: "adjacent_bets", title: "Adjacent Bets", icon: "🔮" },
           ];
           return <div>
-            <button onClick={() => setSelectedInsight(null)} style={{ background: "none", border: "none", color: "#C15F3C", fontSize: 13, cursor: "pointer", fontFamily: "var(--font-body)", padding: "10px 0 6px", fontWeight: 500 }}>← All sectors</button>
+            <button onClick={() => setSelectedInsight(null)} style={{ background: "none", border: "none", color: "var(--accent)", fontSize: 13, cursor: "pointer", fontFamily: "var(--font-body)", padding: "10px 0 6px", fontWeight: 500 }}>← All sectors</button>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
               <span style={{ fontSize: 32 }}>{ins.icon}</span>
-              <h2 style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? 22 : 28, fontWeight: 700, color: "#1a1a18", margin: 0 }}>{ins.title}</h2>
+              <h2 style={{ fontFamily: "var(--font-body)", fontSize: isMobile ? 22 : 28, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>{ins.title}</h2>
             </div>
             {/* Company pills */}
             <div style={{ display: "flex", gap: 4, flexWrap: "wrap", margin: "8px 0 16px" }}>
-              {sectorCos.map(c => <span key={c.id} onClick={(e) => { e.stopPropagation(); setPanel("graph"); setSel(c); }} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 4, background: "#e8e5dc", color: "#6b6b66", cursor: "pointer", transition: "background 0.1s" }}
+              {sectorCos.map(c => <span key={c.id} onClick={(e) => { e.stopPropagation(); setPanel("graph"); setSel(c); }} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 4, background: "var(--border)", color: "var(--footer-text)", cursor: "pointer", transition: "background 0.1s" }}
                 onMouseEnter={e => { e.currentTarget.style.background = "#C15F3C22"; e.currentTarget.style.color = "#C15F3C"; }}
                 onMouseLeave={e => { e.currentTarget.style.background = "#e8e5dc"; e.currentTarget.style.color = "#6b6b66"; }}
               >{c.name}</span>)}
@@ -1361,38 +1362,38 @@ export default function App() {
             {/* Sections */}
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {sections.map(({ key, title, icon }) => ins[key] ? (
-                <div key={key} style={{ background: "#ffffff", borderRadius: 10, border: "1px solid #e8e5dc", padding: 16 }}>
+                <div key={key} style={{ background: "var(--bg-elevated)", borderRadius: 10, border: "1px solid var(--border)", padding: 16 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
                     <span style={{ fontSize: 16 }}>{icon}</span>
-                    <h3 style={{ margin: 0, fontSize: 14, fontFamily: "var(--font-body)", fontWeight: 700, color: "#1a1a18", textTransform: "uppercase", letterSpacing: 0.5 }}>{title}</h3>
+                    <h3 style={{ margin: 0, fontSize: 14, fontFamily: "var(--font-body)", fontWeight: 700, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: 0.5 }}>{title}</h3>
                   </div>
-                  <p style={{ margin: 0, fontSize: 13, color: "#4a4a45", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{boldNames(ins[key])}</p>
+                  <p style={{ margin: 0, fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{boldNames(ins[key])}</p>
                 </div>
               ) : null)}
             </div>
             {/* AI Ask */}
-            <div style={{ marginTop: 20, background: "linear-gradient(135deg,#C15F3C08,#d9775710)", borderRadius: 10, border: "1px solid #C15F3C22", padding: 16 }}>
+            <div style={{ marginTop: 20, background: "var(--accent-bg)", borderRadius: 10, border: "1px solid #C15F3C22", padding: 16 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
                 <span style={{ fontSize: 14 }}>🧠</span>
-                <h3 style={{ margin: 0, fontSize: 13, fontFamily: "var(--font-body)", fontWeight: 700, color: "#C15F3C", textTransform: "uppercase", letterSpacing: 0.5 }}>Ask deeper</h3>
+                <h3 style={{ margin: 0, fontSize: 13, fontFamily: "var(--font-body)", fontWeight: 700, color: "var(--accent)", textTransform: "uppercase", letterSpacing: 0.5 }}>Ask deeper</h3>
               </div>
-              <p style={{ fontSize: 11, color: "#8a8a85", margin: "0 0 8px" }}>Ask a specific question about this sector — grounded in our company data</p>
+              <p style={{ fontSize: 11, color: "var(--text-muted)", margin: "0 0 8px" }}>Ask a specific question about this sector — grounded in our company data</p>
               <div style={{ display: "flex", gap: 6 }}>
                 <input value={insightAsk} onChange={e => setInsightAsk(e.target.value)} onKeyDown={e => { if (e.key === "Enter" && insightAsk.trim() && !insightAsking) askInsight(ins, insightAsk.trim()); }}
                   placeholder={`e.g. "Which company is best positioned to win NHS contracts?"`}
-                  style={{ flex: 1, padding: "8px 12px", borderRadius: 6, border: "1px solid #e8e5dc", fontSize: 13, fontFamily: "var(--font-body)", background: "#fff", outline: "none" }} />
+                  style={{ flex: 1, padding: "8px 12px", borderRadius: 6, border: "1px solid var(--border)", fontSize: 13, fontFamily: "var(--font-body)", background: "var(--bg-elevated)", outline: "none" }} />
                 <button onClick={() => { if (insightAsk.trim() && !insightAsking) askInsight(ins, insightAsk.trim()); }}
                   disabled={!insightAsk.trim() || insightAsking}
                   style={{ padding: "8px 14px", borderRadius: 6, border: "none", background: insightAsking ? "#e8e5dc" : "#C15F3C", color: insightAsking ? "#8a8a85" : "#fff", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-body)", cursor: insightAsking ? "wait" : "pointer" }}>
                   {insightAsking ? "Thinking..." : "Ask"}
                 </button>
               </div>
-              {insightAnswer && <div style={{ marginTop: 12, padding: 12, background: "#fff", borderRadius: 8, border: "1px solid #e8e5dc" }}>
-                <p style={{ margin: 0, fontSize: 13, color: "#4a4a45", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{insightAnswer}</p>
+              {insightAnswer && <div style={{ marginTop: 12, padding: 12, background: "var(--bg-elevated)", borderRadius: 8, border: "1px solid var(--border)" }}>
+                <p style={{ margin: 0, fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{insightAnswer}</p>
               </div>}
             </div>
-            <div style={{ marginTop: 16, padding: "10px 14px", borderRadius: 8, background: "#f5f4f0", border: "1px solid #e8e5dc" }}>
-              <p style={{ margin: 0, fontSize: 10.5, color: "#a0a09b", lineHeight: 1.5 }}>⚠️ These sector analyses were generated with the assistance of AI and may contain inaccuracies. Company data is sourced from public information and updated periodically. This content is for informational purposes only and does not constitute investment advice. Last updated March 2026.</p>
+            <div style={{ marginTop: 16, padding: "10px 14px", borderRadius: 8, background: "var(--bg-sunken)", border: "1px solid var(--border)" }}>
+              <p style={{ margin: 0, fontSize: 10.5, color: "var(--text-muted)", lineHeight: 1.5 }}>⚠️ These sector analyses were generated with the assistance of AI and may contain inaccuracies. Company data is sourced from public information and updated periodically. This content is for informational purposes only and does not constitute investment advice. Last updated March 2026.</p>
             </div>
             <div style={{ height: 40 }} />
           </div>;
@@ -1400,35 +1401,35 @@ export default function App() {
       </div>}
 
       {/* ── EVENTS PANEL ─────────────────────────────────────────── */}
-      {panel === "events" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", paddingBottom: isMobile ? 40 : 130, background: "#faf9f5" }}>
-        <p style={{ fontSize: 13, color: "#a0a09b", margin: "10px 0 12px" }}>Curated meetups, conferences, and community gatherings</p>
+      {panel === "events" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", paddingBottom: isMobile ? 40 : 130, background: "var(--bg-base)", ...panelTransition }}>
+        <p style={{ fontSize: 13, color: "var(--text-muted)", margin: "10px 0 12px" }}>Curated meetups, conferences, and community gatherings</p>
         {eventsLoading ? <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(340px,1fr))", gap: 12, marginTop: 10 }}>
           {[1,2,3,4].map(i => <SkeletonCard key={i} />)}
         </div> :
-        events.length === 0 ? <div style={{ textAlign: "center", padding: 40, color: "#a0a09b" }}>No events found</div> :
+        events.length === 0 ? <div style={{ textAlign: "center", padding: 40, color: "var(--text-muted)" }}>No events found</div> :
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(340px,1fr))", gap: 12 }}>
           {events.map((ev, i) => {
             const isPast = new Date(ev.date) < new Date();
             return (
-              <div key={i} style={{ background: "#ffffff", borderRadius: 10, border: "1px solid #e8e5dc", padding: 16, opacity: isPast ? 0.5 : 1 }}>
+              <div key={i} style={{ background: "var(--bg-elevated)", borderRadius: 10, border: "1px solid var(--border)", padding: 16, opacity: isPast ? 0.5 : 1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: 8 }}>
                   <div>
-                    <div style={{ fontSize: 11, color: "#C15F3C", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                    <div style={{ fontSize: 11, color: "var(--accent)", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
                       {new Date(ev.date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
-                      {ev.time && <span style={{ color: "#8a8a85", fontWeight: 400 }}> · {ev.time}</span>}
+                      {ev.time && <span style={{ color: "var(--text-muted)", fontWeight: 400 }}> · {ev.time}</span>}
                     </div>
-                    <h3 style={{ margin: "4px 0 0", fontSize: 17, fontFamily: "var(--font-body)", fontWeight: 700, color: "#1a1a18" }}>{ev.title}</h3>
+                    <h3 style={{ margin: "4px 0 0", fontSize: 17, fontFamily: "var(--font-body)", fontWeight: 700, color: "var(--text-primary)" }}>{ev.title}</h3>
                   </div>
                   {ev.recurring && <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "#30D15818", color: "#30D158", fontWeight: 600 }}>RECURRING</span>}
                 </div>
-                {ev.venue && <div style={{ fontSize: 12, color: "#6b6b66", marginBottom: 4 }}>📍 {ev.venue}</div>}
-                {ev.organiser && <div style={{ fontSize: 12, color: "#8a8a85", marginBottom: 6 }}>Organised by {ev.organiser}</div>}
-                {ev.description && <p style={{ fontSize: 13, color: "#4a4a45", lineHeight: 1.5, margin: "0 0 8px" }}>{ev.description}</p>}
-                {ev.speakers?.length > 0 && ev.speakers[0] && <div style={{ fontSize: 11, color: "#6b6b66", marginBottom: 6 }}>🎤 {ev.speakers.join(", ")}</div>}
+                {ev.venue && <div style={{ fontSize: 12, color: "var(--footer-text)", marginBottom: 4 }}>📍 {ev.venue}</div>}
+                {ev.organiser && <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 6 }}>Organised by {ev.organiser}</div>}
+                {ev.description && <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5, margin: "0 0 8px" }}>{ev.description}</p>}
+                {ev.speakers?.length > 0 && ev.speakers[0] && <div style={{ fontSize: 11, color: "var(--footer-text)", marginBottom: 6 }}>🎤 {ev.speakers.join(", ")}</div>}
                 {ev.topics?.length > 0 && <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 8 }}>
-                  {ev.topics.map((t, j) => <span key={j} style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#e8e5dc", color: "#6b6b66" }}>{t}</span>)}
+                  {ev.topics.map((t, j) => <span key={j} style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "var(--border)", color: "var(--footer-text)" }}>{t}</span>)}
                 </div>}
-                {ev.registration_url && <a href={ev.registration_url} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#C15F3C", color: "#fff", fontSize: 11, textDecoration: "none", fontFamily: "var(--font-body)", fontWeight: 600 }}>{isPast ? "View details →" : "Register →"}</a>}
+                {ev.registration_url && <a href={ev.registration_url} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "var(--accent)", color: "#fff", fontSize: 11, textDecoration: "none", fontFamily: "var(--font-body)", fontWeight: 600 }}>{isPast ? "View details →" : "Register →"}</a>}
               </div>
             );
           })}
@@ -1436,39 +1437,39 @@ export default function App() {
       </div>}
 
       {/* ── SCORE PANEL ──────────────────────────────────────────── */}
-      {panel === "score" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", paddingBottom: isMobile ? 40 : 130, background: "#faf9f5" }}>
-        <h2 style={{ fontFamily: "var(--font-body)", fontSize: 26, fontWeight: 700, color: "#1a1a18", margin: "16px 0 6px" }}>Network Score & Badges</h2>
+      {panel === "score" && <div style={{ position: "fixed", top: headerHeight, left: 0, right: 0, bottom: 0, overflowY: "auto", padding: isMobile ? "0 12px 20px" : "0 20px 20px", paddingBottom: isMobile ? 40 : 130, background: "var(--bg-base)", ...panelTransition }}>
+        <h2 style={{ fontFamily: "var(--font-body)", fontSize: 26, fontWeight: 700, color: "var(--text-primary)", margin: "16px 0 6px" }}>Network Score & Badges</h2>
         {!user && <div style={{ padding: "12px", borderRadius: 8, background: "#FF9F0A18", border: "1px solid #FF9F0A33", marginBottom: 12 }}>
           <span style={{ fontSize: 10, color: "#FF9F0A" }}>⚠️ Sign up to save your score, appear on the leaderboard, and track connections across devices.</span>
           <button onClick={() => setAuthMode("signup")} style={{ marginLeft: 8, padding: "3px 8px", borderRadius: 4, border: "1px solid #30D158", background: "#30D15818", color: "#30D158", fontSize: 9, cursor: "pointer" }}>Sign up</button>
         </div>}
         {/* Score card */}
-        <div style={{ background: "linear-gradient(135deg,#e8e5dc,#ffffff)", borderRadius: 12, padding: "20px", border: "1px solid #d5d3ca", marginBottom: 12, textAlign: "center" }}>
+        <div style={{ background: "var(--bg-sunken)", borderRadius: 12, padding: "20px", border: "1px solid var(--border-strong)", marginBottom: 12, textAlign: "center" }}>
           <div style={{ fontSize: 40 }}>{score.emoji || "🔭"}</div>
           <div style={{ fontSize: 34, fontWeight: 800, fontFamily: "var(--font-body)", color: "#FFD700", marginTop: 4 }}>{score.score}</div>
-          <div style={{ fontSize: 16, color: "#2d2d2a", fontWeight: 600 }}>{score.level || "Explorer"}</div>
+          <div style={{ fontSize: 16, color: "var(--text-primary)", fontWeight: 600 }}>{score.level || "Explorer"}</div>
           {score.nextLevel && <>
-            <div style={{ width: "100%", height: 4, background: "#e8e5dc", borderRadius: 2, marginTop: 10 }}>
-              <div style={{ width: score.pct + "%", height: 4, background: "linear-gradient(90deg,#FF2D55,#FFD700)", borderRadius: 2 }} />
+            <div style={{ width: "100%", height: 4, background: "var(--border)", borderRadius: 2, marginTop: 10 }}>
+              <div style={{ width: score.pct + "%", height: 4, background: "var(--accent)", borderRadius: 2 }} />
             </div>
-            <div style={{ fontSize: 8.5, color: "#a0a09b", marginTop: 4 }}>{score.pct}% to {score.nextLevel} ({score.nextMin} pts)</div>
+            <div style={{ fontSize: 8.5, color: "var(--text-muted)", marginTop: 4 }}>{score.pct}% to {score.nextLevel} ({score.nextMin} pts)</div>
           </>}
           <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 12 }}>
-            <div><div style={{ fontSize: 16, fontWeight: 700, color: "#2d2d2a" }}>{mn}</div><div style={{ fontSize: 8, color: "#a0a09b" }}>Tracked</div></div>
-            <div><div style={{ fontSize: 16, fontWeight: 700, color: "#2d2d2a" }}>{score.breakdown.catCount || 0}</div><div style={{ fontSize: 8, color: "#a0a09b" }}>Categories</div></div>
-            <div><div style={{ fontSize: 16, fontWeight: 700, color: "#2d2d2a" }}>{score.breakdown.frontierCoverage || 0}/7</div><div style={{ fontSize: 8, color: "#a0a09b" }}>Frontier</div></div>
-            <div><div style={{ fontSize: 16, fontWeight: 700, color: "#2d2d2a" }}>{earnedBadges.length}/{BADGES.length}</div><div style={{ fontSize: 8, color: "#a0a09b" }}>Badges</div></div>
+            <div><div style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>{mn}</div><div style={{ fontSize: 8, color: "var(--text-muted)" }}>Tracked</div></div>
+            <div><div style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>{score.breakdown.catCount || 0}</div><div style={{ fontSize: 8, color: "var(--text-muted)" }}>Categories</div></div>
+            <div><div style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>{score.breakdown.frontierCoverage || 0}/7</div><div style={{ fontSize: 8, color: "var(--text-muted)" }}>Frontier</div></div>
+            <div><div style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>{earnedBadges.length}/{BADGES.length}</div><div style={{ fontSize: 8, color: "var(--text-muted)" }}>Badges</div></div>
           </div>
         </div>
         {/* Badges */}
-        <div style={{ fontSize: 11, color: "#6b6b66", fontWeight: 600, marginBottom: 8 }}>BADGES</div>
+        <div style={{ fontSize: 11, color: "var(--footer-text)", fontWeight: 600, marginBottom: 8 }}>BADGES</div>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(auto-fill,minmax(140px,1fr))", gap: 6, marginBottom: 16 }}>
           {BADGES.map(b => {
             const earned = earnedBadges.find(e => e.id === b.id);
             return (<div key={b.id} style={{ background: earned ? "#e8e5dc" : "#f8f7f3", borderRadius: 8, padding: "10px", border: `1px solid ${earned ? "#d5d3ca" : "#f5f3ee"}`, opacity: earned ? 1 : 0.4, textAlign: "center" }}>
               <div style={{ fontSize: 22 }}>{b.icon}</div>
-              <div style={{ fontSize: 10, color: "#2d2d2a", fontWeight: 600, marginTop: 3 }}>{b.name}</div>
-              <div style={{ fontSize: 8, color: "#a0a09b", marginTop: 2 }}>{b.desc}</div>
+              <div style={{ fontSize: 10, color: "var(--text-primary)", fontWeight: 600, marginTop: 3 }}>{b.name}</div>
+              <div style={{ fontSize: 8, color: "var(--text-muted)", marginTop: 2 }}>{b.desc}</div>
               {earned && <div style={{ fontSize: 7.5, color: "#30D158", marginTop: 3 }}>✓ Earned</div>}
             </div>);
           })}
@@ -1510,19 +1511,19 @@ export default function App() {
             {sel.clients && <S t="Clients & Markets" v={sel.clients} />}
             {sel.ethos && <S t="Ethos" v={sel.ethos} />}
             {sel.ms && <S t="Milestones" v={sel.ms} />}
-            {sel.jobs && <a href={sel.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#e8e5dc", color: "#2d2d2a", fontSize: 9.5, textDecoration: "none", fontFamily: "var(--font-body)", border: "1px solid #d5d3ca", marginTop: 6 }}>🔗 Careers →</a>}
-            {sel.cat !== "investor" && <a href={`/company/${sel.id}.html`} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "#C15F3C18", color: "#C15F3C", fontSize: 9.5, textDecoration: "none", fontFamily: "var(--font-body)", border: "1px solid #C15F3C33", marginTop: 6, marginLeft: 4 }}>📄 Profile →</a>}
+            {sel.jobs && <a href={sel.jobs} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "var(--border)", color: "var(--text-primary)", fontSize: 9.5, textDecoration: "none", fontFamily: "var(--font-body)", border: "1px solid var(--border-strong)", marginTop: 6 }}>🔗 Careers →</a>}
+            {sel.cat !== "investor" && <a href={`/company/${sel.id}.html`} target="_blank" rel="noopener" style={{ display: "inline-block", padding: "6px 12px", borderRadius: 6, background: "var(--accent-bg)", color: "var(--accent)", fontSize: 9.5, textDecoration: "none", fontFamily: "var(--font-body)", border: "1px solid rgba(193,95,60,0.2)", marginTop: 6, marginLeft: 4 }}>📄 Profile →</a>}
           </>}
           {tab === "funding" && <>
             {sel.cat === "investor" ? (
               /* INVESTOR VIEW: show portfolio companies with round info */
               (() => {
                 const portfolioEdges = edges.filter(e => e.ty === "investment" && e.s === sel.id);
-                if (portfolioEdges.length === 0) return <p style={{ fontSize: 11, color: "#a0a09b", textAlign: "center", padding: "16px 0" }}>No portfolio data.</p>;
+                if (portfolioEdges.length === 0) return <p style={{ fontSize: 11, color: "var(--text-muted)", textAlign: "center", padding: "16px 0" }}>No portfolio data.</p>;
                 const totalFunding = portfolioEdges.reduce((s, e) => { const co = companies.find(c => c.id === e.t); return s + (co?.fn || 0); }, 0);
                 return <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
-                    <div style={{ fontSize: 9, color: "#8a8a85", textTransform: "uppercase", fontWeight: 600 }}>Portfolio · {portfolioEdges.length} companies</div>
+                    <div style={{ fontSize: 9, color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Portfolio · {portfolioEdges.length} companies</div>
                     {totalFunding > 0 && <div style={{ fontSize: 9, color: "#30D158", fontWeight: 600 }}>Combined: ${totalFunding >= 1000 ? Math.round(totalFunding/1000) + "B" : totalFunding + "M"}</div>}
                   </div>
                   {portfolioEdges.sort((a,b) => {
@@ -1532,16 +1533,16 @@ export default function App() {
                   }).map((e, i) => {
                     const co = companies.find(c => c.id === e.t);
                     if (!co) return null;
-                    return <div key={i} onClick={() => { setSel(co); setTab("funding"); }} style={{ padding: "7px 9px", borderRadius: 6, background: "#ffffff", border: "1px solid #e8e5dc", cursor: "pointer" }}>
+                    return <div key={i} onClick={() => { setSel(co); setTab("funding"); }} style={{ padding: "7px 9px", borderRadius: 6, background: "var(--bg-elevated)", border: "1px solid var(--border)", cursor: "pointer" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                         <div style={{ width: 6, height: 6, borderRadius: "50%", background: CC[co.cat]?.c || "#999", flexShrink: 0 }} />
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <span style={{ fontSize: 11, fontWeight: 600, color: "#1a1a18" }}>{co.name}</span>
-                          <span style={{ fontSize: 9, color: "#a0a09b", marginLeft: 4 }}>{CC[co.cat]?.l}</span>
+                          <span style={{ fontSize: 11, fontWeight: 600, color: "var(--text-primary)" }}>{co.name}</span>
+                          <span style={{ fontSize: 9, color: "var(--text-muted)", marginLeft: 4 }}>{CC[co.cat]?.l}</span>
                         </div>
                         {co.fund && <span style={{ fontSize: 10, fontWeight: 700, color: "#30D158", flexShrink: 0 }}>{co.fund}</span>}
                       </div>
-                      {e.l && <div style={{ fontSize: 9, color: "#8a8a85", marginTop: 2, paddingLeft: 12 }}>{e.l}</div>}
+                      {e.l && <div style={{ fontSize: 9, color: "var(--text-muted)", marginTop: 2, paddingLeft: 12 }}>{e.l}</div>}
                     </div>;
                   })}
                 </div>;
@@ -1565,31 +1566,31 @@ export default function App() {
                   if (wb !== wa) return wb - wa;
                   return parseDate(b.date) - parseDate(a.date);
                 });
-                if (sorted.length === 0) return <p style={{ fontSize: 11, color: "#a0a09b", textAlign: "center", padding: "16px 0" }}>No funding round data yet.</p>;
+                if (sorted.length === 0) return <p style={{ fontSize: 11, color: "var(--text-muted)", textAlign: "center", padding: "16px 0" }}>No funding round data yet.</p>;
                 return <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   {sorted.map((r, i) => (
-                    <div key={i} style={{ padding: "8px 10px", borderRadius: 8, background: "#ffffff", border: "1px solid #e8e5dc" }}>
+                    <div key={i} style={{ padding: "8px 10px", borderRadius: 8, background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: "#1a1a18" }}>{r.series}</span>
-                        <span style={{ fontSize: 10, color: "#a0a09b" }}>{r.date || ""}</span>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: "var(--text-primary)" }}>{r.series}</span>
+                        <span style={{ fontSize: 10, color: "var(--text-muted)" }}>{r.date || ""}</span>
                       </div>
                       <div style={{ display: "flex", gap: 12, marginBottom: 4 }}>
-                        {r.amount && <div><span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Raised</span><div style={{ fontSize: 13, fontWeight: 700, color: "#30D158" }}>{r.amount}</div></div>}
-                        {r.valuation && <div><span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Valuation</span><div style={{ fontSize: 13, fontWeight: 700, color: "#C15F3C" }}>{r.valuation}</div></div>}
+                        {r.amount && <div><span style={{ fontSize: 8, color: "var(--text-muted)", textTransform: "uppercase" }}>Raised</span><div style={{ fontSize: 13, fontWeight: 700, color: "#30D158" }}>{r.amount}</div></div>}
+                        {r.valuation && <div><span style={{ fontSize: 8, color: "var(--text-muted)", textTransform: "uppercase" }}>Valuation</span><div style={{ fontSize: 13, fontWeight: 700, color: "var(--accent)" }}>{r.valuation}</div></div>}
                       </div>
                       {r.lead_investors?.length > 0 && (
                         <div style={{ marginBottom: 3 }}>
-                          <span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Lead </span>
-                          <span style={{ fontSize: 10, color: "#4a4a45", fontWeight: 600 }}>{r.lead_investors.join(", ")}</span>
+                          <span style={{ fontSize: 8, color: "var(--text-muted)", textTransform: "uppercase" }}>Lead </span>
+                          <span style={{ fontSize: 10, color: "var(--text-secondary)", fontWeight: 600 }}>{r.lead_investors.join(", ")}</span>
                         </div>
                       )}
                       {r.other_investors?.length > 0 && (
                         <div style={{ marginBottom: 2 }}>
-                          <span style={{ fontSize: 8, color: "#8a8a85", textTransform: "uppercase" }}>Also </span>
-                          <span style={{ fontSize: 9, color: "#6b6b66" }}>{r.other_investors.join(", ")}</span>
+                          <span style={{ fontSize: 8, color: "var(--text-muted)", textTransform: "uppercase" }}>Also </span>
+                          <span style={{ fontSize: 9, color: "var(--footer-text)" }}>{r.other_investors.join(", ")}</span>
                         </div>
                       )}
-                      {r.notes && <div style={{ fontSize: 9, color: "#8a8a85", marginTop: 3, fontStyle: "italic" }}>{r.notes}</div>}
+                      {r.notes && <div style={{ fontSize: 9, color: "var(--text-muted)", marginTop: 3, fontStyle: "italic" }}>{r.notes}</div>}
                     </div>
                   ))}
                 </div>;
@@ -1600,20 +1601,20 @@ export default function App() {
             {sel.founders && <S t="Founders" v={sel.founders} />}
             {sel.kp && <S t="Key People" v={sel.kp} />}
             {relatedPeople.length > 0 && <div style={{ marginTop: 8 }}>
-              <div style={{ fontSize: 8, color: "#8a8a85", fontWeight: 600, textTransform: "uppercase", marginBottom: 4 }}>Social Links</div>
+              <div style={{ fontSize: 8, color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", marginBottom: 4 }}>Social Links</div>
               {relatedPeople.map(([name, p]) => (
                 <div key={name} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0" }}>
-                  <span style={{ fontSize: 10, color: "#4a4a45", flex: 1 }}>{name}</span>
+                  <span style={{ fontSize: 10, color: "var(--text-secondary)", flex: 1 }}>{name}</span>
                   {p.tw && <a href={p.tw} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 20, height: 20, borderRadius: 4, background: "#2a2a28", border: "1px solid #333" }}><XIcon size={11} /></a>}
                   {p.li && <a href={p.li} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 20, height: 20, borderRadius: 4, background: "#0A66C2" }}><LIIcon size={11} /></a>}
                 </div>
               ))}
               {/* Podcasts for this company's people */}
               {relatedPeople.some(([, p]) => p.pods?.length > 0) && <div style={{ marginTop: 8 }}>
-                <div style={{ fontSize: 8, color: "#8a8a85", fontWeight: 600, textTransform: "uppercase", marginBottom: 4 }}>Interviews & Podcasts</div>
+                <div style={{ fontSize: 8, color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", marginBottom: 4 }}>Interviews & Podcasts</div>
                 {relatedPeople.map(([name, p]) => p.pods?.length > 0 ? (
                   <div key={name} style={{ marginBottom: 6 }}>
-                    <div style={{ fontSize: 9, color: "#6b6b66", marginBottom: 2 }}>{name}</div>
+                    <div style={{ fontSize: 9, color: "var(--footer-text)", marginBottom: 2 }}>{name}</div>
                     <PodcastList pods={p.pods} compact personName={name} />
                   </div>
                 ) : null)}
@@ -1659,15 +1660,15 @@ export default function App() {
             <div style={{ fontSize: 9, color: "var(--text-faint)", fontStyle: "italic", marginTop: 8, fontFamily: "var(--font-body)" }}>Signals are curated from public sources. Summaries may not reflect the speaker's full views.</div>
           </>}
           {tab === "links" && <>
-            {ce.length === 0 ? <p style={{ fontSize: 12, color: "#a0a09b" }}>No connections.</p> :
-              ce.map((e, i) => { const oid = e.s === sel.id ? e.t : e.s; const o = companies.find(c => c.id === oid); if (!o) return null; return (<div key={i} onClick={() => { setSel(o); setTab("info"); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", borderRadius: 4, cursor: "pointer", marginBottom: 2, background: "rgba(0,0,0,0.02)" }}><div style={{ width: 6, height: 6, borderRadius: "50%", background: ECfg[e.ty]?.c || "#444" }} /><span style={{ fontSize: 10, color: "#4a4a45", flex: 1 }}>{o.name}</span>{e.l && <span style={{ fontSize: 7.5, color: "#a0a09b" }}>{e.l}</span>}<span style={{ fontSize: 7, color: "#c5c3ba", textTransform: "uppercase" }}>{e.ty}</span></div>); })}
+            {ce.length === 0 ? <p style={{ fontSize: 12, color: "var(--text-muted)" }}>No connections.</p> :
+              ce.map((e, i) => { const oid = e.s === sel.id ? e.t : e.s; const o = companies.find(c => c.id === oid); if (!o) return null; return (<div key={i} onClick={() => { setSel(o); setTab("info"); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", borderRadius: 4, cursor: "pointer", marginBottom: 2, background: "rgba(0,0,0,0.02)" }}><div style={{ width: 6, height: 6, borderRadius: "50%", background: ECfg[e.ty]?.c || "#444" }} /><span style={{ fontSize: 10, color: "var(--text-secondary)", flex: 1 }}>{o.name}</span>{e.l && <span style={{ fontSize: 7.5, color: "var(--text-muted)" }}>{e.l}</span>}<span style={{ fontSize: 7, color: "var(--text-faint)", textTransform: "uppercase" }}>{e.ty}</span></div>); })}
           </>}
           {tab === "network" && <>
-            <p style={{ fontSize: 9, color: "#8a8a85", marginBottom: 8 }}>Your connection to {sel.s || sel.name}.</p>
+            <p style={{ fontSize: 9, color: "var(--text-muted)", marginBottom: 8 }}>Your connection to {sel.s || sel.name}.</p>
             {!user && <div style={{ padding: "6px 8px", borderRadius: 5, background: "#FF9F0A18", border: "1px solid #FF9F0A33", marginBottom: 8, fontSize: 9, color: "#FF9F0A" }}>Sign up to save connections across devices. <span onClick={() => setAuthMode("signup")} style={{ textDecoration: "underline", cursor: "pointer" }}>Sign up</span></div>}
             {editConn === sel.id ? <>
               <div style={{ marginBottom: 6 }}>
-                <div style={{ fontSize: 8, color: "#8a8a85", marginBottom: 3 }}>STATUS</div>
+                <div style={{ fontSize: 8, color: "var(--text-muted)", marginBottom: 3 }}>STATUS</div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
                   {Object.entries(US).map(([k, cfg]) => (
                     <button key={k} onClick={() => setCf(p => ({ ...p, status: k }))} style={{ padding: "2px 6px", borderRadius: 4, border: `1px solid ${cf.status === k ? cfg.c : "#e8e5dc"}`, background: cf.status === k ? cfg.c + "20" : "transparent", color: cf.status === k ? cfg.c : "#64748B", fontSize: 8, cursor: "pointer", fontFamily: "var(--font-body)" }}>{cfg.i} {cfg.l}</button>
@@ -1677,19 +1678,19 @@ export default function App() {
               <input type="text" value={cf.contact_name || ""} onChange={e => setCf(p => ({ ...p, contact_name: e.target.value }))} placeholder="Contact name" style={{ ...inputStyle, marginBottom: 5 }} />
               <textarea value={cf.notes || ""} onChange={e => setCf(p => ({ ...p, notes: e.target.value }))} placeholder="Notes" rows={2} style={{ ...inputStyle, resize: "vertical", marginBottom: 6 }} />
               <div style={{ display: "flex", gap: 4 }}>
-                <button onClick={() => saveConn(sel.id, cf)} style={{ flex: 1, padding: "5px", borderRadius: 5, border: "none", background: "#C15F3C", color: "#000", fontSize: 9, fontWeight: 600, cursor: "pointer" }}>Save</button>
-                <button onClick={() => setEditConn(null)} style={{ padding: "5px 10px", borderRadius: 5, border: "1px solid #e8e5dc", background: "transparent", color: "#8a8a85", fontSize: 9, cursor: "pointer" }}>Cancel</button>
+                <button onClick={() => saveConn(sel.id, cf)} style={{ flex: 1, padding: "5px", borderRadius: 5, border: "none", background: "var(--accent)", color: "#000", fontSize: 9, fontWeight: 600, cursor: "pointer" }}>Save</button>
+                <button onClick={() => setEditConn(null)} style={{ padding: "5px 10px", borderRadius: 5, border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", fontSize: 9, cursor: "pointer" }}>Cancel</button>
                 {selUD && <button onClick={() => saveConn(sel.id, null)} style={{ padding: "5px 10px", borderRadius: 5, border: "1px solid #FF453A33", background: "transparent", color: "#FF453A", fontSize: 9, cursor: "pointer" }}>Remove</button>}
               </div>
             </> : <>
               {selUD ? <div>
-                <div style={{ padding: "8px", borderRadius: 6, background: "#ffffff", marginBottom: 6 }}>
+                <div style={{ padding: "8px", borderRadius: 6, background: "var(--bg-elevated)", marginBottom: 6 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 5 }}><span style={{ fontSize: 12 }}>{US[selUD.status]?.i}</span><span style={{ fontSize: 11, color: US[selUD.status]?.c, fontWeight: 600 }}>{US[selUD.status]?.l}</span></div>
-                  {(selUD.contact_name || selUD.contact) && <div style={{ fontSize: 10, color: "#4a4a45", marginTop: 3 }}>Contact: {selUD.contact_name || selUD.contact}</div>}
-                  {selUD.notes && <div style={{ fontSize: 9.5, color: "#6b6b66", marginTop: 3 }}>{selUD.notes}</div>}
+                  {(selUD.contact_name || selUD.contact) && <div style={{ fontSize: 10, color: "var(--text-secondary)", marginTop: 3 }}>Contact: {selUD.contact_name || selUD.contact}</div>}
+                  {selUD.notes && <div style={{ fontSize: 9.5, color: "var(--footer-text)", marginTop: 3 }}>{selUD.notes}</div>}
                 </div>
                 <div style={{ display: "flex", gap: 4 }}>
-                  <button onClick={() => { setCf({ status: selUD.status, contact_name: selUD.contact_name || selUD.contact || "", notes: selUD.notes || "" }); setEditConn(sel.id); }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid #e8e5dc", background: "transparent", color: "#6b6b66", fontSize: 9, cursor: "pointer" }}>Edit</button>
+                  <button onClick={() => { setCf({ status: selUD.status, contact_name: selUD.contact_name || selUD.contact || "", notes: selUD.notes || "" }); setEditConn(sel.id); }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid var(--border)", background: "transparent", color: "var(--footer-text)", fontSize: 9, cursor: "pointer" }}>Edit</button>
                   <button onClick={() => { setCf({ status: "target", contact_name: "", notes: "" }); setEditConn(sel.id); }} style={{ padding: "4px 10px", borderRadius: 5, border: "1px solid #30D15850", background: "#30D15810", color: "#30D158", fontSize: 9, cursor: "pointer" }}>+ Add another</button>
                 </div>
               </div> : <button onClick={() => { setCf({ status: "target", contact_name: "", notes: "" }); setEditConn(sel.id); }} style={{ padding: "5px 12px", borderRadius: 5, border: "1px solid #30D15850", background: "#30D15810", color: "#30D158", fontSize: 9.5, cursor: "pointer" }}>+ Add Connection</button>}
@@ -1708,16 +1709,16 @@ export default function App() {
       {/* Mobile: pullable legend */}
       {panel === "graph" && !sel && isMobile && <div
         onClick={() => setLegendOpen(prev => !prev)}
-        style={{ position: "absolute", bottom: 90, left: 8, right: 8, background: "rgba(255,255,255,0.95)", borderRadius: 10, border: "1px solid #e8e5dc", zIndex: 500, backdropFilter: "blur(8px)", overflow: "hidden", transition: "max-height 0.3s ease", maxHeight: legendOpen ? 200 : 28, cursor: "pointer" }}>
+        style={{ position: "absolute", bottom: 90, left: 8, right: 8, background: "rgba(255,255,255,0.95)", borderRadius: 10, border: "1px solid var(--border)", zIndex: 500, backdropFilter: "blur(8px)", overflow: "hidden", transition: "max-height 0.3s ease", maxHeight: legendOpen ? 200 : 28, cursor: "pointer" }}>
         {/* Pull handle */}
         <div style={{ display: "flex", justifyContent: "center", padding: "6px 0 2px" }}>
           <div style={{ width: 32, height: 4, borderRadius: 2, background: "#d0cec8" }} />
         </div>
         {legendOpen && <div style={{ padding: "0 10px 8px" }}>
-          <p style={{ margin: "0 0 4px", fontSize: 12, color: "#4a4a45", lineHeight: 1.4 }}>
+          <p style={{ margin: "0 0 4px", fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.4 }}>
             <strong>{companies.filter(c => !["investor", "academic"].includes(c.cat)).length}</strong> companies · <strong>${Math.round(companies.reduce((s, c) => s + (c.fn || 0), 0) / 1000)}B+</strong> raised · <strong>{companies.filter(c => c.fn >= 500).length}</strong> unicorns
           </p>
-          <p style={{ margin: 0, fontSize: 11, color: "#a0a09b" }}>Tap node → details · Drag to rearrange · Tap here to hide</p>
+          <p style={{ margin: 0, fontSize: 11, color: "var(--text-muted)" }}>Tap node → details · Drag to rearrange · Tap here to hide</p>
         </div>}
       </div>}
     </div>
@@ -1806,10 +1807,10 @@ function UpdateSummariseBtn({ url, label, person }) {
     setLoading(false);
   };
   return (<>
-    <button onClick={doSummarise} style={{ padding: "1px 6px", borderRadius: 3, border: "1px solid #e8e5dc", background: summary ? "#C15F3C10" : "transparent", color: summary ? "#C15F3C" : "#a0a09b", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+    <button onClick={doSummarise} style={{ padding: "1px 6px", borderRadius: 3, border: "1px solid var(--border)", background: summary ? "#C15F3C10" : "transparent", color: summary ? "#C15F3C" : "#a0a09b", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)" }}>
       {loading ? <span style={{ animation: "pulse 1s infinite" }}>⏳</span> : summary ? "✓ Summary" : "✨ Summarise"}
     </button>
-    {summary && <div style={{ width: "100%", fontSize: 12, color: "#6b6b66", lineHeight: 1.5, padding: "4px 0 2px", borderLeft: "2px solid #e8e5dc", paddingLeft: 10, marginTop: 4 }}>
+    {summary && <div style={{ width: "100%", fontSize: 12, color: "var(--footer-text)", lineHeight: 1.5, padding: "4px 0 2px", borderLeft: "2px solid #e8e5dc", paddingLeft: 10, marginTop: 4 }}>
       {summary.split("•").filter(Boolean).map((b, j) => <div key={j} style={{ marginBottom: 2 }}>• {b.trim()}</div>)}
     </div>}
   </>);
@@ -1850,7 +1851,7 @@ function DraggableCard({ isMobile, onClose, children, headerHeight = 70 }) {
   if (!isMobile) {
     // Desktop: plain fixed card, no drag
     return (
-      <div style={{ position: "fixed", top: headerHeight + 6, right: 6, width: 320, maxHeight: `calc(100vh - ${headerHeight + 12}px)`, overflowY: "auto", background: "rgba(255,255,255,0.98)", borderRadius: 12, backdropFilter: "blur(16px)", border: "1px solid #e8e5dc", zIndex: 600,  }}>
+      <div style={{ position: "fixed", top: headerHeight + 6, right: 6, width: 320, maxHeight: `calc(100vh - ${headerHeight + 12}px)`, overflowY: "auto", background: "rgba(255,255,255,0.98)", borderRadius: 12, backdropFilter: "blur(16px)", border: "1px solid var(--border)", zIndex: 600, animation: "slideInRight 250ms ease-out" }}>
         {children}
       </div>
     );
@@ -1874,7 +1875,7 @@ function DraggableCard({ isMobile, onClose, children, headerHeight = 70 }) {
         background: "rgba(255,255,255,0.98)",
         borderRadius: "16px 16px 0 0",
         backdropFilter: "blur(16px)",
-        border: "1px solid #e8e5dc",
+        border: "1px solid var(--border)",
         borderBottom: "none",
         zIndex: 30,
         transform: `translateY(${dragY}px)`,
@@ -1892,7 +1893,7 @@ function DraggableCard({ isMobile, onClose, children, headerHeight = 70 }) {
   );
 }
 
-function SB({ l, v, c }) { return (<div style={{ background: "rgba(255,255,255,0.96)", borderRadius: 6, padding: "3px 8px", border: "1px solid #e8e5dc", textAlign: "center" }}><div style={{ fontSize: 14, fontWeight: 700, color: c, fontFamily: "var(--font-body)" }}>{v}</div><div style={{ fontSize: 10, color: "#a0a09b", textTransform: "uppercase" }}>{l}</div></div>); }
+function SB({ l, v, c }) { return (<div style={{ background: "rgba(255,255,255,0.96)", borderRadius: 6, padding: "3px 8px", border: "1px solid var(--border)", textAlign: "center" }}><div style={{ fontSize: 14, fontWeight: 700, color: c, fontFamily: "var(--font-body)" }}>{v}</div><div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase" }}>{l}</div></div>); }
 
 function PodcastList({ pods, compact, personName }) {
   const [showAll, setShowAll] = useState(false);
@@ -1972,14 +1973,14 @@ function PodcastList({ pods, compact, personName }) {
       return (
         <div key={i} style={{ marginBottom: 4 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <a href={pod.url} target="_blank" rel="noopener" style={{ flex: 1, fontSize: compact ? 12 : 13, color: "#6b6b66", textDecoration: "none", lineHeight: 1.4 }}>
-              <span style={{ color: "#8a8a85" }}>🎙️</span> <span style={{ color: "#4a4a45" }}>{pod.label}</span>
+            <a href={pod.url} target="_blank" rel="noopener" style={{ flex: 1, fontSize: compact ? 12 : 13, color: "var(--footer-text)", textDecoration: "none", lineHeight: 1.4 }}>
+              <span style={{ color: "var(--text-muted)" }}>🎙️</span> <span style={{ color: "var(--text-secondary)" }}>{pod.label}</span>
             </a>
-            <button onClick={() => summarize(pod)} style={{ flexShrink: 0, padding: "1px 5px", borderRadius: 3, border: "1px solid #e8e5dc", background: hasSummary ? "#C15F3C18" : "transparent", color: hasSummary ? "#C15F3C" : "#5a564e", fontSize: 8, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+            <button onClick={() => summarize(pod)} style={{ flexShrink: 0, padding: "1px 5px", borderRadius: 3, border: "1px solid var(--border)", background: hasSummary ? "#C15F3C18" : "transparent", color: hasSummary ? "#C15F3C" : "#5a564e", fontSize: 8, cursor: "pointer", fontFamily: "var(--font-body)" }}>
               {isLoading ? <span style={{ display: "inline-block", animation: "pulse 1s infinite" }}>⏳</span> : hasSummary ? "✓" : "✨"}
             </button>
           </div>
-          {hasSummary && <div style={{ fontSize: 9.5, color: "#6b6b66", lineHeight: 1.5, padding: "4px 0 2px 16px", borderLeft: "2px solid #e8e5dc", marginTop: 2, marginBottom: 2 }}>
+          {hasSummary && <div style={{ fontSize: 9.5, color: "var(--footer-text)", lineHeight: 1.5, padding: "4px 0 2px 16px", borderLeft: "2px solid #e8e5dc", marginTop: 2, marginBottom: 2 }}>
             {hasSummary.split("•").filter(Boolean).map((b, j) => (
               <div key={j} style={{ marginBottom: 2 }}>• {b.trim()}</div>
             ))}
@@ -1994,14 +1995,14 @@ function PodcastList({ pods, compact, personName }) {
               </div>
             ))}
             <div style={{ display: "flex", gap: 4, marginTop: 3 }}>
-              <input type="text" value={chatMsg} onChange={e => setChatMsg(e.target.value)} onKeyDown={e => e.key === "Enter" && sendChat(pod)} placeholder="Ask a question..." style={{ flex: 1, padding: "3px 6px", borderRadius: 4, border: "1px solid #e8e5dc", background: "#f5f3ee", color: "#4a4a45", fontSize: 9, fontFamily: "var(--font-body)", outline: "none" }} />
-              <button onClick={() => sendChat(pod)} disabled={chatLoading} style={{ padding: "3px 8px", borderRadius: 4, border: "none", background: "#C15F3C", color: "#fff", fontSize: 8, cursor: "pointer", opacity: chatLoading ? 0.5 : 1 }}>{chatLoading ? "..." : "→"}</button>
+              <input type="text" value={chatMsg} onChange={e => setChatMsg(e.target.value)} onKeyDown={e => e.key === "Enter" && sendChat(pod)} placeholder="Ask a question..." style={{ flex: 1, padding: "3px 6px", borderRadius: 4, border: "1px solid var(--border)", background: "var(--bg-sunken)", color: "var(--text-secondary)", fontSize: 9, fontFamily: "var(--font-body)", outline: "none" }} />
+              <button onClick={() => sendChat(pod)} disabled={chatLoading} style={{ padding: "3px 8px", borderRadius: 4, border: "none", background: "var(--accent)", color: "#fff", fontSize: 8, cursor: "pointer", opacity: chatLoading ? 0.5 : 1 }}>{chatLoading ? "..." : "→"}</button>
             </div>
           </div>}
         </div>
       );
     })}
-    {pods.length > 3 && !showAll && <span onClick={() => setShowAll(true)} style={{ fontSize: 8.5, color: "#C15F3C", cursor: "pointer", display: "inline-block", marginTop: 2 }}>+ {pods.length - 3} more</span>}
-    {showAll && pods.length > 3 && <span onClick={() => setShowAll(false)} style={{ fontSize: 8.5, color: "#a0a09b", cursor: "pointer", display: "inline-block", marginTop: 2 }}>show less</span>}
+    {pods.length > 3 && !showAll && <span onClick={() => setShowAll(true)} style={{ fontSize: 8.5, color: "var(--accent)", cursor: "pointer", display: "inline-block", marginTop: 2 }}>+ {pods.length - 3} more</span>}
+    {showAll && pods.length > 3 && <span onClick={() => setShowAll(false)} style={{ fontSize: 8.5, color: "var(--text-muted)", cursor: "pointer", display: "inline-block", marginTop: 2 }}>show less</span>}
   </div>);
 }

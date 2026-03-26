@@ -265,7 +265,15 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
       .style("border-radius", "8px").style("padding", "8px 12px").style("z-index", "700")
       .style("font-family", "'DM Sans',sans-serif").style("opacity", "0").style("transition", "opacity 150ms ease");
 
-    node.on("click", (e, d) => { e.stopPropagation(); onSelect(d); });
+    node.on("click", (e, d) => {
+      e.stopPropagation();
+      onSelect(d);
+      // Smooth zoom to center on the clicked node
+      svg.transition().duration(500).call(
+        zoom.transform,
+        d3.zoomIdentity.translate(w / 2, h / 2).scale(1.5).translate(-d.x, -d.y)
+      );
+    });
     svg.on("click", () => onSelect(null));
 
     const applyHighlight = (activeId) => {
