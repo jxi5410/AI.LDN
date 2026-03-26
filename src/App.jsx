@@ -51,7 +51,7 @@ function nr(c, view, mobile) {
 }
 
 // SVG icons
-const XIcon = ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="#E2E8F0"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>;
+const XIcon = ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="#c4c7c7"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>;
 const LIIcon = ({ size = 14 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="#fff"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>;
 const StarIcon = ({ filled }) => <svg width="14" height="14" viewBox="0 0 24 24" fill={filled ? "#FFD700" : "none"} stroke="#FFD700" strokeWidth="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>;
 
@@ -522,7 +522,7 @@ export default function App() {
     if (layout === "cluster") Object.entries(catCenters).forEach(([cat, pos]) => {
       g.append("text").text(CC[cat]?.l || cat).attr("x", pos.x).attr("y", pos.y - 50)
         .attr("text-anchor", "middle").attr("fill", CC[cat]?.c || "#666").attr("font-size", "10px")
-        .attr("font-family", "'DM Serif Display',Georgia,serif").attr("font-weight", "600").attr("opacity", 0.4);
+        .attr("font-family", "'Newsreader',Georgia,serif").attr("font-weight", "600").attr("opacity", 0.4);
     });
 
     const link = g.append("g").selectAll("path").data(links).enter().append("path")
@@ -555,7 +555,7 @@ export default function App() {
       .attr("fill", "var(--footer-text)")
       .attr("font-size", d => d.r > 14 ? "11px" : "10px")
       .attr("font-weight", "400")
-      .attr("font-family", "'DM Sans',-apple-system,sans-serif").attr("pointer-events", "none");
+      .attr("font-family", "'Inter',-apple-system,sans-serif").attr("pointer-events", "none");
 
     svg.on("click", () => setSel(null));
     sim.on("tick", () => {
@@ -602,12 +602,12 @@ export default function App() {
   // ── RENDER ──────────────────────────────────────────────────────────
   return (<>
     <div style={{ width: "100%", height: "100vh", background: "var(--bg-base)", overflow: "hidden", fontFamily: "var(--font-body)", position: "relative", color: "var(--text-primary)" }}>
-      <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}@keyframes skeletonPulse{0%,100%{opacity:0.6}50%{opacity:1}}@keyframes slideInRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}@keyframes staggerFadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#c5c3ba;border-radius:4px}input[type=range]{-webkit-appearance:none;background:transparent}input[type=range]::-webkit-slider-track{height:2px;background:var(--border);border-radius:2px}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:-3px;cursor:pointer}.panel-enter{opacity:0;transform:translateY(8px)}.panel-enter-active{opacity:1;transform:translateY(0);transition:opacity 200ms ease,transform 200ms ease}`}</style>
+      <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}@keyframes skeletonPulse{0%,100%{opacity:0.6}50%{opacity:1}}@keyframes slideInRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}@keyframes staggerFadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#444748;border-radius:4px}input[type=range]{-webkit-appearance:none;background:transparent}input[type=range]::-webkit-slider-track{height:2px;background:var(--border);border-radius:2px}input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:-3px;cursor:pointer}.panel-enter{opacity:0;transform:translateY(8px)}.panel-enter-active{opacity:1;transform:translateY(0);transition:opacity 200ms ease,transform 200ms ease}`}</style>
 
       {/* ── HEADER ──────────────────────────────────────────────────── */}
       <div ref={headerRef} style={{ position: "fixed", top: 0, left: 0, right: 0, padding: isMobile ? "6px 8px" : "10px 14px", background: "var(--bg-base)", borderBottom: "1px solid var(--border)", zIndex: 1000, display: "flex", alignItems: "center", gap: isMobile ? 6 : 10, flexWrap: "wrap", maxHeight: isMobile ? 48 : "auto" }}>
         <div style={{ flexShrink: 0, cursor: "pointer" }} onClick={() => { setPanel("graph"); setSel(null); setMobileMenuOpen(false); }}>
-          <h1 style={{ margin: 0, fontSize: isMobile ? 20 : 30, fontFamily: "var(--font-body)", fontWeight: 800, background: "linear-gradient(135deg,var(--accent),#d97757,#e8a87c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</h1>
+          <h1 style={{ margin: 0, fontSize: isMobile ? 20 : 30, fontFamily: "var(--font-body)", fontWeight: 800, background: "linear-gradient(135deg,var(--accent),#ffb59c,#ffa080)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</h1>
           {!isMobile && <p style={{ margin: 0, fontSize: 12, color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
             {companies.filter(c => !["investor", "academic"].includes(c.cat)).length} companies · {edges.length} connections
           </p>}
@@ -717,7 +717,7 @@ export default function App() {
       </div>}
 
       {/* ── AUTH MODAL ────────────────────────────────────────────── */}
-      {authMode && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => { setAuthMode(null); setSignupSuccess(false); }}>
+      {authMode && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => { setAuthMode(null); setSignupSuccess(false); }}>
         <div onClick={e => e.stopPropagation()} style={{ background: "var(--bg-elevated)", borderRadius: 14, padding: 24, border: "1px solid var(--border)", width: 360, maxWidth: "90vw" }}>
           {signupSuccess ? <>
             <div style={{ textAlign: "center", padding: "10px 0" }}>
@@ -751,14 +751,14 @@ export default function App() {
       </div>}
 
       {/* ── FEEDBACK MODAL ────────────────────────────────────────── */}
-      {showFeedback && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setShowFeedback(false)}>
+      {showFeedback && <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setShowFeedback(false)}>
         <div onClick={e => e.stopPropagation()} style={{ background: "var(--bg-elevated)", borderRadius: 14, padding: 24, border: "1px solid var(--border)", width: 400, maxWidth: "90vw", maxHeight: "80vh", overflowY: "auto" }}>
           <h2 style={{ margin: "0 0 4px", fontSize: 16, fontFamily: "var(--font-body)", color: "var(--text-primary)" }}>💬 Feedback</h2>
           <p style={{ margin: "0 0 14px", fontSize: 9.5, color: "var(--text-muted)" }}>Help us improve LDN/ai</p>
           {fbSubmitted ? <div style={{ padding: 20, textAlign: "center" }}><span style={{ fontSize: 28 }}>✅</span><p style={{ color: "#30D158", marginTop: 8 }}>Thank you! Feedback submitted.</p></div> : <>
             <div style={{ display: "flex", gap: 4, marginBottom: 10 }}>
               {["feature", "bug", "data", "general"].map(c => (
-                <button key={c} onClick={() => setFbForm(p => ({ ...p, category: c }))} style={{ padding: "3px 8px", borderRadius: 4, border: `1px solid ${fbForm.category === c ? "#30D158" : "#e8e5dc"}`, background: fbForm.category === c ? "#30D15818" : "transparent", color: fbForm.category === c ? "#30D158" : "#64748B", fontSize: 9, cursor: "pointer", fontFamily: "var(--font-body)", textTransform: "capitalize" }}>{c}</button>
+                <button key={c} onClick={() => setFbForm(p => ({ ...p, category: c }))} style={{ padding: "3px 8px", borderRadius: 4, border: `1px solid ${fbForm.category === c ? "#30D158" : "#353532"}`, background: fbForm.category === c ? "#30D15818" : "transparent", color: fbForm.category === c ? "#30D158" : "#64748B", fontSize: 9, cursor: "pointer", fontFamily: "var(--font-body)", textTransform: "capitalize" }}>{c}</button>
               ))}
             </div>
             <textarea value={fbForm.message} onChange={e => setFbForm(p => ({ ...p, message: e.target.value }))} placeholder="What would you like to see improved?" rows={4} style={{ ...inputStyle, resize: "vertical" }} />
@@ -770,7 +770,7 @@ export default function App() {
             {myFeedback.map(fb => (
               <div key={fb.id} style={{ padding: "6px 0", borderBottom: "1px solid var(--bg-sunken)" }}>
                 <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                  <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: fb.status === "resolved" ? "#30D15818" : fb.status === "in_progress" ? "#FFD60A18" : "#e8e5dc", color: fb.status === "resolved" ? "#30D158" : fb.status === "in_progress" ? "#FFD60A" : "#64748B", textTransform: "uppercase" }}>{fb.status}</span>
+                  <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 3, background: fb.status === "resolved" ? "#30D15818" : fb.status === "in_progress" ? "#FFD60A18" : "#353532", color: fb.status === "resolved" ? "#30D158" : fb.status === "in_progress" ? "#FFD60A" : "#64748B", textTransform: "uppercase" }}>{fb.status}</span>
                   <span style={{ fontSize: 8, color: "var(--text-muted)" }}>{fb.category}</span>
                   <span style={{ fontSize: 7.5, color: "var(--text-faint)" }}>{new Date(fb.created_at).toLocaleDateString()}</span>
                 </div>
@@ -815,15 +815,15 @@ export default function App() {
 
       {/* ── MOBILE FILTER BUTTON + DRAWER ──────────────────────── */}
       {panel === "graph" && isMobile && <>
-        <button onClick={() => setMobileFiltersOpen(o => !o)} style={{ position: "fixed", top: headerHeight + 6, left: 8, zIndex: 20001, padding: "6px 10px", borderRadius: 8, border: "1px solid var(--border)", background: mobileFiltersOpen ? "var(--accent)" : "rgba(255,255,255,0.95)", color: mobileFiltersOpen ? "#fff" : "var(--text-secondary)", fontSize: 12, fontFamily: "var(--font-body)", fontWeight: 600, cursor: "pointer", backdropFilter: "blur(10px)", display: "flex", alignItems: "center", gap: 4 }}>
+        <button onClick={() => setMobileFiltersOpen(o => !o)} style={{ position: "fixed", top: headerHeight + 6, left: 8, zIndex: 20001, padding: "6px 10px", borderRadius: 8, border: "1px solid var(--border)", background: mobileFiltersOpen ? "var(--accent)" : "rgba(19,20,17,0.95)", color: mobileFiltersOpen ? "#fff" : "var(--text-secondary)", fontSize: 12, fontFamily: "var(--font-body)", fontWeight: 600, cursor: "pointer", backdropFilter: "blur(10px)", display: "flex", alignItems: "center", gap: 4 }}>
           <span style={{ fontSize: 14 }}>☰</span> Filters
         </button>
         {mobileFiltersOpen && <>
           {/* Backdrop — tap to dismiss */}
-          <div onClick={() => setMobileFiltersOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 20001, background: "rgba(0,0,0,0.15)" }} />
-          <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 20002, background: "rgba(255,255,255,0.97)", borderTop: "1px solid var(--border)", borderRadius: "14px 14px 0 0", padding: "10px 14px 20px", backdropFilter: "blur(14px)", maxHeight: "60vh", overflowY: "auto" }}>
+          <div onClick={() => setMobileFiltersOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 20001, background: "rgba(0,0,0,0.5)" }} />
+          <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 20002, background: "rgba(19,20,17,0.97)", borderTop: "1px solid var(--border)", borderRadius: "14px 14px 0 0", padding: "10px 14px 20px", backdropFilter: "blur(14px)", maxHeight: "60vh", overflowY: "auto" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-            <div style={{ width: 36, height: 4, background: "#d1d1cc", borderRadius: 2 }} />
+            <div style={{ width: 36, height: 4, background: "#444748", borderRadius: 2 }} />
             <button onClick={() => setMobileFiltersOpen(false)} style={{ width: 28, height: 28, borderRadius: "50%", border: "1px solid var(--border)", background: "var(--bg-sunken)", color: "var(--text-muted)", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, fontFamily: "var(--font-body)", lineHeight: 1 }}>✕</button>
           </div>
           <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
@@ -832,7 +832,7 @@ export default function App() {
                 setMapView(k);
                 if (k === "investors") { setCats(prev => new Set([...prev, "investor"])); }
                 else { setCats(prev => { const n = new Set(prev); n.delete("investor"); return n; }); }
-              }} style={{ flex: 1, padding: "6px", borderRadius: 6, border: `1px solid ${mapView === k ? "#C15F3C" : "#e8e5dc"}`, background: mapView === k ? "#C15F3C18" : "transparent", color: mapView === k ? "#C15F3C" : "#8a8a85", fontSize: 13, cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: mapView === k ? 600 : 400 }}>{l}</button>
+              }} style={{ flex: 1, padding: "6px", borderRadius: 6, border: `1px solid ${mapView === k ? "#C15F3C" : "#353532"}`, background: mapView === k ? "#C15F3C18" : "transparent", color: mapView === k ? "#C15F3C" : "#8a8a85", fontSize: 13, cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: mapView === k ? 600 : 400 }}>{l}</button>
             ))}
           </div>
           <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
@@ -887,7 +887,7 @@ export default function App() {
               const typeConfig = { tweet: { icon: "𝕏", c: "#1DA1F2" }, article: { icon: "📰", c: "#30D158" }, chart: { icon: "📊", c: "#BF5AF2" }, podcast: { icon: "🎙️", c: "#FF9F0A" }, video: { icon: "🎬", c: "#FF2D55" }, data: { icon: "📈", c: "#BF5AF2" } };
               const tc = typeConfig[bit.type] || { icon: "⚡", c: "var(--accent)" };
               return (
-                <div key={bit.id || i} style={{ background: "var(--bg-elevated)", borderRadius: 10, border: `1px solid ${bit._pending ? "#FF9F0A50" : "#e8e5dc"}`, padding: 14 }}>
+                <div key={bit.id || i} style={{ background: "var(--bg-elevated)", borderRadius: 10, border: `1px solid ${bit._pending ? "#FF9F0A50" : "#353532"}`, padding: 14 }}>
                   {bit._pending && <div style={{ marginBottom: 4 }}>
                     <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: "#FF9F0A18", color: "#FF9F0A", fontWeight: 600 }}>PENDING</span>
                     {bit.ai_relevance_score && <span style={{ fontSize: 9, color: "var(--text-muted)", marginLeft: 6 }}>{(bit.ai_relevance_score * 100).toFixed(0)}%</span>}
@@ -907,7 +907,7 @@ export default function App() {
                     {bit.source && <span style={{ fontSize: 9, color: "var(--text-faint)" }}>{bit.source}</span>}
                   </div>
                   {bit.tags?.length > 0 && <div style={{ display: "flex", gap: 3, flexWrap: "wrap", marginBottom: 6 }}>
-                    {bit.tags.map((t, j) => <span key={j} style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: t === "londonmaxxing" ? "#C15F3C18" : "#f0ede8", color: t === "londonmaxxing" ? "#C15F3C" : "#6b6b66", fontWeight: t === "londonmaxxing" ? 600 : 400 }}>{t}</span>)}
+                    {bit.tags.map((t, j) => <span key={j} style={{ fontSize: 9, padding: "1px 5px", borderRadius: 3, background: t === "londonmaxxing" ? "#C15F3C18" : "#1f201d", color: t === "londonmaxxing" ? "#C15F3C" : "#6b6b66", fontWeight: t === "londonmaxxing" ? 600 : 400 }}>{t}</span>)}
                   </div>}
                   <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                     {bit.url && <a href={bit.url} target="_blank" rel="noopener" style={{ fontSize: 11, color: "var(--accent)", textDecoration: "none", fontWeight: 500 }}>View →</a>}
@@ -937,7 +937,7 @@ export default function App() {
           <p style={{ fontSize: 13, color: "var(--text-muted)", margin: "10px 0 12px" }}>Funding, acquisitions, people moves, milestones, interviews</p>
           <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
             {Object.entries(UPDATE_TYPES).map(([k, cfg]) => (
-              <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${updateFilter === k ? cfg.c : "#e8e5dc"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: updateFilter === k ? 600 : (k === "regulation" ? 700 : 400), letterSpacing: k === "regulation" ? 0.3 : 0 }}>{cfg.label}</button>
+              <button key={k} onClick={() => setUpdateFilter(k)} style={{ padding: "4px 10px", borderRadius: 5, border: `1px solid ${updateFilter === k ? cfg.c : "#353532"}`, background: updateFilter === k ? cfg.c + "18" : "transparent", color: updateFilter === k ? cfg.c : "#8a8a85", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)", fontWeight: updateFilter === k ? 600 : (k === "regulation" ? 700 : 400), letterSpacing: k === "regulation" ? 0.3 : 0 }}>{cfg.label}</button>
             ))}
           </div>
         </div>
@@ -996,8 +996,8 @@ export default function App() {
         ) : isMobile ? (
           /* ── MOBILE: vertical arrow timeline ── */
           <div style={{ position: "relative", padding: "0 12px 40px 40px" }}>
-            <div style={{ position: "absolute", left: 23, top: 0, bottom: 20, width: 2, background: "linear-gradient(to bottom, #C15F3C, #e8e5dc)" }} />
-            <div style={{ position: "absolute", left: 18, bottom: 10, width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: "10px solid #e8e5dc" }} />
+            <div style={{ position: "absolute", left: 23, top: 0, bottom: 20, width: 2, background: "linear-gradient(to bottom, #C15F3C, #353532)" }} />
+            <div style={{ position: "absolute", left: 18, bottom: 10, width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: "10px solid #353532" }} />
             {filteredUpdates.map((u, i) => {
               const co = companies.find(c => c.id === u.company);
               const tc = UPDATE_TYPES[u.type] || { c: "#94A3B8", label: u.type };
@@ -1081,7 +1081,7 @@ export default function App() {
               <div key={cat} style={{ marginBottom: 8 }}>
                 {/* Category header — clickable */}
                 <div onClick={() => setOpenCats(prev => { const n = new Set(prev); n.has(cat) ? n.delete(cat) : n.add(cat); return n; })}
-                  style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 10, background: "var(--bg-elevated)", border: `1px solid ${isOpen ? cfg.c + "40" : "#e8e5dc"}`, cursor: "pointer", transition: "all 0.2s" }}>
+                  style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 10, background: "var(--bg-elevated)", border: `1px solid ${isOpen ? cfg.c + "40" : "#353532"}`, cursor: "pointer", transition: "all 0.2s" }}>
                   <span style={{ fontSize: 18 }}>{cfg.i}</span>
                   <div style={{ flex: 1 }}>
                     <span style={{ fontSize: 15, fontWeight: 700, color: cfg.c }}>{cfg.l}</span>
@@ -1101,7 +1101,7 @@ export default function App() {
                       const xHandle = p.tw ? p.tw.replace(/https?:\/\/(x|twitter)\.com\//,"").replace(/\//g,"") : null;
                       const avatarUrl = xHandle ? `https://unavatar.io/x/${xHandle}` : null;
                       return (
-                        <div key={name} id={`person-${name.replace(/\s+/g, "-")}`} style={{ background: highlightPerson === name ? "#fff3e0" : "var(--bg-elevated)", borderRadius: 10, padding: "14px", border: `1px solid ${highlightPerson === name ? "#C15F3C" : "#e8e5dc"}`, transition: "all 0.3s ease", borderTop: `3px solid ${accentColor}30` }}>
+                        <div key={name} id={`person-${name.replace(/\s+/g, "-")}`} style={{ background: highlightPerson === name ? "rgba(193,95,60,0.15)" : "var(--bg-elevated)", borderRadius: 10, padding: "14px", border: `1px solid ${highlightPerson === name ? "#C15F3C" : "#353532"}`, transition: "all 0.3s ease", borderTop: `3px solid ${accentColor}30` }}>
                           <div style={{ display: "flex", alignItems: "start", gap: 10 }}>
                             {/* Avatar — photo or initials fallback */}
                             <div style={{ width: 40, height: 40, borderRadius: "50%", background: `${accentColor}18`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: `2px solid ${accentColor}30`, overflow: "hidden", position: "relative" }}>
@@ -1152,7 +1152,7 @@ export default function App() {
                                     const domMap = { deepmind: "deepmind.google", anthropic: "anthropic.com", openai: "openai.com", mistral: "mistral.ai", cohere: "cohere.com", stability: "stability.ai", elevenlabs: "elevenlabs.io", synthesia: "synthesia.io", wayve: "wayve.ai", isomorphic: "isomorphiclabs.com", helsing: "helsing.ai", darktrace: "darktrace.com", nscale: "nscale.com", graphcore: "graphcore.ai", polyai: "poly.ai", tractable: "tractable.ai", faculty: "faculty.ai", "signal-ai": "signal-ai.com", physicsx: "physicsx.ai", healx: "healx.io", encord: "encord.com", "holistic-ai": "holisticai.com", "robin-ai": "robin.ai", condukt: "condukt.ai", blackwall: "blackwall.ai", nexcade: "nexcade.ai", "peak-ai": "peak.ai" };
                                     const logoUrl = domMap[co2.id] ? `https://logo.clearbit.com/${domMap[co2.id]}` : null;
                                     return (
-                                      <span key={co2.id} onClick={() => setPeoplePeek(co2)} style={{ fontSize: 10, color: "#5a5a55", cursor: "pointer", padding: "2px 6px", borderRadius: 4, background: "var(--bg-sunken)", border: "1px solid var(--border)", display: "inline-flex", alignItems: "center", gap: 3 }}>
+                                      <span key={co2.id} onClick={() => setPeoplePeek(co2)} style={{ fontSize: 10, color: "#c4c7c7", cursor: "pointer", padding: "2px 6px", borderRadius: 4, background: "var(--bg-sunken)", border: "1px solid var(--border)", display: "inline-flex", alignItems: "center", gap: 3 }}>
                                         {logoUrl && <img src={logoUrl} alt="" style={{ width: 12, height: 12, borderRadius: 2, objectFit: "contain" }} onError={e => e.target.style.display="none"} />}
                                         {co2.s || co2.name}
                                       </span>
@@ -1185,7 +1185,7 @@ export default function App() {
           const domainMap = { deepmind: "deepmind.google", anthropic: "anthropic.com", openai: "openai.com", mistral: "mistral.ai", cohere: "cohere.com", stability: "stability.ai", elevenlabs: "elevenlabs.io", synthesia: "synthesia.io", wayve: "wayve.ai", isomorphic: "isomorphiclabs.com", helsing: "helsing.ai", darktrace: "darktrace.com", nscale: "nscale.com", graphcore: "graphcore.ai", polyai: "poly.ai", tractable: "tractable.ai", faculty: "faculty.ai", "signal-ai": "signal-ai.com", physicsx: "physicsx.ai", healx: "healx.io", encord: "encord.com", "holistic-ai": "holisticai.com", "robin-ai": "robin.ai", condukt: "condukt.ai", blackwall: "blackwall.ai", nexcade: "nexcade.ai", "peak-ai": "peak.ai", balderton: "balderton.com", atomico: "atomico.com", accel: "accel.com", mmc: "mmc.vc", seedcamp: "seedcamp.com", localglobe: "localglobe.vc", plural: "plural.vc", index: "indexventures.com", gv: "gv.com" };
           const pkLogo = domainMap[pk.id] ? `https://logo.clearbit.com/${domainMap[pk.id]}` : null;
           return (
-            <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 999, background: "rgba(26,26,24,0.45)", backdropFilter: "blur(4px)", top: headerHeight, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={e => { if (e.target === e.currentTarget) setPeoplePeek(null); }}>
+            <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 999, background: "rgba(10,10,10,0.7)", backdropFilter: "blur(4px)", top: headerHeight, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={e => { if (e.target === e.currentTarget) setPeoplePeek(null); }}>
               <div style={{ background: "var(--bg-base)", borderRadius: "16px 16px 0 0", maxWidth: 480, width: "100%", maxHeight: "75vh", overflowY: "auto", border: "1px solid var(--border)", borderBottom: "none" }}>
                 {/* Header */}
                 <div style={{ padding: "14px 16px 10px", borderBottom: "1px solid var(--border)", position: "sticky", top: 0, background: "var(--bg-base)", borderRadius: "16px 16px 0 0", zIndex: 1 }}>
@@ -1230,7 +1230,7 @@ export default function App() {
                         const oid = e.s === pk.id ? e.t : e.s;
                         const o = companies.find(c => c.id === oid);
                         if (!o) return null;
-                        return (<span key={i} onClick={() => setPeoplePeek(o)} style={{ fontSize: 10, color: "#5a5a55", cursor: "pointer", padding: "2px 6px", borderRadius: 4, background: "var(--bg-sunken)", border: "1px solid var(--border)", display: "inline-flex", alignItems: "center", gap: 3 }}>
+                        return (<span key={i} onClick={() => setPeoplePeek(o)} style={{ fontSize: 10, color: "#c4c7c7", cursor: "pointer", padding: "2px 6px", borderRadius: 4, background: "var(--bg-sunken)", border: "1px solid var(--border)", display: "inline-flex", alignItems: "center", gap: 3 }}>
                           {domainMap[o.id] && <img src={`https://logo.clearbit.com/${domainMap[o.id]}`} alt="" style={{ width: 11, height: 11, borderRadius: 2 }} onError={e2 => e2.target.style.display="none"} />}
                           {o.s || o.name}
                           <span style={{ fontSize: 8, color: "var(--text-faint)" }}>{e.ty}</span>
@@ -1307,7 +1307,7 @@ export default function App() {
               {bits.filter(b => !b._pending && b.type === "chart").map(bit => (
                 <a key={bit.id} href={bit.url} target="_blank" rel="noopener" style={{ display: "block", background: "var(--bg-elevated)", borderRadius: 8, border: "1px solid var(--border)", padding: 14, textDecoration: "none", transition: "border-color 0.15s" }}
                   onMouseEnter={e => e.currentTarget.style.borderColor="#C15F3C"}
-                  onMouseLeave={e => e.currentTarget.style.borderColor="#e8e5dc"}>
+                  onMouseLeave={e => e.currentTarget.style.borderColor="#353532"}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                     <span style={{ fontSize: 20 }}>📊</span>
                     <span style={{ fontWeight: 600, color: "var(--text-primary)", fontSize: 14, fontFamily: "var(--font-body)" }}>{bit.title}</span>
@@ -1356,7 +1356,7 @@ export default function App() {
             <div style={{ display: "flex", gap: 4, flexWrap: "wrap", margin: "8px 0 16px" }}>
               {sectorCos.map(c => <span key={c.id} onClick={(e) => { e.stopPropagation(); setPanel("graph"); setSel(c); }} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 4, background: "var(--border)", color: "var(--footer-text)", cursor: "pointer", transition: "background 0.1s" }}
                 onMouseEnter={e => { e.currentTarget.style.background = "#C15F3C22"; e.currentTarget.style.color = "#C15F3C"; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "#e8e5dc"; e.currentTarget.style.color = "#6b6b66"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "#353532"; e.currentTarget.style.color = "#6b6b66"; }}
               >{c.name}</span>)}
             </div>
             {/* Sections */}
@@ -1384,7 +1384,7 @@ export default function App() {
                   style={{ flex: 1, padding: "8px 12px", borderRadius: 6, border: "1px solid var(--border)", fontSize: 13, fontFamily: "var(--font-body)", background: "var(--bg-elevated)", outline: "none" }} />
                 <button onClick={() => { if (insightAsk.trim() && !insightAsking) askInsight(ins, insightAsk.trim()); }}
                   disabled={!insightAsk.trim() || insightAsking}
-                  style={{ padding: "8px 14px", borderRadius: 6, border: "none", background: insightAsking ? "#e8e5dc" : "#C15F3C", color: insightAsking ? "#8a8a85" : "#fff", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-body)", cursor: insightAsking ? "wait" : "pointer" }}>
+                  style={{ padding: "8px 14px", borderRadius: 6, border: "none", background: insightAsking ? "#353532" : "#C15F3C", color: insightAsking ? "#8a8a85" : "#fff", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-body)", cursor: insightAsking ? "wait" : "pointer" }}>
                   {insightAsking ? "Thinking..." : "Ask"}
                 </button>
               </div>
@@ -1466,7 +1466,7 @@ export default function App() {
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(auto-fill,minmax(140px,1fr))", gap: 6, marginBottom: 16 }}>
           {BADGES.map(b => {
             const earned = earnedBadges.find(e => e.id === b.id);
-            return (<div key={b.id} style={{ background: earned ? "#e8e5dc" : "#f8f7f3", borderRadius: 8, padding: "10px", border: `1px solid ${earned ? "#d5d3ca" : "#f5f3ee"}`, opacity: earned ? 1 : 0.4, textAlign: "center" }}>
+            return (<div key={b.id} style={{ background: earned ? "#353532" : "#1b1c19", borderRadius: 8, padding: "10px", border: `1px solid ${earned ? "#444748" : "#1b1c19"}`, opacity: earned ? 1 : 0.4, textAlign: "center" }}>
               <div style={{ fontSize: 22 }}>{b.icon}</div>
               <div style={{ fontSize: 10, color: "var(--text-primary)", fontWeight: 600, marginTop: 3 }}>{b.name}</div>
               <div style={{ fontSize: 8, color: "var(--text-muted)", marginTop: 2 }}>{b.desc}</div>
@@ -1661,7 +1661,7 @@ export default function App() {
           </>}
           {tab === "links" && <>
             {ce.length === 0 ? <p style={{ fontSize: 12, color: "var(--text-muted)" }}>No connections.</p> :
-              ce.map((e, i) => { const oid = e.s === sel.id ? e.t : e.s; const o = companies.find(c => c.id === oid); if (!o) return null; return (<div key={i} onClick={() => { setSel(o); setTab("info"); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", borderRadius: 4, cursor: "pointer", marginBottom: 2, background: "rgba(0,0,0,0.02)" }}><div style={{ width: 6, height: 6, borderRadius: "50%", background: ECfg[e.ty]?.c || "#444" }} /><span style={{ fontSize: 10, color: "var(--text-secondary)", flex: 1 }}>{o.name}</span>{e.l && <span style={{ fontSize: 7.5, color: "var(--text-muted)" }}>{e.l}</span>}<span style={{ fontSize: 7, color: "var(--text-faint)", textTransform: "uppercase" }}>{e.ty}</span></div>); })}
+              ce.map((e, i) => { const oid = e.s === sel.id ? e.t : e.s; const o = companies.find(c => c.id === oid); if (!o) return null; return (<div key={i} onClick={() => { setSel(o); setTab("info"); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", borderRadius: 4, cursor: "pointer", marginBottom: 2, background: "rgba(228,226,221,0.03)" }}><div style={{ width: 6, height: 6, borderRadius: "50%", background: ECfg[e.ty]?.c || "#444" }} /><span style={{ fontSize: 10, color: "var(--text-secondary)", flex: 1 }}>{o.name}</span>{e.l && <span style={{ fontSize: 7.5, color: "var(--text-muted)" }}>{e.l}</span>}<span style={{ fontSize: 7, color: "var(--text-faint)", textTransform: "uppercase" }}>{e.ty}</span></div>); })}
           </>}
           {tab === "network" && <>
             <p style={{ fontSize: 9, color: "var(--text-muted)", marginBottom: 8 }}>Your connection to {sel.s || sel.name}.</p>
@@ -1671,7 +1671,7 @@ export default function App() {
                 <div style={{ fontSize: 8, color: "var(--text-muted)", marginBottom: 3 }}>STATUS</div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
                   {Object.entries(US).map(([k, cfg]) => (
-                    <button key={k} onClick={() => setCf(p => ({ ...p, status: k }))} style={{ padding: "2px 6px", borderRadius: 4, border: `1px solid ${cf.status === k ? cfg.c : "#e8e5dc"}`, background: cf.status === k ? cfg.c + "20" : "transparent", color: cf.status === k ? cfg.c : "#64748B", fontSize: 8, cursor: "pointer", fontFamily: "var(--font-body)" }}>{cfg.i} {cfg.l}</button>
+                    <button key={k} onClick={() => setCf(p => ({ ...p, status: k }))} style={{ padding: "2px 6px", borderRadius: 4, border: `1px solid ${cf.status === k ? cfg.c : "#353532"}`, background: cf.status === k ? cfg.c + "20" : "transparent", color: cf.status === k ? cfg.c : "#64748B", fontSize: 8, cursor: "pointer", fontFamily: "var(--font-body)" }}>{cfg.i} {cfg.l}</button>
                   ))}
                 </div>
               </div>
@@ -1709,10 +1709,10 @@ export default function App() {
       {/* Mobile: pullable legend */}
       {panel === "graph" && !sel && isMobile && <div
         onClick={() => setLegendOpen(prev => !prev)}
-        style={{ position: "absolute", bottom: 90, left: 8, right: 8, background: "rgba(255,255,255,0.95)", borderRadius: 10, border: "1px solid var(--border)", zIndex: 500, backdropFilter: "blur(8px)", overflow: "hidden", transition: "max-height 0.3s ease", maxHeight: legendOpen ? 200 : 28, cursor: "pointer" }}>
+        style={{ position: "absolute", bottom: 90, left: 8, right: 8, background: "rgba(19,20,17,0.95)", borderRadius: 10, border: "1px solid var(--border)", zIndex: 500, backdropFilter: "blur(8px)", overflow: "hidden", transition: "max-height 0.3s ease", maxHeight: legendOpen ? 200 : 28, cursor: "pointer" }}>
         {/* Pull handle */}
         <div style={{ display: "flex", justifyContent: "center", padding: "6px 0 2px" }}>
-          <div style={{ width: 32, height: 4, borderRadius: 2, background: "#d0cec8" }} />
+          <div style={{ width: 32, height: 4, borderRadius: 2, background: "#444748" }} />
         </div>
         {legendOpen && <div style={{ padding: "0 10px 8px" }}>
           <p style={{ margin: "0 0 4px", fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.4 }}>
@@ -1734,7 +1734,7 @@ export default function App() {
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "20px 20px 12px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 20, marginBottom: 12 }}>
             <div>
-              <span style={{ fontSize: 18, fontWeight: 700, fontFamily: "var(--font-body)", background: "linear-gradient(135deg,var(--accent),#d97757)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</span>
+              <span style={{ fontSize: 18, fontWeight: 700, fontFamily: "var(--font-body)", background: "linear-gradient(135deg,var(--accent),#ffb59c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>LDN/ai</span>
               <p style={{ margin: "4px 0 0", fontSize: 12, color: "var(--footer-text)", maxWidth: 300, fontFamily: "var(--font-body)" }}>Interactive intelligence platform mapping London's AI ecosystem. 89 companies, 20 investors, 67 people, $37B+ funding.</p>
             </div>
             <div style={{ display: "flex", gap: 32 }}>
@@ -1759,7 +1759,7 @@ export default function App() {
               </div>
             </div>
           </div>
-          <div style={{ borderTop: "1px solid #2d2d2a", paddingTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+          <div style={{ borderTop: "1px solid #353532", paddingTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
             <span style={{ fontSize: 11, color: "var(--footer-text)", fontFamily: "var(--font-body)" }}>© 2026 Jie Xi. All rights reserved. Data sourced from public records.</span>
             <span style={{ fontSize: 11, color: "var(--footer-text)", fontFamily: "var(--font-body)" }}>Made in London 🇬🇧</span>
           </div>
@@ -1807,10 +1807,10 @@ function UpdateSummariseBtn({ url, label, person }) {
     setLoading(false);
   };
   return (<>
-    <button onClick={doSummarise} style={{ padding: "1px 6px", borderRadius: 3, border: "1px solid var(--border)", background: summary ? "#C15F3C10" : "transparent", color: summary ? "#C15F3C" : "#a0a09b", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+    <button onClick={doSummarise} style={{ padding: "1px 6px", borderRadius: 3, border: "1px solid var(--border)", background: summary ? "#C15F3C10" : "transparent", color: summary ? "#C15F3C" : "#8e9192", fontSize: 11, cursor: "pointer", fontFamily: "var(--font-body)" }}>
       {loading ? <span style={{ animation: "pulse 1s infinite" }}>⏳</span> : summary ? "✓ Summary" : "✨ Summarise"}
     </button>
-    {summary && <div style={{ width: "100%", fontSize: 12, color: "var(--footer-text)", lineHeight: 1.5, padding: "4px 0 2px", borderLeft: "2px solid #e8e5dc", paddingLeft: 10, marginTop: 4 }}>
+    {summary && <div style={{ width: "100%", fontSize: 12, color: "var(--footer-text)", lineHeight: 1.5, padding: "4px 0 2px", borderLeft: "2px solid #353532", paddingLeft: 10, marginTop: 4 }}>
       {summary.split("•").filter(Boolean).map((b, j) => <div key={j} style={{ marginBottom: 2 }}>• {b.trim()}</div>)}
     </div>}
   </>);
@@ -1851,7 +1851,7 @@ function DraggableCard({ isMobile, onClose, children, headerHeight = 70 }) {
   if (!isMobile) {
     // Desktop: plain fixed card, no drag
     return (
-      <div style={{ position: "fixed", top: headerHeight + 6, right: 6, width: 320, maxHeight: `calc(100vh - ${headerHeight + 12}px)`, overflowY: "auto", background: "rgba(255,255,255,0.98)", borderRadius: 12, backdropFilter: "blur(16px)", border: "1px solid var(--border)", zIndex: 600, animation: "slideInRight 250ms ease-out" }}>
+      <div style={{ position: "fixed", top: headerHeight + 6, right: 6, width: 320, maxHeight: `calc(100vh - ${headerHeight + 12}px)`, overflowY: "auto", background: "rgba(19,20,17,0.98)", borderRadius: 12, backdropFilter: "blur(16px)", border: "1px solid var(--border)", zIndex: 600, animation: "slideInRight 250ms ease-out" }}>
         {children}
       </div>
     );
@@ -1872,7 +1872,7 @@ function DraggableCard({ isMobile, onClose, children, headerHeight = 70 }) {
         right: 0,
         maxHeight: "92vh",
         overflowY: isDragging ? "hidden" : "auto",
-        background: "rgba(255,255,255,0.98)",
+        background: "rgba(19,20,17,0.98)",
         borderRadius: "16px 16px 0 0",
         backdropFilter: "blur(16px)",
         border: "1px solid var(--border)",
@@ -1886,14 +1886,14 @@ function DraggableCard({ isMobile, onClose, children, headerHeight = 70 }) {
     >
       {/* Drag handle */}
       <div style={{ display: "flex", justifyContent: "center", padding: "10px 0 6px", cursor: "grab" }}>
-        <div style={{ width: 40, height: 5, borderRadius: 3, background: "#d5d3ca" }} />
+        <div style={{ width: 40, height: 5, borderRadius: 3, background: "#444748" }} />
       </div>
       {children}
     </div>
   );
 }
 
-function SB({ l, v, c }) { return (<div style={{ background: "rgba(255,255,255,0.96)", borderRadius: 6, padding: "3px 8px", border: "1px solid var(--border)", textAlign: "center" }}><div style={{ fontSize: 14, fontWeight: 700, color: c, fontFamily: "var(--font-body)" }}>{v}</div><div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase" }}>{l}</div></div>); }
+function SB({ l, v, c }) { return (<div style={{ background: "rgba(19,20,17,0.96)", borderRadius: 6, padding: "3px 8px", border: "1px solid var(--border)", textAlign: "center" }}><div style={{ fontSize: 14, fontWeight: 700, color: c, fontFamily: "var(--font-body)" }}>{v}</div><div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase" }}>{l}</div></div>); }
 
 function PodcastList({ pods, compact, personName }) {
   const [showAll, setShowAll] = useState(false);
@@ -1976,11 +1976,11 @@ function PodcastList({ pods, compact, personName }) {
             <a href={pod.url} target="_blank" rel="noopener" style={{ flex: 1, fontSize: compact ? 12 : 13, color: "var(--footer-text)", textDecoration: "none", lineHeight: 1.4 }}>
               <span style={{ color: "var(--text-muted)" }}>🎙️</span> <span style={{ color: "var(--text-secondary)" }}>{pod.label}</span>
             </a>
-            <button onClick={() => summarize(pod)} style={{ flexShrink: 0, padding: "1px 5px", borderRadius: 3, border: "1px solid var(--border)", background: hasSummary ? "#C15F3C18" : "transparent", color: hasSummary ? "#C15F3C" : "#5a564e", fontSize: 8, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+            <button onClick={() => summarize(pod)} style={{ flexShrink: 0, padding: "1px 5px", borderRadius: 3, border: "1px solid var(--border)", background: hasSummary ? "#C15F3C18" : "transparent", color: hasSummary ? "#C15F3C" : "#8e9192", fontSize: 8, cursor: "pointer", fontFamily: "var(--font-body)" }}>
               {isLoading ? <span style={{ display: "inline-block", animation: "pulse 1s infinite" }}>⏳</span> : hasSummary ? "✓" : "✨"}
             </button>
           </div>
-          {hasSummary && <div style={{ fontSize: 9.5, color: "var(--footer-text)", lineHeight: 1.5, padding: "4px 0 2px 16px", borderLeft: "2px solid #e8e5dc", marginTop: 2, marginBottom: 2 }}>
+          {hasSummary && <div style={{ fontSize: 9.5, color: "var(--footer-text)", lineHeight: 1.5, padding: "4px 0 2px 16px", borderLeft: "2px solid #353532", marginTop: 2, marginBottom: 2 }}>
             {hasSummary.split("•").filter(Boolean).map((b, j) => (
               <div key={j} style={{ marginBottom: 2 }}>• {b.trim()}</div>
             ))}
@@ -1990,7 +1990,7 @@ function PodcastList({ pods, compact, personName }) {
           </div>}
           {isChatOpen && <div style={{ marginLeft: 16, marginTop: 4, marginBottom: 4 }}>
             {chat.map((m, j) => (
-              <div key={j} style={{ fontSize: 9, color: m.role === "user" ? "#d4cfc4" : "#a09b90", padding: "2px 0", borderLeft: m.role === "assistant" ? "2px solid #C15F3C33" : "none", paddingLeft: m.role === "assistant" ? 6 : 0 }}>
+              <div key={j} style={{ fontSize: 9, color: m.role === "user" ? "#c4c7c7" : "#8e9192", padding: "2px 0", borderLeft: m.role === "assistant" ? "2px solid #C15F3C33" : "none", paddingLeft: m.role === "assistant" ? 6 : 0 }}>
                 {m.role === "user" ? "You: " : "AI: "}{m.content}
               </div>
             ))}

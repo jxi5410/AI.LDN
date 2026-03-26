@@ -32,7 +32,8 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Space+Grotesk:wght@300..700&family=Inter:wght@300..600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
     <!-- RSS Discovery -->
     <link rel="alternate" type="application/rss+xml" title="LDN/ai Ecosystem Updates" href="/feed.xml" />
@@ -98,29 +99,37 @@
     <style>
       :root {
         /* Typography */
-        --font-display: 'DM Serif Display', Georgia, serif;
-        --font-body: 'DM Sans', -apple-system, sans-serif;
+        --font-display: 'Newsreader', Georgia, serif;
+        --font-body: 'Inter', -apple-system, sans-serif;
+        --font-label: 'Space Grotesk', sans-serif;
         --font-mono: 'JetBrains Mono', monospace;
 
-        /* Backgrounds — 3 elevation levels */
-        --bg-base: #faf9f5;
-        --bg-elevated: #ffffff;
-        --bg-sunken: #f2f0ea;
+        /* Backgrounds — dark sovereign elevation */
+        --bg-base: #131411;
+        --bg-elevated: #1f201d;
+        --bg-sunken: #0e0e0c;
+        --bg-surface: #1b1c19;
+        --bg-surface-high: #2a2a27;
+        --bg-surface-highest: #353532;
+        --bg-overlay: #0a0a0a;
 
-        /* Text — 4 contrast levels */
-        --text-primary: #1a1a18;
-        --text-secondary: #4a4a45;
-        --text-muted: #8a8a85;
-        --text-faint: #b5b3ae;
+        /* Text — 4 contrast levels on dark */
+        --text-primary: #e4e2dd;
+        --text-secondary: #c4c7c7;
+        --text-muted: #8e9192;
+        --text-faint: rgba(228, 226, 221, 0.3);
 
-        /* Accent — single hue, 3 intensities */
+        /* Accent — terracotta, 3 intensities */
         --accent: #C15F3C;
-        --accent-hover: #a84e30;
-        --accent-bg: rgba(193, 95, 60, 0.07);
+        --accent-light: #ffb59c;
+        --accent-hover: #ffa080;
+        --accent-bg: rgba(193, 95, 60, 0.12);
+        --accent-container: #802f0f;
 
         /* Borders */
-        --border: #e8e5dc;
-        --border-strong: #d5d3ca;
+        --border: #444748;
+        --border-strong: #353532;
+        --border-faint: rgba(68, 71, 72, 0.3);
 
         /* Status */
         --success: #30D158;
@@ -128,17 +137,25 @@
         --danger: #FF453A;
 
         /* Footer */
-        --footer-bg: #1a1a18;
-        --footer-text: #6b6b66;
-        --footer-text-bright: #8a8a85;
+        --footer-bg: #0a0a0a;
+        --footer-text: #8e9192;
+        --footer-text-bright: #c4c7c7;
       }
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { background: var(--bg-base); overflow: hidden; overflow-x: hidden; max-width: 100vw; }
+      body { background: var(--bg-base); color: var(--text-primary); overflow: hidden; overflow-x: hidden; max-width: 100vw; }
+      ::selection { background: rgba(255, 181, 156, 0.3); }
+      ::-webkit-scrollbar { width: 4px; }
+      ::-webkit-scrollbar-track { background: var(--bg-overlay); }
+      ::-webkit-scrollbar-thumb { background: var(--bg-surface-highest); }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        font-size: 1.25rem;
+      }
       #ssr-content { display: none; color: var(--text-secondary); font-family: var(--font-body); padding: 24px; max-width: 860px; margin: 0 auto; line-height: 1.7; }
-      #ssr-content h1 { color: var(--accent); font-size: 28px; margin: 0 0 12px; font-family: var(--font-display); }
+      #ssr-content h1 { color: var(--accent-light); font-size: 28px; margin: 0 0 12px; font-family: var(--font-display); }
       #ssr-content h2 { color: var(--text-primary); font-size: 20px; margin: 24px 0 8px; font-family: var(--font-display); }
-      #ssr-content h3 { color: var(--accent); font-size: 16px; margin: 18px 0 6px; }
-      #ssr-content a { color: var(--accent); }
+      #ssr-content h3 { color: var(--accent-light); font-size: 16px; margin: 18px 0 6px; }
+      #ssr-content a { color: var(--accent-light); }
       #ssr-content p { margin: 0 0 12px; font-size: 15px; }
       #ssr-content strong { color: var(--text-primary); }
     </style>

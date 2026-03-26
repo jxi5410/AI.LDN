@@ -71,7 +71,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
     d3.select(svgRef.current.parentNode).selectAll(".edge-tooltip").remove();
     d3.select(svgRef.current.parentNode).selectAll(".node-tooltip").remove();
 
-    svg.append("rect").attr("width", w).attr("height", h).attr("fill", "#faf9f5");
+    svg.append("rect").attr("width", w).attr("height", h).attr("fill", "#131411");
     const defs = svg.append("defs");
     const g = svg.append("g");
 
@@ -127,10 +127,10 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
     // Edge tooltip
     const tip = d3.select(svgRef.current.parentNode).append("div").attr("class", "edge-tooltip")
       .style("position", "absolute").style("pointer-events", "none").style("display", "none")
-      .style("background", "rgba(255,255,255,0.96)").style("backdrop-filter", "blur(8px)")
-      .style("border", "1px solid #e8e5dc").style("border-radius", "6px")
-      .style("padding", "5px 10px").style("font-size", "11px").style("font-family", "'DM Sans',sans-serif")
-      .style("color", "#2d2d2a").style("z-index", "600")
+      .style("background", "rgba(19,20,17,0.96)").style("backdrop-filter", "blur(8px)")
+      .style("border", "1px solid #353532").style("border-radius", "6px")
+      .style("padding", "5px 10px").style("font-size", "11px").style("font-family", "'Inter',sans-serif")
+      .style("color", "#e4e2dd").style("z-index", "600")
       .style("max-width", "240px").style("white-space", "nowrap");
 
     link.style("cursor", "pointer")
@@ -140,7 +140,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
         d3.select(this).attr("stroke-opacity", 0.9).attr("stroke-width", 3);
         const sName = typeof d.source === "object" ? d.source.name : d.source;
         const tName = typeof d.target === "object" ? d.target.name : d.target;
-        tip.html(`<span style="color:${edgeColor};font-weight:600">${typeName}</span><br/><span style="color:#6b6b66">${sName} → ${tName}</span>${d.l ? `<br/><span style="color:#8a8a85;font-size:10px">${d.l}</span>` : ""}`)
+        tip.html(`<span style="color:${edgeColor};font-weight:600">${typeName}</span><br/><span style="color:#8e9192">${sName} → ${tName}</span>${d.l ? `<br/><span style="color:#8e9192;font-size:10px">${d.l}</span>` : ""}`)
           .style("display", "block");
       })
       .on("mousemove", function(e) {
@@ -183,7 +183,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
     node.append("circle")
       .attr("r", d => d.r)
       .attr("fill", d => {
-        if (isInv && d.cat === "investor") return "#ffffff";
+        if (isInv && d.cat === "investor") return "#1f201d";
         if (isInv && d.cat !== "investor") {
           return getInvestorColor(d.id, links) + "40";
         }
@@ -193,7 +193,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
         if (selected?.id === d.id) return "#C15F3C";
         if (isInv && d.cat === "investor" && INVESTOR_BRAND[d.id]) return INVESTOR_BRAND[d.id].c;
         if (isInv && d.cat !== "investor") return getInvestorColor(d.id, links) + "80";
-        return "white";
+        return "#1f201d";
       })
       .attr("stroke-width", d => {
         if (selected?.id === d.id) return 3;
@@ -227,7 +227,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
             .style("font-size", (sz * 0.4) + "px")
             .style("font-weight", "800")
             .style("color", brand.c)
-            .style("font-family", "'DM Sans',sans-serif")
+            .style("font-family", "'Inter',sans-serif")
             .text(d.name.charAt(0));
         };
       });
@@ -249,12 +249,12 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
         if (isInv && d.cat === "investor") return "13px";
         return d.r > 14 ? "10px" : "8px";
       })
-      .attr("font-family", "'DM Sans', sans-serif")
+      .attr("font-family", "'Inter', sans-serif")
       .attr("font-weight", d => isInv && d.cat === "investor" ? 700 : 500)
       .attr("fill", d => {
         if (isInv && d.cat === "investor" && INVESTOR_BRAND[d.id]) return INVESTOR_BRAND[d.id].c;
-        if (isInv && d.cat === "investor") return "#1a1a18";
-        return "#4a4a45";
+        if (isInv && d.cat === "investor") return "#e8e6e1";
+        return "#c4c7c7";
       })
       .attr("pointer-events", "none");
 
@@ -263,7 +263,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
       .style("position", "absolute").style("pointer-events", "none").style("display", "none")
       .style("background", "var(--bg-elevated)").style("border", "1px solid var(--border)")
       .style("border-radius", "8px").style("padding", "8px 12px").style("z-index", "700")
-      .style("font-family", "'DM Sans',sans-serif").style("opacity", "0").style("transition", "opacity 150ms ease");
+      .style("font-family", "'Inter',sans-serif").style("opacity", "0").style("transition", "opacity 150ms ease");
 
     node.on("click", (e, d) => {
       e.stopPropagation();
@@ -308,7 +308,7 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
       // Show tooltip
       const catLabel = CC[d.cat]?.l || d.cat;
       const funding = d.fund || "";
-      nodeTip.html(`<div style="font-family:'DM Serif Display',Georgia,serif;font-size:16px;color:var(--text-primary)">${d.name}</div>${funding ? `<div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);margin-top:2px">${funding}</div>` : ""}<div style="font-size:11px;color:${CC[d.cat]?.c || "var(--text-muted)"};margin-top:2px">${catLabel}</div>`)
+      nodeTip.html(`<div style="font-family:'Newsreader',Georgia,serif;font-size:16px;color:var(--text-primary)">${d.name}</div>${funding ? `<div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);margin-top:2px">${funding}</div>` : ""}<div style="font-size:11px;color:${CC[d.cat]?.c || "var(--text-muted)"};margin-top:2px">${catLabel}</div>`)
         .style("display", "block");
       setTimeout(() => nodeTip.style("opacity", "1"), 10);
       // Edge labels
@@ -329,11 +329,11 @@ export default function LondonMap({ companies, edges, onSelect, selected, userCo
               .text(l.l)
               .attr("text-anchor", "middle")
               .attr("font-size", "9px")
-              .attr("font-family", "'DM Sans',sans-serif")
+              .attr("font-family", "'Inter',sans-serif")
               .attr("fill", edgeCol)
               .attr("font-weight", 600)
               .attr("paint-order", "stroke")
-              .attr("stroke", "#faf9f5")
+              .attr("stroke", "#131411")
               .attr("stroke-width", 3);
           }
         }

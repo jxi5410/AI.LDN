@@ -3,11 +3,11 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 import { UPDATES, companies } from "./data";
 
 const ACCENT = "#C15F3C";
-const ACCENT2 = "#d97757";
-const BG = "#ffffff";
-const BORDER = "#e8e5dc";
-const TEXT = "#8a8a85";
-const TEXT_LIGHT = "#2d2d2a";
+const ACCENT2 = "#ffb59c";
+const BG = "#131411";
+const BORDER = "#353532";
+const TEXT = "#8e9192";
+const TEXT_LIGHT = "#e8e5dc";
 
 // Aggregate capital raised per year from UPDATES funding entries
 function buildCapitalData() {
@@ -68,7 +68,7 @@ function buildStats() {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: "#ffffff", border: `1px solid ${BORDER}`, borderRadius: 6, padding: "8px 12px", fontSize: 12 }}>
+    <div style={{ background: "#131411", border: `1px solid ${BORDER}`, borderRadius: 6, padding: "8px 12px", fontSize: 12 }}>
       <div style={{ color: TEXT_LIGHT, fontWeight: 600, marginBottom: 2 }}>{label}</div>
       {payload.map((p, i) => (
         <div key={i} style={{ color: p.color || ACCENT, fontSize: 11 }}>
@@ -93,7 +93,7 @@ export default function InsightsPanel({ isMobile }) {
           <h3 style={{ fontFamily: "var(--font-body)", fontSize: 13, color: TEXT_LIGHT, fontWeight: 600, margin: "0 0 8px" }}>Capital Raised ($M)</h3>
           <ResponsiveContainer width="100%" height={160}>
             <BarChart data={capitalData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e8e5dc" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#353532" />
               <XAxis dataKey="year" tick={{ fontSize: 9, fill: TEXT }} />
               <YAxis tick={{ fontSize: 9, fill: TEXT }} tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}B` : `${v}M`} />
               <Tooltip content={<CustomTooltip />} />
@@ -105,7 +105,7 @@ export default function InsightsPanel({ isMobile }) {
           <h3 style={{ fontFamily: "var(--font-body)", fontSize: 13, color: TEXT_LIGHT, fontWeight: 600, margin: "0 0 8px" }}>Ecosystem Growth</h3>
           <ResponsiveContainer width="100%" height={160}>
             <AreaChart data={cumulativeData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e8e5dc" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#353532" />
               <XAxis dataKey="year" tick={{ fontSize: 9, fill: TEXT }} />
               <YAxis tick={{ fontSize: 9, fill: TEXT }} />
               <Tooltip content={<CustomTooltip />} />
@@ -116,7 +116,7 @@ export default function InsightsPanel({ isMobile }) {
         </div>
       </div>
 
-      <p style={{ fontSize: 9, color: "#a0a09b", textAlign: "center", marginTop: 8 }}>
+      <p style={{ fontSize: 9, color: "#8e9192", textAlign: "center", marginTop: 8 }}>
         Data sourced from tracked companies and public funding announcements in the London AI ecosystem
       </p>
     </div>
@@ -127,7 +127,7 @@ function StatCard({ label, value, icon }) {
   return (
     <div style={{ background: BG, borderRadius: 8, border: `1px solid ${BORDER}`, padding: "12px", textAlign: "center" }}>
       <div style={{ fontSize: 20 }}>{icon}</div>
-      <div style={{ fontSize: 22, fontWeight: 800, color: "#1a1a18", fontFamily: "var(--font-body)", marginTop: 2 }}>{value}</div>
+      <div style={{ fontSize: 22, fontWeight: 800, color: "#e8e5dc", fontFamily: "var(--font-body)", marginTop: 2 }}>{value}</div>
       <div style={{ fontSize: 9, color: TEXT, marginTop: 2 }}>{label}</div>
     </div>
   );

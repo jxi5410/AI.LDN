@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0d0d0c; color: #e8e5dc; font-family: 'Inter', sans-serif; min-height: 100vh; }
+  body { background: #0d0d0c; color: #e4e2dd; font-family: 'Inter', sans-serif; min-height: 100vh; }
   
   /* Gate screen */
   #gate { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
@@ -17,7 +17,7 @@
   .gate-card h1 { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
   .gate-card h1 span { color: #C15F3C; }
   .gate-card .sub { color: #6b6b66; font-size: 13px; margin-bottom: 24px; }
-  .gate-card input { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid #333; background: #1a1a18; color: #e8e5dc; font-family: 'JetBrains Mono', monospace; font-size: 14px; text-align: center; outline: none; }
+  .gate-card input { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid #333; background: #1a1a18; color: #e4e2dd; font-family: 'JetBrains Mono', monospace; font-size: 14px; text-align: center; outline: none; }
   .gate-card input:focus { border-color: #C15F3C; }
   .gate-card button { margin-top: 12px; width: 100%; padding: 12px; border-radius: 8px; border: none; background: #C15F3C; color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; font-family: inherit; }
   .gate-card button:hover { background: #a84e30; }
@@ -55,11 +55,11 @@
   .param-table td { padding: 6px 8px; border-bottom: 1px solid #1f1f1d; vertical-align: top; }
   .param-name { font-family: 'JetBrains Mono', monospace; color: #C15F3C; font-weight: 600; white-space: nowrap; }
   .param-type { color: #6b6b66; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
-  .param-desc { color: #a0a09b; }
+  .param-desc { color: #8e9192; }
   .param-values { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #8a8a85; background: #0d0d0c; padding: 2px 6px; border-radius: 3px; }
 
   .try-url { display: flex; align-items: center; gap: 8px; margin-top: 12px; background: #0d0d0c; border: 1px solid #2a2a28; border-radius: 6px; padding: 8px 10px; }
-  .try-url code { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #a0a09b; flex: 1; overflow-x: auto; white-space: nowrap; word-break: break-all; }
+  .try-url code { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #8e9192; flex: 1; overflow-x: auto; white-space: nowrap; word-break: break-all; }
   .try-btn { padding: 4px 12px; border-radius: 4px; border: 1px solid #C15F3C40; background: #C15F3C15; color: #C15F3C; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; text-decoration: none; }
   .try-btn:hover { background: #C15F3C25; }
 
@@ -69,7 +69,7 @@
 
   .info-box { background: #C15F3C10; border: 1px solid #C15F3C25; border-radius: 8px; padding: 12px 14px; margin: 16px 0; }
   .info-box .label { font-size: 10px; font-weight: 700; color: #C15F3C; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-  .info-box p { font-size: 13px; color: #a0a09b; line-height: 1.5; }
+  .info-box p { font-size: 13px; color: #8e9192; line-height: 1.5; }
 
   .footer { border-top: 1px solid #2a2a28; padding-top: 24px; margin-top: 40px; text-align: center; }
   .footer p { font-size: 12px; color: #6b6b66; }
@@ -406,7 +406,7 @@ async function loadStats() {
     const r = await fetch("https://ripugedrbnmvbbdntxgt.supabase.co/functions/v1/api?resource=stats");
     const d = await r.json();
     document.getElementById("stats-line").innerHTML = 
-      `<strong style="color:#e8e5dc">${d.companies}</strong> companies · <strong style="color:#e8e5dc">${d.investors}</strong> investors · <strong style="color:#e8e5dc">${d.connections}</strong> connections · <strong style="color:#e8e5dc">${d.funding_rounds}</strong> funding rounds · <strong style="color:#e8e5dc">${d.podcasts}</strong> podcasts · <strong style="color:#e8e5dc">$${Math.round(d.total_funding_m/1000)}B+</strong> total funding tracked`;
+      `<strong style="color:#ffb59c">${d.companies}</strong> companies · <strong style="color:#ffb59c">${d.investors}</strong> investors · <strong style="color:#ffb59c">${d.connections}</strong> connections · <strong style="color:#ffb59c">${d.funding_rounds}</strong> funding rounds · <strong style="color:#ffb59c">${d.podcasts}</strong> podcasts · <strong style="color:#ffb59c">$${Math.round(d.total_funding_m/1000)}B+</strong> total funding tracked`;
   } catch(e) { document.getElementById("stats-line").textContent = "Could not load stats"; }
 }
 </script>
